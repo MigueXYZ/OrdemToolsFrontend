@@ -1,0 +1,131 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Light Theme Variables */
+:root,
+[data-theme='light'] {
+  --bg-primary: linear-gradient(180deg, #e8f0f6 0%, #c5dbe8 50%, #a8cfe0 100%);
+  --bg-secondary: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.95) 100%);
+  --bg-tertiary: rgba(255, 255, 255, 0.8);
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --text-accent: #0066cc;
+  --border-color: rgba(0, 102, 204, 0.2);
+  --border-color-hover: rgba(0, 102, 204, 0.4);
+  --button-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 248, 255, 0.8) 100%);
+  --button-bg-hover: linear-gradient(180deg, rgba(230, 245, 255, 0.95) 0%, rgba(200, 230, 255, 0.95) 100%);
+  --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 250, 255, 0.9) 100%);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Dark Theme Variables */
+[data-theme='dark'] {
+  --bg-primary: linear-gradient(180deg, #0d0221 0%, #1a0333 50%, #0f0228 100%);
+  --bg-secondary: rgba(13, 2, 33, 0.85);
+  --bg-tertiary: rgba(13, 2, 33, 0.7);
+  --text-primary: #e0e0e0;
+  --text-secondary: #d0d0d0;
+  --text-tertiary: #a0a0a0;
+  --text-accent: #00d4ff;
+  --border-color: rgba(0, 247, 255, 0.2);
+  --border-color-hover: rgba(0, 247, 255, 0.5);
+  --button-bg: rgba(0, 247, 255, 0.08);
+  --button-bg-hover: rgba(0, 247, 255, 0.15);
+  --input-bg: rgba(13, 2, 33, 0.7);
+  --shadow-sm: 0 0 15px rgba(0, 247, 255, 0.1);
+  --shadow-md: 0 0 25px rgba(0, 247, 255, 0.2);
+  --inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+html, body, #__next {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', 'Frutiger', 'Calibri', sans-serif;
+  background: var(--bg-primary);
+  background-attachment: fixed;
+  background-size: 400% 400%;
+  animation: aeroGradient 15s ease infinite;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+@keyframes aeroGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Windows Aero Glass Morphism */
+.aero-glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.aero-glass-dark {
+  background: rgba(240, 245, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(200, 220, 255, 0.6);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+a {
+  color: #0066CC;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #0052A3;
+  text-decoration: underline;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0076C0 0%, #4DA6FF 100%);
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0052A3 0%, #0076C0 100%);
+}

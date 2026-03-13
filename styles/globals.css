@@ -1,0 +1,188 @@
+/* Cyberpunk Neumorphism Theme with Glow Effects */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', 'Frutiger', 'Calibri', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #0d0221 0%, #1a0333 25%, #0f0421 50%, #1d0433 75%, #0d0221 100%);
+  background-attachment: fixed;
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  color: #e0f7ff;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Animated glow background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 247, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(102, 51, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(255, 0, 127, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+
+#__next {
+  position: relative;
+  z-index: 1;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(13, 2, 33, 0.8);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00f7ff 0%, #6633ff 100%);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00ffff 0%, #7744ff 100%);
+  box-shadow: 0 0 15px rgba(0, 247, 255, 0.8);
+}
+
+/* Selection styling */
+::selection {
+  background: linear-gradient(135deg, rgba(0, 247, 255, 0.5), rgba(102, 51, 255, 0.5));
+  color: #fff;
+}
+
+/* Links */
+a {
+  color: #00f7ff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 8px rgba(0, 247, 255, 0.5);
+}
+
+a:hover {
+  color: #00ffff;
+  text-shadow: 0 0 16px rgba(0, 247, 255, 0.9);
+}
+
+/* Code blocks */
+code, pre {
+  background: rgba(13, 2, 33, 0.6);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 8px;
+  padding: 2px 6px;
+  color: #00f7ff;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 0 8px rgba(0, 247, 255, 0.2);
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  color: #e0f7ff;
+}
+
+/* Enhanced Neumorphism Utilities */
+.glass-effect {
+  background: rgba(20, 5, 40, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 
+    0 0 20px rgba(0, 247, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.glass-effect-strong {
+  background: rgba(13, 2, 33, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(102, 51, 255, 0.4);
+  border-radius: 12px;
+  box-shadow: 
+    0 0 30px rgba(102, 51, 255, 0.3),
+    0 0 60px rgba(0, 247, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.8);
+}
+
+/* Neon Glow Border Effect */
+.neon-border {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.neon-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0, 247, 255, 0.5), rgba(102, 51, 255, 0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.floating {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse glow animation */
+@keyframes pulseGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(0, 247, 255, 0.8), 0 0 60px rgba(102, 51, 255, 0.4);
+  }
+}
+
+.glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}

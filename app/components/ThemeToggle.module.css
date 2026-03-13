@@ -1,0 +1,41 @@
+.toggleButton {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 248, 255, 0.8) 100%);
+  border: 1px solid rgba(0, 102, 204, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+
+.toggleButton:hover {
+  background: linear-gradient(180deg, rgba(230, 245, 255, 0.95) 0%, rgba(200, 230, 255, 0.95) 100%);
+  border-color: rgba(0, 102, 204, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 102, 204, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: scale(1.05);
+}
+
+.toggleButton:active {
+  transform: scale(0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme='dark'] .toggleButton {
+    background: linear-gradient(180deg, rgba(50, 70, 100, 0.9) 0%, rgba(40, 60, 90, 0.9) 100%);
+    border-color: rgba(0, 150, 255, 0.4);
+    color: #00d4ff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(200, 230, 255, 0.2);
+  }
+
+  [data-theme='dark'] .toggleButton:hover {
+    background: linear-gradient(180deg, rgba(70, 100, 140, 0.95) 0%, rgba(60, 90, 130, 0.95) 100%);
+    border-color: rgba(100, 180, 255, 0.6);
+    box-shadow: 0 2px 8px rgba(0, 150, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
