@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { AuthContext } from '../context/AuthContext';
+
+// Importação dos Formulários
 import AddAbilityForm from './AddAbilityForm';
 import AddRitualForm from './AddRitualForm';
 import AddRuleForm from './AddRuleForm';
@@ -10,35 +13,30 @@ import AddClassForm from './AddClassForm';
 import AddTrackForm from './AddTrackForm';
 import AddWeaponForm from './AddWeaponForm';
 import AddThreatForm from './AddThreatForm';
+
+// Componentes Globais
 import ThemeToggle from '../components/ThemeToggle';
 import styles from './page.module.css';
-import { useContext } from 'react'; // Adiciona isto junto ao import do useState
-import { AuthContext } from '../context/AuthContext'; // Confirma se o caminho está correto
 
 export default function ManagePage() {
   const [activeTab, setActiveTab] = useState('abilities');
+  const { user, loading } = useContext(AuthContext);
   const router = useRouter();
 
-  const handleback = () => {
+  // Proteção de Rota: Se não estiver logado, volta para o login
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  const handleBack = () => {
     router.push('/');
   };
 
-  // Dentro do teu export default function ManagePage() {
-const { user, loading } = useContext(AuthContext); // Precisas de importar o useContext e AuthContext
-
-// Se ainda está a carregar o token do localStorage, não mostra nada
-if (loading) return null;
-
-// Se não há utilizador, redireciona para o login ou mostra erro
-if (!user) {
-  return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <h1>Acesso Negado</h1>
-      <p>Precisas de iniciar sessão para gerir o conteúdo.</p>
-      <button onClick={() => router.push('/login')}>Ir para Login</button>
-    </div>
-  );
-}
+  // Enquanto verifica o estado do login, mostra um ecrã vazio ou loading
+  if (loading) return null;
+  if (!user) return null;
 
   return (
     <div className={styles.wrapper}>
@@ -46,7 +44,7 @@ if (!user) {
         <div className={styles.headerContent}>
           <div className={styles.headerTop}>
             <button 
-              onClick={handleback}
+              onClick={handleBack}
               className={styles.homeLink}
             >
               ← Voltar à Pesquisa
@@ -54,12 +52,14 @@ if (!user) {
             <ThemeToggle />
           </div>
           <h1 className={styles.title}>Gerenciador de Conteúdo</h1>
-          <p className={styles.subtitle}>Adicione poderes, rituais, regras, itens, classes, trilhas ou armas ao banco de dados</p>
+          <p className={styles.subtitle}>
+            Olá, **{user.username}**. Adicione novos elementos ao banco de dados do Ordem.
+          </p>
         </div>
       </header>
 
       <div className={styles.container}>
-        <div className={styles.tabNavigation}>
+        <nav className={styles.tabNavigation}>
           <button
             className={`${styles.tab} ${activeTab === 'abilities' ? styles.active : ''}`}
             onClick={() => setActiveTab('abilities')}
@@ -67,6 +67,7 @@ if (!user) {
             <span className={styles.tabIcon}>⚡</span>
             Poderes
           </button>
+          
           <button
             className={`${styles.tab} ${activeTab === 'rituals' ? styles.active : ''}`}
             onClick={() => setActiveTab('rituals')}
@@ -74,6 +75,7 @@ if (!user) {
             <span className={styles.tabIcon}>✨</span>
             Rituais
           </button>
+          
           <button
             className={`${styles.tab} ${activeTab === 'rules' ? styles.active : ''}`}
             onClick={() => setActiveTab('rules')}
@@ -81,6 +83,7 @@ if (!user) {
             <span className={styles.tabIcon}>📖</span>
             Regras
           </button>
+          
           <button
             className={`${styles.tab} ${activeTab === 'items' ? styles.active : ''}`}
             onClick={() => setActiveTab('items')}
@@ -88,6 +91,7 @@ if (!user) {
             <span className={styles.tabIcon}>🧭</span>
             Itens
           </button>
+          
           <button
             className={`${styles.tab} ${activeTab === 'classes' ? styles.active : ''}`}
             onClick={() => setActiveTab('classes')}
@@ -95,6 +99,7 @@ if (!user) {
             <span className={styles.tabIcon}>⚔️</span>
             Classes
           </button>
+          
           <button
             className={`${styles.tab} ${activeTab === 'tracks' ? styles.active : ''}`}
             onClick={() => setActiveTab('tracks')}
@@ -102,23 +107,25 @@ if (!user) {
             <span className={styles.tabIcon}>🛤️</span>
             Trilhas
           </button>
+          
           <button
             className={`${styles.tab} ${activeTab === 'weapons' ? styles.active : ''}`}
             onClick={() => setActiveTab('weapons')}
           >
-            <span className={styles.tabIcon}>⚔️</span>
+            <span className={styles.tabIcon}>🗡️</span>
             Armas
           </button>
+          
           <button
             className={`${styles.tab} ${activeTab === 'threats' ? styles.active : ''}`}
             onClick={() => setActiveTab('threats')}
           >
-            <span className={styles.tabIcon}></span>
+            <span className={styles.tabIcon}>💀</span>
             Ameaças
           </button>
-        </div>
+        </nav>
 
-        <div className={styles.content}>
+        <main className={styles.content}>
           {activeTab === 'abilities' && <AddAbilityForm />}
           {activeTab === 'rituals' && <AddRitualForm />}
           {activeTab === 'rules' && <AddRuleForm />}
@@ -127,7 +134,7 @@ if (!user) {
           {activeTab === 'tracks' && <AddTrackForm />}
           {activeTab === 'weapons' && <AddWeaponForm />}
           {activeTab === 'threats' && <AddThreatForm />}
-        </div>
+        </main>
       </div>
     </div>
   );

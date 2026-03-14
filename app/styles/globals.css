@@ -1,116 +1,141 @@
+/* globals.css - Ordem Paranormal Biblioteca (Aero Style) */
+
+/* 1. IMPORTAÇÃO DE FONTES */
+@import url('https://fonts.googleapis.com/css2?family=Girassol&family=Special+Elite&display=swap');
+
+:root {
+  /* Fontes */
+  --font-titles: 'Girassol', serif;
+  --font-body: 'Special Elite', typewriter, serif;
+
+  /* Light Theme (Aero Vista) */
+  --bg-primary: radial-gradient(circle at 0% 0%, #a8e6cf 0%, transparent 50%),
+                radial-gradient(circle at 100% 0%, #89cff0 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #1e90ff 0%, transparent 50%),
+                #f0f8ff;
+  --bg-secondary: rgba(255, 255, 255, 0.4);
+  --text-primary: #003366;
+  --text-secondary: #445566;
+  --text-accent: #0052a3;
+  --border-color: rgba(255, 255, 255, 0.6);
+  --button-bg: linear-gradient(180deg, #82caff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --shadow-main: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='dark'] {
+  /* Dark Theme (Aero Night) */
+  --bg-primary: radial-gradient(circle at 0% 0%, #0d0221 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, #1a0333 0%, transparent 50%),
+                #050110;
+  --bg-secondary: rgba(13, 2, 33, 0.6);
+  --text-primary: #e0f4ff;
+  --text-secondary: #a0c0d0;
+  --text-accent: #00d4ff;
+  --border-color: rgba(0, 212, 255, 0.2);
+  --button-bg: linear-gradient(180deg, #00d4ff 0%, #0088ff 49%, #0055ff 50%, #003399 100%);
+  --input-bg: rgba(0, 0, 0, 0.4);
+  --shadow-main: 0 8px 32px rgba(0, 212, 255, 0.15);
+}
+
+/* 2. RESET & BASE */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-/* Light Theme Variables */
-:root,
-[data-theme='light'] {
-  --bg-primary: linear-gradient(180deg, #e8f0f6 0%, #c5dbe8 50%, #a8cfe0 100%);
-  --bg-secondary: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.95) 100%);
-  --bg-tertiary: rgba(255, 255, 255, 0.8);
-  --text-primary: #333333;
-  --text-secondary: #666666;
-  --text-tertiary: #999999;
-  --text-accent: #0066cc;
-  --border-color: rgba(0, 102, 204, 0.2);
-  --border-color-hover: rgba(0, 102, 204, 0.4);
-  --button-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 248, 255, 0.8) 100%);
-  --button-bg-hover: linear-gradient(180deg, rgba(230, 245, 255, 0.95) 0%, rgba(200, 230, 255, 0.95) 100%);
-  --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 250, 255, 0.9) 100%);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
-/* Dark Theme Variables */
-[data-theme='dark'] {
-  --bg-primary: linear-gradient(180deg, #0d0221 0%, #1a0333 50%, #0f0228 100%);
-  --bg-secondary: rgba(13, 2, 33, 0.85);
-  --bg-tertiary: rgba(13, 2, 33, 0.7);
-  --text-primary: #e0e0e0;
-  --text-secondary: #d0d0d0;
-  --text-tertiary: #a0a0a0;
-  --text-accent: #00d4ff;
-  --border-color: rgba(0, 247, 255, 0.2);
-  --border-color-hover: rgba(0, 247, 255, 0.5);
-  --button-bg: rgba(0, 247, 255, 0.08);
-  --button-bg-hover: rgba(0, 247, 255, 0.15);
-  --input-bg: rgba(13, 2, 33, 0.7);
-  --shadow-sm: 0 0 15px rgba(0, 247, 255, 0.1);
-  --shadow-md: 0 0 25px rgba(0, 247, 255, 0.2);
-  --inset-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-html, body, #__next {
-  height: 100%;
-  width: 100%;
+  font-family: var(--font-body);
 }
 
 body {
-  font-family: 'Segoe UI', 'Frutiger', 'Calibri', sans-serif;
   background: var(--bg-primary);
   background-attachment: fixed;
-  background-size: 400% 400%;
-  animation: aeroGradient 15s ease infinite;
   color: var(--text-primary);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: background 0.5s ease;
+  line-height: 1.6;
 }
 
-@keyframes aeroGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* 3. TIPOGRAFIA PARANORMAL */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-titles) !important;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* Windows Aero Glass Morphism */
-.aero-glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 8px 32px rgba(0, 0, 0, 0.15),
-    0 2px 8px rgba(0, 0, 0, 0.1);
+/* Títulos do Header */
+.titleMain, [class*="titleMain"] {
+  font-family: var(--font-titles) !important;
+  font-size: 4rem;
 }
 
-.aero-glass-dark {
-  background: rgba(240, 245, 255, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(200, 220, 255, 0.6);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08);
+.titleSub, [class*="titleSub"] {
+  font-family: var(--font-titles) !important;
+  font-size: 2rem;
+}
+
+/* 4. COMPONENTES AERO GLASS */
+.aero-glass, [class*="glassCard"], [class*="aeroForm"] {
+  background: var(--bg-secondary);
+  backdrop-filter: blur(15px) saturate(150%);
+  -webkit-backdrop-filter: blur(15px) saturate(150%);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* 5. INTERATIVIDADE (Botões & Links) */
+button {
+  font-family: var(--font-body) !important;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 a {
-  color: #0066CC;
+  font-family: var(--font-body);
+  color: var(--text-accent);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: filter 0.2s;
 }
 
 a:hover {
-  color: #0052A3;
+  filter: brightness(1.2);
   text-decoration: underline;
 }
 
-button {
-  cursor: pointer;
-  font-family: inherit;
-  border: none;
-  transition: all 0.2s ease;
+/* Botões Estilo Bolha */
+.aero-button, [class*="aeroButton"], [class*="manageLink"] {
+  background: var(--button-bg) !important;
+  color: white !important;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+.aero-button:hover, [class*="aeroButton"]:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+/* 6. INPUTS & FORMULÁRIOS */
 input, textarea, select {
-  font-family: inherit;
-  font-size: inherit;
+  font-family: var(--font-body) !important;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.8rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s;
 }
 
-/* Scrollbar Styling */
+input:focus, textarea:focus {
+  border-color: var(--text-accent);
+  box-shadow: 0 0 10px var(--text-accent);
+}
+
+/* 7. SCROLLBAR PERSONALIZADA (VISTA STYLE) */
 ::-webkit-scrollbar {
   width: 12px;
   height: 12px;
@@ -121,11 +146,21 @@ input, textarea, select {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0076C0 0%, #4DA6FF 100%);
-  border-radius: 6px;
+  background: linear-gradient(180deg, #82caff 0%, #0077e6 100%);
+  border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #0052A3 0%, #0076C0 100%);
+  background: linear-gradient(180deg, #3399ff 0%, #005bb8 100%);
+}
+
+/* 8. ANIMAÇÕES */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
 }

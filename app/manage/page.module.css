@@ -1,34 +1,38 @@
+/* app/manage/page.module.css */
+
 .wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-primary);
+  /* Fundo Aurora suave */
+  background: radial-gradient(circle at 0% 0%, rgba(168, 230, 207, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 100% 100%, rgba(30, 144, 255, 0.1) 0%, transparent 40%),
+              var(--bg-primary);
   transition: background 0.3s ease;
 }
 
 .header {
-  padding: 2rem 1rem;
-  background: linear-gradient(180deg, #f0f6fb 0%, #dde8f0 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 102, 204, 0.2);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 1rem;
+  /* Vidro Aero */
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  text-align: center;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.header::before {
+/* Brilho superior característico */
+.header::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(0, 102, 204, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(100, 180, 255, 0.05) 0%, transparent 50%);
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
   pointer-events: none;
 }
 
@@ -40,55 +44,51 @@
 }
 
 .headerTop {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .homeLink {
   display: inline-flex;
   align-items: center;
-  color: var(--text-accent);
+  padding: 0.6rem 1.2rem;
+  /* Botão de Vidro Neutro */
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(230, 240, 250, 0.8) 100%);
+  color: #0052a3;
+  border: 1px solid rgba(0, 102, 204, 0.3);
+  border-radius: 50px;
   font-weight: 600;
-  padding: 0.5rem 1rem;
-  background: var(--button-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 3px;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm), var(--inset-shadow);
+  font-size: 0.9rem;
   cursor: pointer;
-  font-size: 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 0 white;
 }
 
 .homeLink:hover {
-  background: var(--button-bg-hover);
-  border-color: var(--border-color-hover);
-  color: #003d99;
+  background: white;
+  border-color: #0077e6;
+  transform: translateX(-3px);
+  box-shadow: 0 4px 10px rgba(0, 102, 204, 0.1);
 }
 
 .title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #004a99 0%, #00aaff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
   margin: 0;
-  letter-spacing: 0.5px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  font-size: 1rem;
-  color: #666666;
+  font-size: 1.1rem;
+  color: #445566;
   margin-top: 0.5rem;
+  font-weight: 500;
 }
 
 .container {
@@ -96,98 +96,92 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  padding: 2rem 1rem;
+  padding: 2rem 1.5rem;
 }
 
+/* Barra de Ferramentas Estilo "Dock" */
 .tabNavigation {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  background: linear-gradient(180deg, rgba(240, 248, 255, 0.9) 0%, rgba(220, 235, 255, 0.9) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 0.75rem;
-  border-radius: 3px;
-  border: 1px solid rgba(0, 102, 204, 0.2);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 1px 3px rgba(0, 0, 0, 0.08);
+  gap: 0.8rem;
+  margin-bottom: 2.5rem;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px);
+  padding: 0.8rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
+.tabNavigation::-webkit-scrollbar { display: none; }
 
 .tab {
   flex: 1;
-  padding: 0.875rem 1rem;
-  background: linear-gradient(180deg, rgba(240, 248, 255, 0.6) 0%, rgba(220, 235, 255, 0.6) 100%);
-  border: 1px solid rgba(0, 102, 204, 0.2);
-  border-radius: 3px;
+  min-width: max-content;
+  padding: 0.8rem 1.2rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(240, 248, 255, 0.4) 100%);
+  border: 1px solid rgba(0, 102, 204, 0.15);
+  border-radius: 12px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  color: #0066cc;
-  transition: all 0.2s ease;
+  color: #0052a3;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  gap: 0.6rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 .tabIcon {
   font-size: 1.2rem;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
 }
 
 .tab:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(230, 245, 255, 0.8) 100%);
-  color: #003d99;
-  box-shadow: 0 1px 3px rgba(0, 102, 204, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: white;
+  border-color: #00aaff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 102, 204, 0.1);
 }
 
 .tab.active {
-  background: linear-gradient(135deg, rgba(0, 102, 204, 0.2) 0%, rgba(100, 180, 255, 0.15) 100%);
-  color: #003d99;
-  border-color: rgba(0, 102, 204, 0.4);
-  box-shadow: 
-    0 2px 6px rgba(0, 102, 204, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  /* O "Botão Ativo" brilha como o botão de Iniciar do Windows 7 */
+  background: linear-gradient(180deg, #82caff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  color: white;
+  border-color: #004a99;
+  box-shadow: 0 4px 12px rgba(0, 74, 153, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.tab.active .tabIcon {
+  filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
 }
 
 .content {
-  animation: fadeIn 0.3s ease;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1024px) {
+  .tabNavigation {
+    justify-content: flex-start;
   }
 }
 
 @media (max-width: 768px) {
-  .header {
-    padding: 1.5rem 1rem;
-  }
-
-  .title {
-    font-size: 1.75rem;
-  }
-
-  .tabNavigation {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .tab {
-    flex: 0 1 calc(33.333% - 0.35rem);
-    flex-direction: column;
-    padding: 0.75rem;
-  }
-
-  .tabIcon {
-    margin: 0 !important;
-  }
+  .title { font-size: 2rem; }
+  .tabNavigation { border-radius: 15px; padding: 0.5rem; }
+  .tab { padding: 0.6rem 1rem; font-size: 0.85rem; }
 }

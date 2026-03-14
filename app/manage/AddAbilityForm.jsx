@@ -2,10 +2,16 @@
 
 import { useState } from 'react';
 import axios from 'axios';
-import FormField from './FormField';
+import FormField from './FormField'; // Assumindo que este componente existe
 import styles from './AddAbilityForm.module.css';
 
-const ABILITY_CATEGORIES = ['Poderes de Ocultista', 'Poderes de Especialista', 'Poderes de Combatente', 'Poderes Paranormais', 'Poder de Origem'];
+const ABILITY_CATEGORIES = [
+  'Poderes de Ocultista',
+  'Poderes de Especialista',
+  'Poderes de Combatente',
+  'Poderes Paranormais',
+  'Poder de Origem'
+];
 
 export default function AddAbilityForm({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -39,6 +45,7 @@ export default function AddAbilityForm({ onSuccess }) {
     setMessage(null);
 
     try {
+      // Configurar payload
       const payload = {
         ...formData,
         tags: formData.tags
@@ -46,6 +53,7 @@ export default function AddAbilityForm({ onSuccess }) {
           .map((tag) => tag.trim())
           .filter((tag) => tag.length > 0)
       };
+      
       if (formData.category === 'Poder de Origem') {
         if (formData.origin) payload.origin = formData.origin;
         payload.associatedPower = formData.name;
@@ -55,12 +63,14 @@ export default function AddAbilityForm({ onSuccess }) {
           .filter((s) => s.length > 0);
       }
 
+      // Enviar para a API
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/abilities`,
         payload
       );
 
-      setMessage({ type: 'success', text: 'Poder adicionado com sucesso!' });
+      // Sucesso
+      setMessage({ type: 'success', text: 'Poder paranormal adicionado ao banco de dados!' });
       setFormData({
         name: '',
         description: '',
@@ -73,106 +83,124 @@ export default function AddAbilityForm({ onSuccess }) {
       });
       onSuccess?.();
     } catch (error) {
+      // Erro
       const errorMsg = error.response?.data?.message || error.message;
-      setMessage({ type: 'error', text: `Erro: ${errorMsg}` });
+      setMessage({ type: 'error', text: `Falha na conexão: ${errorMsg}` });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h3>Adicionar Novo Poder</h3>
-
-      {message && (
-        <div className={`${styles.message} ${styles[message.type]}`}>
-          {message.text}
-        </div>
-      )}
-
-      <div className={styles.grid}>
-        <FormField
-          label="Nome"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="ex: Telecinesia (ou nome do poder)"
-          required
-        />
-
-        <FormField
-          label="Categoria"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          isSelect
-          options={ABILITY_CATEGORIES}
-          cacheKey="ability_category"
-          required
-        />
+    <form onSubmit={handleSubmit} className={styles.aeroForm}>
+      {/* Cabeçalho do formulário com efeito de vidro polido */}
+      <div className={styles.formHeader}>
+        <h3 className={styles.formTitle}>Adicionar Novo Poder</h3>
+        <div className={styles.glossyReflect}></div>
       </div>
 
-      <FormField
-        label="Descrição"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        placeholder="Breve descrição do poder"
-        isTextarea
-        required
-      />
+      <div className={styles.formContent}>
+        {message && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.type === 'success' ? '✅ ' : '❌ '}
+            {message.text}
+          </div>
+        )}
 
-      <FormField
-        label="Requisitos"
-        name="requirements"
-        value={formData.requirements}
-        onChange={handleChange}
-        placeholder="O que o personagem precisa para usar este poder?"
-        isTextarea
-      />
-
-      <div className={styles.grid}>
-        <FormField
-          label="Livro"
-          name="book"
-          value={formData.book}
-          onChange={handleChange}
-          placeholder="Nome do livro onde aparece"
-        />
-      </div>
-
-      {formData.category === 'Poder de Origem' && (
-        <>
+        <div className={styles.grid}>
           <FormField
-            label="Nome da Origem"
-            name="origin"
-            value={formData.origin}
+            label="Nome do Poder *"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
-            placeholder="ex: Acadêmico"
+            placeholder="ex: Telecinesia"
             required
+            className={styles.aeroInput}
           />
 
           <FormField
-            label="Perícias treinadas"
-            name="trainedSkills"
-            value={formData.trainedSkills}
+            label="Categoria *"
+            name="category"
+            value={formData.category}
             onChange={handleChange}
-            placeholder="Separadas por vírgula (ex: Ciências, Investigação)"
+            isSelect
+            options={ABILITY_CATEGORIES}
+            cacheKey="ability_category"
+            required
+            className={styles.aeroSelect}
           />
-        </>
-      )}
+        </div>
 
-      <FormField
-        label="Tags"
-        name="tags"
-        value={formData.tags}
-        onChange={handleChange}
-        placeholder="Separadas por vírgula (ex: paranormal, telecinesia, combate)"
-      />
+        <FormField
+          label="Descrição do Poder *"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Descreva os efeitos paranormais..."
+          isTextarea
+          required
+          className={styles.aeroTextarea}
+        />
 
-      <button type="submit" disabled={loading} className={styles.submitButton}>
-        {loading ? 'Adicionando...' : 'Adicionar Poder'}
-      </button>
+        <FormField
+          label="Requisitos"
+          name="requirements"
+          value={formData.requirements}
+          onChange={handleChange}
+          placeholder="O que o personagem precisa? (ex: NEX 30%)"
+          isTextarea
+          className={styles.aeroTextarea}
+        />
+
+        <div className={styles.grid}>
+          <FormField
+            label="Livro de Referência"
+            name="book"
+            value={formData.book}
+            onChange={handleChange}
+            placeholder="ex: Livro Básico - pág. 120"
+            className={styles.aeroInput}
+          />
+        </div>
+
+        {/* Campos dinâmicos para Poder de Origem */}
+        {formData.category === 'Poder de Origem' && (
+          <div className={`${styles.grid} ${styles.extraFields} ${styles.fadeIn}`}>
+            <FormField
+              label="Nome da Origem *"
+              name="origin"
+              value={formData.origin}
+              onChange={handleChange}
+              placeholder="ex: Acadêmico"
+              required
+              className={styles.aeroInput}
+            />
+
+            <FormField
+              label="Perícias Treinadas"
+              name="trainedSkills"
+              value={formData.trainedSkills}
+              onChange={handleChange}
+              placeholder="Separadas por vírgula (ex: Ciências, Investigação)"
+              className={styles.aeroInput}
+            />
+          </div>
+        )}
+
+        <FormField
+          label="Tags de Pesquisa"
+          name="tags"
+          value={formData.tags}
+          onChange={handleChange}
+          placeholder="ex: paranormal, combate, dano (separadas por vírgula)"
+          className={styles.aeroInput}
+        />
+
+        {/* Botão estilo bolha/gelatina Aero */}
+        <button type="submit" disabled={loading} className={styles.aeroButton}>
+          {loading ? 'Adicionando...' : 'Adicionar Poder Paranormal'}
+        </button>
+      </div>
     </form>
   );
 }

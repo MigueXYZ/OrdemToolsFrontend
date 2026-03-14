@@ -1,115 +1,162 @@
-.form {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.95) 100%);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 102, 204, 0.35);
-  border-radius: 3px;
-  padding: 2rem;
+/* AddAbilityForm.module.css - Versão Aero Premium */
+
+.aeroForm {
+  max-width: 850px;
+  margin: 0 auto 3rem;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    0 15px 35px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  position: relative;
 }
 
-.form h3 {
-  background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: 1.35rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(0, 102, 204, 0.2);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* BARRA PRINCIPAL AZUL COM EFEITO DE PROFUNDIDADE */
+.formHeader {
+  padding: 1.2rem 2rem;
+  /* Gradiente 3D Azul (Estilo barra de título Windows Vista) */
+  background: linear-gradient(180deg, 
+    #55aaff 0%, 
+    #2288ee 49%, 
+    #0066cc 50%, 
+    #0044aa 100%
+  );
+  border-bottom: 2px solid #003388;
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Brilho superior interno para profundidade */
+.formHeader::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+/* TÍTULO BRANCO COM EFEITO DE RELEVO */
+.formTitle {
+  font-family: var(--font-titles) !important; /* Usa Girassol */
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin: 0;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  /* Efeito de profundidade: sombra projetada e brilho sutil */
+  text-shadow: 
+    0px 2px 4px rgba(0, 0, 0, 0.4),
+    0px 0px 10px rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.formContent {
+  padding: 2.5rem 2rem;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
+/* Rótulos com Special Elite */
+.formContent label {
+  display: block;
+  color: #004488;
+  font-weight: 400; /* Special Elite não precisa de bold */
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Inputs Aero - Plástico Branco Esculpido */
+.formContent input, 
+.formContent select, 
+.formContent textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 80, 160, 0.25);
+  border-radius: 10px;
+  color: #003366;
+  font-size: 1rem;
+  box-shadow: 
+    inset 0 2px 5px rgba(0, 0, 0, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.formContent input:focus, 
+.formContent textarea:focus {
+  background: #ffffff;
+  border-color: #0099ff;
+  box-shadow: 
+    0 0 12px rgba(0, 153, 255, 0.4), 
+    inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+/* Botão Adicionar - Efeito "Pressionar" */
+.aeroButton {
+  width: 100%;
+  padding: 1.1rem;
+  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  color: white;
+  border: 1px solid #004a99;
+  border-radius: 50px;
+  font-family: var(--font-body) !important;
+  font-weight: 400;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 
+    0 6px 15px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.2s;
+  margin-top: 2rem;
+}
+
+.aeroButton:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+}
+
+.aeroButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Mensagens de Feedback Aero */
 .message {
-  padding: 1rem;
-  border-radius: 8px;
+  border-radius: 15px;
+  padding: 1.2rem;
   margin-bottom: 1.5rem;
-  border-left: 4px solid;
-  font-weight: 500;
-  animation: slideInDown 0.3s ease;
-}
-
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  font-weight: 400;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .message.success {
-  background: rgba(51, 153, 102, 0.15);
-  color: #00a850;
-  border-color: #00a850;
+  background: linear-gradient(180deg, #a8e6cf 0%, #77ddaa 100%);
+  color: #005522;
 }
 
 .message.error {
-  background: rgba(255, 0, 0, 0.1);
-  color: #cc0000;
-  border-color: #cc0000;
-}
-
-.submitButton {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: linear-gradient(180deg, rgba(230, 245, 255, 0.9) 0%, rgba(200, 230, 255, 0.9) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: #0066cc;
-  border: 1px solid rgba(0, 102, 204, 0.35);
-  border-radius: 3px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
-  margin-top: 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.submitButton:hover:not(:disabled) {
-  background: linear-gradient(180deg, rgba(150, 210, 255, 0.95) 0%, rgba(100, 180, 255, 0.95) 100%);
-  border-color: rgba(0, 102, 204, 0.5);
-  color: #003d99;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 2px 8px rgba(0, 102, 204, 0.2);
-  transform: translateY(-2px);
-}
-
-.submitButton:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.submitButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
-  .form {
-    padding: 1.5rem;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
+  background: linear-gradient(180deg, #ffcccc 0%, #ffaaaa 100%);
+  color: #880000;
 }
