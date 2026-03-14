@@ -1,4 +1,4 @@
-/* AddAbilityForm.module.css - Versão Aero Premium */
+/* AddAbilityForm.module.css - Versão Final Consolidada */
 
 .aeroForm {
   max-width: 850px;
@@ -15,10 +15,8 @@
   position: relative;
 }
 
-/* BARRA PRINCIPAL AZUL COM EFEITO DE PROFUNDIDADE */
 .formHeader {
   padding: 1.2rem 2rem;
-  /* Gradiente 3D Azul (Estilo barra de título Windows Vista) */
   background: linear-gradient(180deg, 
     #55aaff 0%, 
     #2288ee 49%, 
@@ -30,31 +28,24 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-/* Brilho superior interno para profundidade */
 .formHeader::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 50%;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
   pointer-events: none;
 }
 
-/* TÍTULO BRANCO COM EFEITO DE RELEVO */
 .formTitle {
-  font-family: var(--font-titles) !important; /* Usa Girassol */
+  font-family: var(--font-titles) !important;
   font-size: 1.6rem;
   font-weight: 400;
   margin: 0;
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  /* Efeito de profundidade: sombra projetada e brilho sutil */
-  text-shadow: 
-    0px 2px 4px rgba(0, 0, 0, 0.4),
-    0px 0px 10px rgba(255, 255, 255, 0.2);
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   position: relative;
   z-index: 1;
 }
@@ -70,17 +61,15 @@
   margin-bottom: 1rem;
 }
 
-/* Rótulos com Special Elite */
 .formContent label {
   display: block;
   color: #004488;
-  font-weight: 400; /* Special Elite não precisa de bold */
   margin-bottom: 0.6rem;
   font-size: 0.95rem;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
-/* Inputs Aero - Plástico Branco Esculpido */
+/* INPUTS, TEXTAREAS E SELECTS */
 .formContent input, 
 .formContent select, 
 .formContent textarea {
@@ -98,17 +87,38 @@
   outline: none;
 }
 
+/* ESTILO ESPECÍFICO PARA O DROPDOWN (SELECT) */
+.formContent select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 3rem;
+  
+  /* Chevron Aero */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23004488' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2rem;
+}
+
+/* Corrigir a lista de opções que aparece na imagem */
+.formContent select option {
+  background-color: #f0f8ff; /* Fundo azul clarinho sólido */
+  color: #003366;
+  padding: 10px;
+  font-family: var(--font-body);
+}
+
 .formContent input:focus, 
+.formContent select:focus,
 .formContent textarea:focus {
   background: #ffffff;
   border-color: #0099ff;
-  box-shadow: 
-    0 0 12px rgba(0, 153, 255, 0.4), 
-    inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 12px rgba(0, 153, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
 
-/* Botão Adicionar - Efeito "Pressionar" */
 .aeroButton {
   width: 100%;
   padding: 1.1rem;
@@ -122,9 +132,7 @@
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 
-    0 6px 15px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.2s;
   margin-top: 2rem;
 }
@@ -135,12 +143,6 @@
   box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
 }
 
-.aeroButton:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Mensagens de Feedback Aero */
 .message {
   border-radius: 15px;
   padding: 1.2rem;

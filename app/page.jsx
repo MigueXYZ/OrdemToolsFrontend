@@ -55,32 +55,25 @@ export default function Home() {
           <h2 className={styles.browseTitle}>Ou navegue por categoria:</h2>
           <div className={styles.browseButtons}>
             <Link href="/browse?tab=abilities" className={styles.browseButton}>
-              <span className={styles.browseIcon}>⚡</span>
-              <span>Todos os Poderes</span>
+              <span>⚡ Poderes</span>
             </Link>
             <Link href="/browse?tab=rituals" className={styles.browseButton}>
-              <span className={styles.browseIcon}>✨</span>
-              <span>Todos os Rituais</span>
+              <span>✨ Rituais</span>
             </Link>
             <Link href="/browse?tab=items" className={styles.browseButton}>
-              <span className={styles.browseIcon}>🧭</span>
-              <span>Todos os Itens</span>
+              <span>🧭 Itens</span>
             </Link>
             <Link href="/browse?tab=rules" className={styles.browseButton}>
-              <span className={styles.browseIcon}>📖</span>
-              <span>Todas as Regras</span>
+              <span>📖 Regras</span>
             </Link>
             <Link href="/browse?tab=classes" className={styles.browseButton}>
-              <span className={styles.browseIcon}>⚔️</span>
-              <span>Todas as Classes</span>
+              <span>⚔️ Classes</span>
             </Link>
             <Link href="/browse?tab=tracks" className={styles.browseButton}>
-              <span className={styles.browseIcon}>🛤️</span>
-              <span>Todas as Trilhas</span>
+              <span>🛤️ Trilhas</span>
             </Link>
             <Link href="/browse?tab=weapons" className={styles.browseButton}>
-              <span className={styles.browseIcon}>🗡️</span>
-              <span>Todas as Armas</span>
+              <span>🗡️ Armas</span>
             </Link>
           </div>
         </div>

@@ -1,0 +1,151 @@
+/* AeroSelect.module.css - Ajuste de Alinhamento Cirúrgico */
+
+.container {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.label {
+  display: block;
+  color: #004488;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  font-family: var(--font-body) !important;
+}
+
+.required {
+  color: #cc0000;
+}
+
+/* O Gatilho (Trigger) */
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 102, 204, 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 
+    inset 0 1px 3px rgba(0, 0, 0, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.2s;
+  outline: none;
+  height: 42px;
+  box-sizing: border-box; /* Fundamental para manter a largura */
+}
+
+.selectTrigger:hover {
+  background: #ffffff;
+  border-color: #0099ff;
+  box-shadow: 0 0 10px rgba(0, 153, 255, 0.2);
+}
+
+.selectTrigger.open {
+  border-radius: 10px 10px 0 0;
+  border-color: #0099ff;
+  /* Remove a borda inferior para fundir com a lista */
+  border-bottom: none; 
+  /* Adiciona um pequeno padding extra no fundo para compensar a borda removida */
+  padding-bottom: 1px; 
+  z-index: 1001;
+  background: #ffffff;
+}
+
+
+.value {
+  color: #003366;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-body) !important;
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* A LISTA DE OPÇÕES - Ajuste de Posição */
+.optionsList {
+  position: absolute;
+  /* Ajuste manual para colar: se 100% deixa espaço, usamos um valor fixo ou negativo */
+  top: 41px; /* Como o trigger tem height 42px e borda 1px, 41px força a união */
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  
+  /* Borda azul que completa o trigger */
+  border: 1px solid #0099ff;
+  border-top: none; /* Já que o trigger fornece o topo */
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  
+  max-height: 200px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Item da Lista */
+.optionItem {
+  margin: 0 !important;
+  padding: 0.7rem 1rem !important;
+  color: #003366;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.1s;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  display: block;
+  font-family: var(--font-body) !important;
+  /* Remove qualquer marcador residual */
+  list-style: none;
+}
+
+.optionItem:hover {
+  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.optionItem.selected {
+  background: rgba(0, 102, 204, 0.1);
+  color: #004a99;
+}
+
+/* Scrollbar Aero */
+.optionsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.optionsList::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #82caff 0%, #0077e6 100%);
+  border-radius: 10px;
+}
+
+.fadeIn {
+  animation: fadeInEffect 0.2s ease-out;
+}
+
+@keyframes fadeInEffect {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

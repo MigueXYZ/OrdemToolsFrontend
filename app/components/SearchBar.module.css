@@ -12,8 +12,7 @@
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(15px) saturate(150%);
-  -webkit-backdrop-filter: blur(15px) saturate(150%);
-  padding: 0.5rem; /* Reduzi ligeiramente para a cápsula ficar mais justa */
+  padding: 0.4rem; /* Reduzi ligeiramente o padding do container */
   border-radius: 100px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -22,27 +21,23 @@
 .searchBox {
   display: flex;
   position: relative;
-  align-items: center;
+  align-items: stretch; /* Força os filhos a terem a mesma altura */
   gap: 0;
-  /* Removi o background daqui para não criar "camadas" de cinzento */
-  background: transparent; 
   border-radius: 50px;
-  overflow: visible; /* IMPORTANTE: Mudei para visible para o botão de limpar não sumir */
+  overflow: hidden;
 }
 
 .input {
   flex: 1;
-  /* Aumentei o padding para 180px para garantir que o texto não bate no X */
-  padding: 0.85rem 180px 0.85rem 1.7rem; 
-  border-radius: 50px; 
-  border: 1px solid rgba(0, 102, 204, 0.15);
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 0 1.5rem; /* Removi o padding vertical para usar height fixa */
+  height: 45px; /* Altura definida para o input */
+  border-radius: 50px 0 0 50px;
+  border: 1px solid rgba(0, 102, 204, 0.2);
+  border-right: none;
+  background: rgba(255, 255, 255, 0.85);
   color: #003d99;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   outline: none;
-  transition: all 0.2s;
 }
 
 .input:focus {
@@ -83,22 +78,27 @@
 }
 
 .searchButton {
-  padding: 0.85rem 2.2rem;
+  /* O botão agora herda a altura do container stretch ou usamos a mesma fixa */
+  height: 45px; 
+  padding: 0 1.8rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  
+  /* Estilo Glossy */
   background: linear-gradient(180deg, #82caff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
   color: white;
   border: 1px solid #004a99;
   border-radius: 0 50px 50px 0;
-  margin-left: -50px; /* Faz o botão "entrar" no input para fechar a cápsula */
-  z-index: 10;
+  
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: all 0.2s;
-  min-width: 150px;
+  white-space: nowrap;
 }
 
 .searchButton:hover:not(:disabled) {
@@ -107,8 +107,8 @@
   box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
 }
 
-.searchButton:active:not(:disabled) {
-  transform: scale(0.98);
+.searchButton:hover:not(:disabled) {
+  filter: brightness(1.1);
 }
 
 .clearButton {

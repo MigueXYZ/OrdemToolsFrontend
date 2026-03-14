@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import FormField from './FormField'; // Assumindo que este componente existe
+import AeroSelect from '../components/AeroSelect';
 import styles from './AddAbilityForm.module.css';
 
 const ABILITY_CATEGORIES = [
@@ -118,16 +119,13 @@ export default function AddAbilityForm({ onSuccess }) {
             className={styles.aeroInput}
           />
 
-          <FormField
+          <AeroSelect
             label="Categoria *"
-            name="category"
+            options={ABILITY_CATEGORIES}
             value={formData.category}
             onChange={handleChange}
-            isSelect
-            options={ABILITY_CATEGORIES}
-            cacheKey="ability_category"
+            placeholder="-- Selecionar categoria *"
             required
-            className={styles.aeroSelect}
           />
         </div>
 
