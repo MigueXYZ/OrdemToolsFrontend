@@ -239,13 +239,93 @@
   }
 }
 
+/* Container principal da barra de pesquisa */
 .searchContainer {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 900px; /* Um pouco mais largo para acomodar tudo */
+  margin: 1.5rem auto; /* Espaçamento vertical */
   padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  
+  /* Efeito de Vidro Aero (Glassmorphism) */
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(15px) saturate(160%);
+  -webkit-backdrop-filter: blur(15px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 50px; /* Forma de cápsula/bolha */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* O Campo de Input (onde está escrito "casca") */
+.searchInput {
+  flex: 1; /* Ocupa o espaço disponível */
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  border: 1px solid rgba(0, 102, 204, 0.3);
+  background: rgba(255, 255, 255, 0.7); /* Ligeiramente translúcido */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra interna para profundidade */
+  color: #003d99;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #0099ff;
+  box-shadow: 0 0 10px rgba(0, 153, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* O Botão "Pesquisar" (com o ícone da lupa) */
+.searchButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: 30px;
+  border: 1px solid rgba(0, 102, 204, 0.5);
+  
+  /* Gradiente "Glossy" Azul */
+  background: linear-gradient(180deg, #aaddff 0%, #3399ff 50%, #0066cc 51%, #005bb8 100%);
+  color: white;
+  font-weight: 600;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.2s;
+}
+
+.searchButton:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 102, 204, 0.3);
+}
+
+.searchButton:active {
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+/* O Botão "X" (limpar pesquisa) */
+.clearButton {
+  background: none;
+  border: none;
+  color: #ff4d4d; /* Vermelho suave */
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: -0.5rem; /* Puxar para perto do input */
+  transition: color 0.2s, transform 0.2s;
+  opacity: 0.7;
+}
+
+.clearButton:hover {
+  color: #cc0000; /* Vermelho mais forte */
+  opacity: 1;
+  transform: scale(1.1);
 }
