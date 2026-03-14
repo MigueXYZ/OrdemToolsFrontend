@@ -12,6 +12,8 @@ import AddWeaponForm from './AddWeaponForm';
 import AddThreatForm from './AddThreatForm';
 import ThemeToggle from '../components/ThemeToggle';
 import styles from './page.module.css';
+import { useContext } from 'react'; // Adiciona isto junto ao import do useState
+import { AuthContext } from '../context/AuthContext'; // Confirma se o caminho está correto
 
 export default function ManagePage() {
   const [activeTab, setActiveTab] = useState('abilities');
@@ -20,6 +22,23 @@ export default function ManagePage() {
   const handleback = () => {
     router.push('/');
   };
+
+  // Dentro do teu export default function ManagePage() {
+const { user, loading } = useContext(AuthContext); // Precisas de importar o useContext e AuthContext
+
+// Se ainda está a carregar o token do localStorage, não mostra nada
+if (loading) return null;
+
+// Se não há utilizador, redireciona para o login ou mostra erro
+if (!user) {
+  return (
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h1>Acesso Negado</h1>
+      <p>Precisas de iniciar sessão para gerir o conteúdo.</p>
+      <button onClick={() => router.push('/login')}>Ir para Login</button>
+    </div>
+  );
+}
 
   return (
     <div className={styles.wrapper}>

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Link from 'next/link';
+import { AuthContext } from './context/AuthContext'; // Importar o contexto
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
 import ThemeToggle from './components/ThemeToggle';
@@ -11,17 +12,34 @@ import styles from './page.module.css';
 export default function Home() {
   const [searchResults, setSearchResults] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  // Aceder ao estado do utilizador
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.headerTop}>
-            <Link href="/manage" className={styles.manageLink}>
-              + Adicionar Conteúdo
-            </Link>
+            <div className={styles.authControls}>
+              {user ? (
+                <>
+                  <Link href="/manage" className={styles.manageLink}>
+                    + Gerenciar Conteúdo
+                  </Link>
+                  <button onClick={logout} className={styles.logoutButton}>
+                    Sair ({user.username})
+                  </button>
+                </>
+              ) : (
+                <Link href="/login" className={styles.loginLink}>
+                  Acesso Restrito
+                </Link>
+              )}
+            </div>
             <ThemeToggle />
           </div>
+
           <h1 className={styles.title}>
             <span className={styles.titleMain}>Ordem</span>
             <span className={styles.titleSub}>Paranormal</span>
