@@ -148,7 +148,11 @@ export default function AddTrackForm({ onSuccess }) {
                     onClick={() => handleAbilityChange(ability._id)}
                   >
                     <div className={styles.abilityHeader}>
-                      <span className={styles.abilityName}>{ability.name}</span>
+                      <div className={styles.abilityInfo}>
+                        <span className={styles.abilityName}>{ability.name}</span>
+                        {/* Adicionada a Categoria aqui */}
+                        <span className={styles.abilityCategory}>{ability.category || 'Sem Categoria'}</span>
+                      </div>
                       {formData.abilities.includes(ability._id) && <span className={styles.checkIcon}>✓</span>}
                     </div>
                   </div>

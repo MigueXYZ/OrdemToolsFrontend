@@ -429,7 +429,7 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
             </>
           )}
 
-          {/* ... IF TRACK ... */}
+{/* ... IF TRACK ... */}
           {type === 'track' && (
             <div className={styles.abilitiesSection}>
               <label className={styles.fieldLabel}>Poderes da Trilha ({formData.abilities.length}/4 selecionados)</label>
@@ -450,8 +450,13 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
                         className={`${styles.abilityCard} ${formData.abilities.includes(ability._id) ? styles.selected : ''}`}
                         onClick={() => handleAbilityChange(ability._id)}
                       >
-                        <span className={styles.abilityName}>{ability.name}</span>
-                        {formData.abilities.includes(ability._id) && <span className={styles.checkIcon}>✓</span>}
+                        <div className={styles.abilityHeader}>
+                          <div className={styles.abilityInfo}>
+                            <span className={styles.abilityName}>{ability.name}</span>
+                            <span className={styles.abilityCategory}>{ability.category || 'Sem Categoria'}</span>
+                          </div>
+                          {formData.abilities.includes(ability._id) && <span className={styles.checkIcon}>✓</span>}
+                        </div>
                       </div>
                     ))}
                 </div>

@@ -383,3 +383,37 @@
 @media (max-width: 768px) {
   .grid5 { grid-template-columns: 1fr; }
 }
+
+/* Estilos para a Categoria dos Poderes na Trilha */
+.abilityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.abilityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.abilityName {
+  font-size: 0.95rem;
+  color: #003366;
+  font-weight: 700;
+}
+
+.abilityCategory {
+  font-size: 0.7rem;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* Quando o cartão está selecionado, a categoria fica com uma cor que condiz com o fundo azulado */
+.abilityCard.selected .abilityCategory {
+  color: #005bb8;
+  opacity: 0.8;
+}
