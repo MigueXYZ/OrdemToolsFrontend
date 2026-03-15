@@ -17,7 +17,7 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
     class: { color: '#B24C0B', label: 'Classe', icon: '⚔️' },
     track: { color: '#2E5C7D', label: 'Trilha', icon: '🛤️' },
     weapon: { color: '#704214', label: 'Arma', icon: '🗡️' },
-    threat: { color: '#8b0000', label: 'Ameaça', icon: '💀' } // <- Nova linha
+    threat: { color: '#8b0000', label: 'Ameaça', icon: '💀' }
   };
 
   const config = typeConfig[type] || typeConfig.ability;
@@ -27,10 +27,10 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
     return (
       <div className={styles.field}>
-        <strong className={styles.fieldLabel}>{label}:</strong>
-        <span className={styles.fieldValue}>
+        <strong className={styles.fieldLabel}>{label}</strong>
+        <div className={styles.fieldValue}>
           {isArray ? value.join(', ') : value}
-        </span>
+        </div>
       </div>
     );
   };
@@ -61,62 +61,65 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
           {renderField('Descrição', item.description || item.content)}
 
           {type === 'ability' && (
-            <>
+            <div className={styles.grid2}>
               {renderField('Categoria', item.category)}
               {renderField('Origem', item.origin)}
               {renderField('Requisitos', item.requirements)}
-              {renderField('Perícias treinadas', item.trainedSkills, true)}
-            </>
+              {renderField('Perícias', item.trainedSkills, true)}
+            </div>
           )}
 
           {type === 'ritual' && (
-            <>
+            <div className={styles.grid2}>
               {renderField('Círculo', item.circle)}
-              {renderField('Elementos', item.elements, true)}
               {renderField('Duração', item.duration)}
-            </>
+              {renderField('Elementos', item.elements, true)}
+            </div>
           )}
 
           {type === 'rule' && (
-            <>
+            <div className={styles.grid2}>
               {renderField('Seção', item.section)}
               {renderField('Subseção', item.subsection)}
-              {renderField('Referência de página', item.pageReference)}
-            </>
+              {renderField('Página', item.pageReference)}
+            </div>
           )}
 
           {type === 'item' && (
-            <>
+            <div className={styles.grid2}>
               {renderField('Categoria', item.category)}
               {renderField('Paranormal', item.paranormal ? 'Sim' : 'Não')}
-            </>
+            </div>
           )}
 
           {type === 'class' && (
-            <>
-              {renderField('Descrição', item.description)}
-            </>
+            <div className={styles.grid2}>
+              {/* Classes apenas mostram descrição e metadados por agora */}
+            </div>
           )}
 
           {type === 'track' && (
             <>
-              {renderField('Classe', item.class?.name)}
-              {renderField('Descrição', item.description)}
+              <div className={styles.grid2}>
+                {renderField('Classe', item.class?.name)}
+              </div>
               {item.abilities && item.abilities.length > 0 && (
                 <div className={styles.field}>
-                  <strong className={styles.fieldLabel}>Poderes:</strong>
-                  <ul className={styles.abilitiesList}>
-                    {item.abilities.map((ability) => (
-                      <li key={ability._id}>{ability.name}</li>
-                    ))}
-                  </ul>
+                  <strong className={styles.fieldLabel}>Poderes da Trilha</strong>
+                  <div className={styles.fieldValue}>
+                    <ul className={styles.abilitiesList}>
+                      {item.abilities.map((ability) => (
+                        <li key={ability._id}>{ability.name}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               )}
             </>
           )}
 
           {type === 'weapon' && (
-            <>
+            <div className={styles.grid2}>
               {renderField('Categoria', item.category)}
               {renderField('Proficiência', item.proficiency)}
               {renderField('Tipo', item.type)}
@@ -127,32 +130,33 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
               {renderField('Tipo de Dano', item.damageType)}
               {renderField('Espaço', item.space?.toString())}
               {renderField('Notas', item.notes)}
-            </>
+            </div>
           )}
 
           {type === 'threat' && (
             <>
-              {/* Informações Básicas */}
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-                {renderField('VD', item.vd)}
-                {renderField('Tipo', item.type)}
-                {renderField('Tamanho', item.size)}
+              {/* Identificação Base */}
+              <div className={styles.threatSection}>
+                <div className={styles.grid3}>
+                  {renderField('VD', item.vd)}
+                  {renderField('Tipo', item.type)}
+                  {renderField('Tamanho', item.size)}
+                </div>
                 {renderField('Elementos', item.elements, true)}
                 {renderField('Deslocamento', item.movement)}
               </div>
 
               {/* Combate e Sobrevivência */}
-              <div style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-                <h3 style={{ fontSize: '1.1rem', color: config.color, marginBottom: '0.5rem' }}>Estatísticas</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+              <div className={styles.threatSection}>
+                <h3 className={styles.sectionTitle} style={{ color: config.color }}>Estatísticas</h3>
+                <div className={styles.grid2}>
                   {renderField('Defesa', item.defense)}
                   {renderField('PV', `${item.hp?.total || 0} (${item.hp?.bloodied || 0} machucado)`)}
                 </div>
                 
                 {item.senses && (item.senses.perception || item.senses.initiative) && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <strong>Sentidos: </strong>
-                    {[
+                  <div className={styles.inlineInfo}>
+                    <strong>Sentidos:</strong> {[
                       item.senses.perception ? `Percepção ${item.senses.perception}` : null,
                       item.senses.initiative ? `Iniciativa ${item.senses.initiative}` : null,
                       item.senses.notes ? `(${item.senses.notes})` : null
@@ -161,9 +165,8 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                 )}
                 
                 {item.savingThrows && (item.savingThrows.fortitude || item.savingThrows.reflexes || item.savingThrows.will) && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <strong>Testes de Resistência: </strong>
-                    {[
+                  <div className={styles.inlineInfo}>
+                    <strong>Testes de Resistência:</strong> {[
                       item.savingThrows.fortitude ? `Fortitude ${item.savingThrows.fortitude}` : null,
                       item.savingThrows.reflexes ? `Reflexos ${item.savingThrows.reflexes}` : null,
                       item.savingThrows.will ? `Vontade ${item.savingThrows.will}` : null
@@ -171,46 +174,47 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                   </div>
                 )}
 
-                {renderField('Resistências a Dano', item.resistances, true)}
-                {renderField('Vulnerabilidades', item.vulnerabilities, true)}
+                <div className={styles.grid2}>
+                  {renderField('Resistências', item.resistances, true)}
+                  {renderField('Vulnerabilidades', item.vulnerabilities, true)}
+                </div>
               </div>
 
               {/* Atributos */}
               {item.attributes && (
-                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', margin: '1rem 0', padding: '1rem', background: 'rgba(0,0,0,0.05)', borderRadius: '8px' }}>
-                  <div><strong>AGI</strong> {item.attributes.agi}</div>
-                  <div><strong>FOR</strong> {item.attributes.for}</div>
-                  <div><strong>INT</strong> {item.attributes.int}</div>
-                  <div><strong>PRE</strong> {item.attributes.pre}</div>
-                  <div><strong>VIG</strong> {item.attributes.vig}</div>
+                <div className={styles.attributesGrid}>
+                  <div className={styles.attrBox}><span>AGI</span> {item.attributes.agi}</div>
+                  <div className={styles.attrBox}><span>FOR</span> {item.attributes.for}</div>
+                  <div className={styles.attrBox}><span>INT</span> {item.attributes.int}</div>
+                  <div className={styles.attrBox}><span>PRE</span> {item.attributes.pre}</div>
+                  <div className={styles.attrBox}><span>VIG</span> {item.attributes.vig}</div>
                 </div>
               )}
 
               {/* Perícias */}
               {item.skills && item.skills.length > 0 && (
-                <div className={styles.field}>
-                  <strong className={styles.fieldLabel}>Perícias:</strong>
-                  <span>{item.skills.map(s => `${s.name} ${s.value}`).join(' | ')}</span>
+                <div className={styles.inlineInfo}>
+                  <strong>Perícias:</strong> {item.skills.map(s => `${s.name} ${s.value}`).join(' | ')}
                 </div>
               )}
 
               {/* Enigma de Medo */}
               {item.enigmaOfFear?.hasEnigma && (
-                <div style={{ margin: '1.5rem 0', padding: '1rem', border: '2px solid #8b008b', borderRadius: '8px', background: 'rgba(139, 0, 139, 0.05)' }}>
-                  <h3 style={{ color: '#8b008b', marginTop: 0, marginBottom: '0.5rem' }}>Enigma de Medo</h3>
-                  {item.enigmaOfFear.description && <p style={{ margin: '0 0 0.5rem 0' }}>{item.enigmaOfFear.description}</p>}
-                  {item.enigmaOfFear.mechanics && <p style={{ margin: 0 }}><strong>Efeito:</strong> {item.enigmaOfFear.mechanics}</p>}
+                <div className={styles.enigmaBox}>
+                  <h4>Enigma de Medo</h4>
+                  {item.enigmaOfFear.description && <p>{item.enigmaOfFear.description}</p>}
+                  {item.enigmaOfFear.mechanics && <p className={styles.mechanicInfo}><strong>Efeito:</strong> {item.enigmaOfFear.mechanics}</p>}
                 </div>
               )}
 
               {/* Passivas */}
               {item.passives && item.passives.length > 0 && (
-                <div style={{ marginTop: '1.5rem' }}>
-                  <h3 style={{ fontSize: '1.1rem', color: config.color, borderBottom: '1px solid currentColor', marginBottom: '0.5rem' }}>Habilidades Passivas</h3>
+                <div className={styles.threatSection}>
+                  <h3 className={styles.sectionTitle} style={{ color: config.color }}>Habilidades Passivas</h3>
                   {item.passives.map((passive, index) => (
-                    <div key={index} style={{ marginBottom: '1rem' }}>
-                      <strong style={{ display: 'block' }}>{passive.name}</strong>
-                      <p style={{ margin: '0.25rem 0 0 0' }}>{passive.description}</p>
+                    <div key={index} className={styles.actionBlock}>
+                      <strong>{passive.name}</strong>
+                      <p>{passive.description}</p>
                     </div>
                   ))}
                 </div>
@@ -218,15 +222,13 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
               {/* Ações */}
               {item.actions && item.actions.length > 0 && (
-                <div style={{ marginTop: '1.5rem' }}>
-                  <h3 style={{ fontSize: '1.1rem', color: config.color, borderBottom: '1px solid currentColor', marginBottom: '0.5rem' }}>Ações</h3>
+                <div className={styles.threatSection}>
+                  <h3 className={styles.sectionTitle} style={{ color: config.color }}>Ações</h3>
                   {item.actions.map((action, index) => (
-                    <div key={index} style={{ marginBottom: '1rem', paddingLeft: '1rem', borderLeft: '3px solid rgba(0,0,0,0.1)' }}>
-                      <strong style={{ display: 'block', textTransform: 'uppercase' }}>
-                        {action.actionType} - {action.name}
-                      </strong>
-                      <p style={{ margin: '0.25rem 0' }}>{action.description}</p>
-                      <div style={{ fontSize: '0.9em', color: '#555' }}>
+                    <div key={index} className={styles.actionBlock}>
+                      <strong>{action.actionType} - {action.name}</strong>
+                      <p>{action.description}</p>
+                      <div className={styles.actionStats}>
                         {[
                           action.test ? `Teste: ${action.test}` : null,
                           action.damage ? `Dano: ${action.damage}` : null
@@ -239,8 +241,10 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
             </>
           )}
 
-          {renderField('Tags', item.tags, true)}
-          {renderField('Livro', item.book || item.source)}
+          <div className={styles.metaData}>
+            {renderField('Tags', item.tags, true)}
+            {renderField('Livro', item.book || item.source)}
+          </div>
         </div>
       </div>
 
