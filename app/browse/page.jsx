@@ -276,25 +276,37 @@ function BrowsePageContent() {
         </div>
 
         <div className={styles.filters}>
-          {activeTab !== 'classes' && activeTab !== 'tracks' && (
+{activeTab !== 'classes' && activeTab !== 'tracks' && (
             <div className={styles.filterSection}>
               <div className={styles.filterHeader} onClick={() => setShowTags(!showTags)}>
                 <h3>Filtrar por Tags</h3>
                 <span className={`${styles.expandIcon} ${showTags ? styles.expanded : ''}`}>▼</span>
               </div>
+              
+              {/* A barra de pesquisa fica agora sempre visível */}
+              <input 
+                type="text" 
+                placeholder="🔍 Pesquisar tags..." 
+                value={tagSearchQuery} 
+                onChange={(e) => {
+                  setTagSearchQuery(e.target.value);
+                  // Se o utilizador começar a escrever e as tags estiverem escondidas, abre-as automaticamente!
+                  if (!showTags) setShowTags(true); 
+                }} 
+                className={styles.tagSearchInput} 
+              />
+
+              {/* Apenas os botões das tags ficam escondidos/mostrados */}
               {showTags && (
-                <>
-                  <input type="text" placeholder="🔍 Pesquisar tags..." value={tagSearchQuery} onChange={(e) => setTagSearchQuery(e.target.value)} className={styles.tagSearchInput} />
-                  <div className={styles.tagFilters}>
-                    {getFilteredTags().length > 0 ? (
-                      getFilteredTags().map(tag => (
-                        <button key={tag} className={`${styles.tagButton} ${selectedTags.includes(tag) ? styles.tagSelected : ''}`} onClick={() => handleTagToggle(tag)}>
-                          {tag}
-                        </button>
-                      ))
-                    ) : (<div className={styles.noTagsMessage}>Nenhuma tag encontrada</div>)}
-                  </div>
-                </>
+                <div className={styles.tagFilters}>
+                  {getFilteredTags().length > 0 ? (
+                    getFilteredTags().map(tag => (
+                      <button key={tag} className={`${styles.tagButton} ${selectedTags.includes(tag) ? styles.tagSelected : ''}`} onClick={() => handleTagToggle(tag)}>
+                        {tag}
+                      </button>
+                    ))
+                  ) : (<div className={styles.noTagsMessage}>Nenhuma tag encontrada</div>)}
+                </div>
               )}
             </div>
           )}
