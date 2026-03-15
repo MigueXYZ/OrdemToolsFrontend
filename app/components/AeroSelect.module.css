@@ -37,6 +37,7 @@
   outline: none;
   height: 42px;
   box-sizing: border-box; /* Fundamental para manter a largura */
+  min-width: 0;
 }
 
 .selectTrigger:hover {

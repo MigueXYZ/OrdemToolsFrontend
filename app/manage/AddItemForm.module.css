@@ -1,115 +1,89 @@
-.form {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.95) 100%);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 102, 204, 0.35);
-  border-radius: 3px;
-  padding: 2rem;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* AddItemForm.module.css - Versão Dropdown Simétrica */
+
+.aeroForm {
+  max-width: 750px;
+  margin: 0 auto 3rem;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
 }
 
-.form h3 {
-  background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: 1.35rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(0, 102, 204, 0.2);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.formHeader {
+  padding: 0.9rem 1.8rem;
+  background: linear-gradient(180deg, #55aaff 0%, #2288ee 49%, #0066cc 50%, #0044aa 100%);
+  border-bottom: 2px solid #003388;
 }
+
+.formTitle {
+  font-family: var(--font-titles) !important;
+  font-size: 1.4rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+}
+
+.formContent {
+  padding: 1.8rem;
+}
+
+.singleColumn { margin-bottom: 1.2rem; }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.tripleGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1.2fr; 
   gap: 1.5rem;
+  margin-bottom: 1.2rem;
+  align-items: flex-start;
+}
+
+.aeroButton {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  color: white;
+  border: 1px solid #004a99;
+  border-radius: 50px;
+  font-family: var(--font-titles) !important;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-top: 1rem;
+}
+
+.aeroButton:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
 }
 
 .message {
-  padding: 1rem;
-  border-radius: 3px;
+  border-radius: 12px;
+  padding: 0.8rem;
   margin-bottom: 1.5rem;
-  border-left: 4px solid;
-  font-weight: 500;
-  animation: slideInDown 0.3s ease;
+  text-align: center;
+  font-family: var(--font-body);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.message.success { background: rgba(168, 230, 207, 0.6); color: #00441b; }
+.message.error { background: rgba(255, 204, 204, 0.6); color: #880000; }
 
-.message.success {
-  background: rgba(51, 153, 102, 0.15);
-  color: #00a850;
-  border-color: #00a850;
-}
-
-.message.error {
-  background: rgba(255, 0, 0, 0.1);
-  color: #cc0000;
-  border-color: #cc0000;
-}
-
-.submitButton {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: linear-gradient(180deg, rgba(230, 245, 255, 0.9) 0%, rgba(200, 230, 255, 0.9) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: #0066cc;
-  border: 1px solid rgba(0, 102, 204, 0.35);
-  border-radius: 3px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
-  margin-top: 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.submitButton:hover:not(:disabled) {
-  background: linear-gradient(180deg, rgba(150, 210, 255, 0.95) 0%, rgba(100, 180, 255, 0.95) 100%);
-  border-color: rgba(0, 102, 204, 0.5);
-  color: #003d99;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 2px 8px rgba(0, 102, 204, 0.2);
-  transform: translateY(-2px);
-}
-
-.submitButton:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.submitButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
-  .form {
-    padding: 1.5rem;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 600px) {
+  .tripleGrid { grid-template-columns: 1fr; }
 }

@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
+import AeroSelect from '../components/AeroSelect'; // Ajusta o caminho se necessário
 import styles from './AddRitualForm.module.css';
-
 
 export default function AddRitualForm({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -43,112 +43,105 @@ export default function AddRitualForm({ onSuccess }) {
           .filter((tag) => tag.length > 0)
       };
 
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/rituals`,
-        payload
-      );
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/rituals`, payload);
 
-      setMessage({ type: 'success', text: 'Ritual adicionado com sucesso!' });
+      setMessage({ type: 'success', text: 'Ritual de Ordem adicionado com sucesso!' });
       setFormData({
-        name: '',
-        description: '',
-        circle: '',
-        elements: '',
-        duration: '',
-        tags: '',
-        book: ''
+        name: '', description: '', circle: '', elements: '',
+        duration: '', tags: '', book: ''
       });
       onSuccess?.();
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      setMessage({ type: 'error', text: `Erro: ${errorMsg}` });
+      setMessage({ type: 'error', text: `Falha no Sigilo: ${errorMsg}` });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h3>Adicionar Novo Ritual</h3>
+    <form onSubmit={handleSubmit} className={styles.aeroForm}>
+      <div className={styles.formHeader}>
+        <h3 className={styles.formTitle}>Adicionar Novo Ritual</h3>
+      </div>
 
-      {message && (
-        <div className={`${styles.message} ${styles[message.type]}`}>
-          {message.text}
+      <div className={styles.formContent}>
+        {message && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.type === 'success' ? '✨ ' : '❌ '}
+            {message.text}
+          </div>
+        )}
+
+        <div className={styles.grid}>
+          <FormField
+            label="Nome do Ritual *"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="ex: Círculo de Banimento"
+            required
+          />
         </div>
-      )}
 
-      <div className={styles.grid}>
         <FormField
-          label="Nome"
-          name="name"
-          value={formData.name}
+          label="Descrição Paranormal *"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
-          placeholder="ex: Círculo de Banimento"
+          placeholder="Descreva os efeitos do ritual..."
+          isTextarea
           required
         />
+
+        <div className={styles.grid}>
+          <AeroSelect
+            label="Círculo"
+            options={['1', '2', '3', '4']}
+            value={formData.circle}
+            onChange={(val) => setFormData(p => ({...p, circle: val.target.value}))}
+            placeholder="-- Escolher Círculo --"
+          />
+
+          <FormField
+            label="Elementos"
+            name="elements"
+            value={formData.elements}
+            onChange={handleChange}
+            placeholder="sangue, morte, energia..."
+          />
+        </div>
+
+        <div className={styles.grid}>
+          <FormField
+            label="Duração"
+            name="duration"
+            value={formData.duration}
+            onChange={handleChange}
+            placeholder="ex: 30 minutos"
+          />
+
+          <FormField
+            label="Livro de Referência"
+            name="book"
+            value={formData.book}
+            onChange={handleChange}
+            placeholder="Nome do livro e pág."
+          />
+        </div>
+
+        <FormField
+          label="Tags de Pesquisa"
+          name="tags"
+          value={formData.tags}
+          onChange={handleChange}
+          placeholder="Tags separadas por vírgula"
+        />
+
+        <button type="submit" disabled={loading} className={styles.aeroButton}>
+          {loading ? 'Invocando...' : 'Adicionar Ritual'}
+        </button>
       </div>
-
-      <FormField
-        label="Descrição"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        placeholder="Breve descrição do ritual"
-        isTextarea
-        required
-      />
-
-      <div className={styles.grid}>
-        <FormField
-          label="Círculo"
-          name="circle"
-          value={formData.circle}
-          onChange={handleChange}
-          isSelect
-          options={[1,2,3,4].map((n) => n.toString())}
-          cacheKey="ritual_circle"
-        />
-
-        <FormField
-          label="Elementos"
-          name="elements"
-          value={formData.elements}
-          onChange={handleChange}
-          placeholder="Separados por vírgula (sangue, morte, energia, conhecimento, medo)"
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <FormField
-          label="Duração"
-          name="duration"
-          value={formData.duration}
-          onChange={handleChange}
-          placeholder="ex: 30 minutos"
-        />
-
-        <FormField
-          label="Livro"
-          name="book"
-          value={formData.book}
-          onChange={handleChange}
-          placeholder="Nome do livro onde aparece"
-        />
-      </div>
-
-
-
-      <FormField
-        label="Tags"
-        name="tags"
-        value={formData.tags}
-        onChange={handleChange}
-        placeholder="Tags separadas por vírgula"
-      />
-
-      <button type="submit" disabled={loading} className={styles.submitButton}>
-        {loading ? 'Adicionando...' : 'Adicionar Ritual'}
-      </button>
     </form>
   );
 }

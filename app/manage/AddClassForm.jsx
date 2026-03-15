@@ -30,67 +30,68 @@ export default function AddClassForm({ onSuccess }) {
         formData
       );
 
-      setMessage({ type: 'success', text: 'Classe adicionada com sucesso!' });
-      setFormData({
-        name: '',
-        description: '',
-        book: ''
-      });
+      setMessage({ type: 'success', text: 'Classe de prestígio registada com sucesso!' });
+      setFormData({ name: '', description: '', book: '' });
       onSuccess?.();
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      setMessage({ type: 'error', text: `Erro: ${errorMsg}` });
+      setMessage({ type: 'error', text: `Falha na Ordem: ${errorMsg}` });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h3>Adicionar Nova Classe</h3>
+    <form onSubmit={handleSubmit} className={styles.aeroForm}>
+      <div className={styles.formHeader}>
+        <h3 className={styles.formTitle}>Adicionar Nova Classe</h3>
+      </div>
 
-      {message && (
-        <div className={`${styles.message} ${styles[message.type]}`}>
-          {message.text}
+      <div className={styles.formContent}>
+        {message && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.type === 'success' ? '🛡️ ' : '❌ '}
+            {message.text}
+          </div>
+        )}
+
+        <div className={styles.grid}>
+          <FormField
+            label="Nome da Classe *"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="ex: Guerreiro"
+            required
+          />
+
+          <FormField
+            label="Livro de Referência"
+            name="book"
+            value={formData.book}
+            onChange={handleChange}
+            placeholder="Nome do livro e pág."
+          />
         </div>
-      )}
 
-      <div className={styles.grid}>
         <FormField
-          label="Nome"
-          name="name"
-          value={formData.name}
+          label="Descrição da Classe *"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
-          placeholder="ex: Guerreiro"
+          placeholder="Breve descrição das capacidades da classe..."
+          isTextarea
           required
         />
 
-        <FormField
-          label="Livro"
-          name="book"
-          value={formData.book}
-          onChange={handleChange}
-          placeholder="Nome do livro onde aparece"
-        />
+        <button
+          type="submit"
+          disabled={loading}
+          className={styles.aeroButton}
+        >
+          {loading ? 'Processando Arquivos...' : 'Adicionar Classe'}
+        </button>
       </div>
-
-      <FormField
-        label="Descrição"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        placeholder="Breve descrição da classe"
-        isTextarea
-        required
-      />
-
-      <button
-        type="submit"
-        disabled={loading}
-        className={styles.submitButton}
-      >
-        {loading ? 'Adicionando...' : 'Adicionar Classe'}
-      </button>
     </form>
   );
 }

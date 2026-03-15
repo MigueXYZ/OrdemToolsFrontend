@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
+import AeroSelect from '../components/AeroSelect';
 import styles from './AddItemForm.module.css';
 
 export default function AddItemForm({ onSuccess }) {
@@ -10,7 +11,7 @@ export default function AddItemForm({ onSuccess }) {
     name: '',
     description: '',
     category: '',
-    paranormal: false,
+    paranormal: 'false', // Iniciamos como string para o Select
     space: '1',
     tags: '',
     book: ''
@@ -31,107 +32,98 @@ export default function AddItemForm({ onSuccess }) {
     try {
       const payload = {
         ...formData,
-        paranormal: formData.paranormal || false,
-        space: parseFloat(formData.space),
+        paranormal: formData.paranormal === 'true', // Converte para booleano aqui
+        space: parseFloat(formData.space) || 0,
         tags: formData.tags
           .split(',')
           .map((tag) => tag.trim())
           .filter((tag) => tag.length > 0)
       };
 
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/items`,
-        payload
-      );
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/items`, payload);
 
-      setMessage({ type: 'success', text: 'Item adicionado com sucesso!' });
-      setFormData({ name: '', description: '', category: '', paranormal: false, space: '1', tags: '', book: '' });
+      setMessage({ type: 'success', text: 'Item de inventário adicionado com sucesso!' });
+      setFormData({ name: '', description: '', category: '', paranormal: 'false', space: '1', tags: '', book: '' });
       onSuccess?.();
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
-      setMessage({ type: 'error', text: `Erro: ${errorMsg}` });
+      setMessage({ type: 'error', text: `Falha no Inventário: ${errorMsg}` });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h3>Adicionar Novo Item</h3>
+    <form onSubmit={handleSubmit} className={styles.aeroForm}>
+      <div className={styles.formHeader}>
+        <h3 className={styles.formTitle}>Adicionar Novo Item</h3>
+      </div>
 
-      {message && (
-        <div className={`${styles.message} ${styles[message.type]}`}>
-          {message.text}
+      <div className={styles.formContent}>
+        {message && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.type === 'success' ? '🧭 ' : '❌ '}
+            {message.text}
+          </div>
+        )}
+
+        <div className={styles.singleColumn}>
+          <FormField
+            label="Nome do Item *"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="ex: Amuleto de Proteção"
+            required
+          />
         </div>
-      )}
 
-      <div className={styles.grid}>
+        <div className={styles.tripleGrid}>
+          <AeroSelect
+            label="Categoria"
+            options={['0', '1', '2', '3', '4']}
+            value={formData.category}
+            onChange={(val) => setFormData(p => ({...p, category: val.target.value}))}
+            placeholder="--"
+          />
+          
+          <FormField
+            label="Espaço"
+            name="space"
+            value={formData.space}
+            onChange={handleChange}
+            placeholder="1"
+          />
+
+          <AeroSelect
+            label="Paranormal?"
+            options={[
+              { label: 'Sim', value: 'true' },
+              { label: 'Não', value: 'false' }
+            ]}
+            value={formData.paranormal}
+            onChange={(val) => setFormData(p => ({...p, paranormal: val.target.value}))}
+          />
+        </div>
+
         <FormField
-          label="Nome"
-          name="name"
-          value={formData.name}
+          label="Descrição dos Efeitos"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
-          placeholder="ex: Amuleto de Proteção"
-          required
+          placeholder="Descreva as propriedades do item..."
+          isTextarea
         />
 
-        <FormField
-          label="Categoria"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          isSelect
-          options={['0', '1', '2', '3', '4']}
-          placeholder="Selecione a categoria"
-        />
+        <div className={styles.grid}>
+          <FormField label="Livro" name="book" value={formData.book} onChange={handleChange} placeholder="Livro e pág." />
+          <FormField label="Tags" name="tags" value={formData.tags} onChange={handleChange} placeholder="artefato, amaldiçoado..." />
+        </div>
 
-        <FormField
-          label="Paranormal?"
-          name="paranormal"
-          type="checkbox"
-          value={formData.paranormal}
-          onChange={handleChange}
-        />
-
-        <FormField
-          label="Espaço"
-          name="space"
-          value={formData.space}
-          onChange={handleChange}
-          placeholder="ex: 1, 2, 0.5"
-        />
+        <button type="submit" disabled={loading} className={styles.aeroButton}>
+          {loading ? 'Equipando...' : 'Adicionar Item ao Banco'}
+        </button>
       </div>
-
-      <FormField
-        label="Descrição"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        placeholder="Breve descrição do item"
-        isTextarea
-      />
-
-      <div className={styles.grid}>
-        <FormField
-          label="Livro"
-          name="book"
-          value={formData.book}
-          onChange={handleChange}
-          placeholder="Nome do livro onde aparece"
-        />
-      </div>
-
-      <FormField
-        label="Tags"
-        name="tags"
-        value={formData.tags}
-        onChange={handleChange}
-        placeholder="Separadas por vírgula (ex: artefato, mágico)"
-      />
-
-      <button type="submit" disabled={loading} className={styles.submitButton}>
-        {loading ? 'Adicionando...' : 'Adicionar Item'}
-      </button>
     </form>
   );
 }

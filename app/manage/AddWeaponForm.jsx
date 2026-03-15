@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
+import AeroSelect from '../components/AeroSelect';
 import styles from './AddWeaponForm.module.css';
 
 const PROFICIENCIES = ['Simples', 'Tática', 'Pesada'];
@@ -37,6 +38,10 @@ export default function AddWeaponForm({ onSuccess }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSelectChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -44,217 +49,170 @@ export default function AddWeaponForm({ onSuccess }) {
 
     try {
       const payload = {
-        name: formData.name,
-        description: formData.description,
-        category: formData.category,
-        proficiency: formData.proficiency,
-        type: formData.type,
-        grip: formData.grip,
-        damage: formData.damage,
-        critical: formData.critical,
-        damageType: formData.damageType,
+        ...formData,
         space: parseInt(formData.space),
-        notes: formData.notes,
-        book: formData.book,
-        tags: formData.tags
-          .split(',')
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0)
+        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
       };
 
-      // Apenas adiciona range se estiver preenchido
-      if (formData.range) {
-        payload.range = formData.range;
-      }
+      if (formData.range === 'Nenhum' || !formData.range) delete payload.range;
 
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/weapons`,
-        payload
-      );
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/weapons`, payload);
 
-      setMessage({ type: 'success', text: 'Arma adicionada com sucesso!' });
+      setMessage({ type: 'success', text: 'Armamento registado no arsenal!' });
       setFormData({
-        name: '',
-        description: '',
-        category: '',
-        proficiency: '',
-        type: '',
-        grip: '',
-        damage: '',
-        critical: '20/x2',
-        range: '',
-        damageType: '',
-        space: '1',
-        notes: '',
-        book: '',
-        tags: ''
+        name: '', description: '', category: '', proficiency: '',
+        type: '', grip: '', damage: '', critical: '20/x2',
+        range: '', damageType: '', space: '1', notes: '', book: '', tags: ''
       });
       onSuccess?.();
     } catch (error) {
-      const errorMsg = error.response?.data?.message || error.message;
-      setMessage({ type: 'error', text: `Erro: ${errorMsg}` });
+      setMessage({ type: 'error', text: `Erro balístico: ${error.response?.data?.message || error.message}` });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <h3>Adicionar Nova Arma</h3>
+    <form onSubmit={handleSubmit} className={styles.aeroForm}>
+      <div className={styles.formHeader}>
+        <h3 className={styles.formTitle}>Adicionar Nova Arma</h3>
+      </div>
 
-      {message && (
-        <div className={`${styles.message} ${styles[message.type]}`}>
-          {message.text}
+      <div className={styles.formContent}>
+        {message && (
+          <div className={`${styles.message} ${styles[message.type]}`}>
+            {message.type === 'success' ? '⚔️ ' : '⚠️ '} {message.text}
+          </div>
+        )}
+
+        <div className={styles.grid}>
+          <FormField
+            label="Nome da Arma *"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="ex: Espada Longa"
+            required
+          />
+
+          <AeroSelect
+            label="Tipo de Dano *"
+            options={DAMAGE_TYPES}
+            value={formData.damageType}
+            onChange={(e) => handleSelectChange('damageType', e.target.value)}
+            placeholder="-- Selecionar --"
+            required
+          />
         </div>
-      )}
 
-      <div className={styles.grid}>
         <FormField
-          label="Nome"
-          name="name"
-          value={formData.name}
+          label="Descrição Visual"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
-          placeholder="ex: Espada Longa"
-          required
+          placeholder="Descreva a aparência e detalhes da arma..."
+          isTextarea
+        />
+
+        <div className={styles.grid}>
+          <AeroSelect
+            label="Categoria *"
+            options={CATEGORIES}
+            value={formData.category}
+            onChange={(e) => handleSelectChange('category', e.target.value)}
+            required
+          />
+          <AeroSelect
+            label="Proficiência *"
+            options={PROFICIENCIES}
+            value={formData.proficiency}
+            onChange={(e) => handleSelectChange('proficiency', e.target.value)}
+            required
+          />
+        </div>
+
+        <div className={styles.grid}>
+          <AeroSelect
+            label="Tipo *"
+            options={TYPES}
+            value={formData.type}
+            onChange={(e) => handleSelectChange('type', e.target.value)}
+            required
+          />
+          <AeroSelect
+            label="Empunhadura *"
+            options={GRIPS}
+            value={formData.grip}
+            onChange={(e) => handleSelectChange('grip', e.target.value)}
+            required
+          />
+        </div>
+
+        <div className={styles.grid3}>
+          <FormField
+            label="Dano *"
+            name="damage"
+            value={formData.damage}
+            onChange={handleChange}
+            placeholder="ex: 1d8, 2d6"
+            required
+          />
+          <FormField
+            label="Crítico *"
+            name="critical"
+            value={formData.critical}
+            onChange={handleChange}
+            placeholder="20/x2"
+            required
+          />
+          <AeroSelect
+            label="Alcance"
+            options={RANGES}
+            value={formData.range}
+            onChange={(e) => handleSelectChange('range', e.target.value)}
+            placeholder="Nenhum"
+          />
+        </div>
+
+        <div className={styles.grid}>
+          <FormField
+            label="Espaço *"
+            name="space"
+            value={formData.space}
+            onChange={handleChange}
+            type="number"
+            required
+          />
+          <FormField
+            label="Livro de Origem"
+            name="book"
+            value={formData.book}
+            onChange={handleChange}
+            placeholder="Livro e pág."
+          />
+        </div>
+
+        <FormField
+          label="Propriedades e Notas"
+          name="notes"
+          value={formData.notes}
+          onChange={handleChange}
+          placeholder="Regras especiais da arma (ex: Versátil, Defensiva...)"
+          isTextarea
         />
 
         <FormField
-          label="Tipo de Dano"
-          name="damageType"
-          value={formData.damageType}
+          label="Tags"
+          name="tags"
+          value={formData.tags}
           onChange={handleChange}
-          isSelect
-          options={DAMAGE_TYPES}
-          required
+          placeholder="mágica, pesada, ágil (separadas por vírgula)"
         />
+
+        <button type="submit" disabled={loading} className={styles.aeroButton}>
+          {loading ? 'Forjando...' : 'Adicionar Arma ao Arsenal'}
+        </button>
       </div>
-
-      <FormField
-        label="Descrição"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        placeholder="Breve descrição da arma"
-        isTextarea
-      />
-
-      <div className={styles.grid}>
-        <FormField
-          label="Categoria"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          isSelect
-          options={CATEGORIES}
-          required
-        />
-
-        <FormField
-          label="Proficiência"
-          name="proficiency"
-          value={formData.proficiency}
-          onChange={handleChange}
-          isSelect
-          options={PROFICIENCIES}
-          required
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <FormField
-          label="Tipo"
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          isSelect
-          options={TYPES}
-          required
-        />
-
-        <FormField
-          label="Empunhadura"
-          name="grip"
-          value={formData.grip}
-          onChange={handleChange}
-          isSelect
-          options={GRIPS}
-          required
-        />
-      </div>
-
-      <div className={styles.grid3}>
-        <FormField
-          label="Dano"
-          name="damage"
-          value={formData.damage}
-          onChange={handleChange}
-          placeholder="ex: 1d8+2, 2d6"
-          required
-        />
-
-        <FormField
-          label="Crítico"
-          name="critical"
-          value={formData.critical}
-          onChange={handleChange}
-          placeholder="ex: 19/x3, 20/x2"
-          required
-        />
-
-        <FormField
-          label="Alcance"
-          name="range"
-          value={formData.range}
-          onChange={handleChange}
-          isSelect
-          options={RANGES}
-          placeholder="Deixe vazio ou selecione 'Nenhum' para corpo a corpo"
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <FormField
-          label="Espaço"
-          name="space"
-          value={formData.space}
-          onChange={handleChange}
-          type="number"
-          required
-        />
-
-        <FormField
-          label="Livro"
-          name="book"
-          value={formData.book}
-          onChange={handleChange}
-          placeholder="Nome do livro onde aparece"
-        />
-      </div>
-
-      <FormField
-        label="Notas Adicionais"
-        name="notes"
-        value={formData.notes}
-        onChange={handleChange}
-        placeholder="Informações extras sobre a arma"
-        isTextarea
-      />
-
-      <FormField
-        label="Tags"
-        name="tags"
-        value={formData.tags}
-        onChange={handleChange}
-        placeholder="ex: fogo, mágica, especial (separadas por vírgula)"
-      />
-
-      <button
-        type="submit"
-        disabled={loading}
-        className={styles.submitButton}
-      >
-        {loading ? 'Adicionando...' : 'Adicionar Arma'}
-      </button>
     </form>
   );
 }
