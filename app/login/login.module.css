@@ -1,28 +1,25 @@
+/* Login.module.css - Aero Premium (Light/Dark Ready) */
+
 .loginWrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Fundo estilo Aurora do Windows Vista */
-  background: radial-gradient(circle at 0% 0%, #a8e6cf 0%, transparent 50%),
-              radial-gradient(circle at 100% 0%, #89cff0 0%, transparent 50%),
-              radial-gradient(circle at 100% 100%, #1e90ff 0%, transparent 50%),
-              radial-gradient(circle at 0% 100%, #00fa9a 0%, transparent 50%),
-              #f0f8ff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* Fundo estilo Aurora que reage ao Dark Mode automaticamente */
+  background: var(--bg-primary);
+  font-family: var(--font-body);
 }
 
 .glassCard {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--bg-secondary);
   backdrop-filter: blur(15px) saturate(150%);
   -webkit-backdrop-filter: blur(15px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
   padding: 2.5rem;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
-              inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  max-width: 420px;
+  box-shadow: var(--shadow-main), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
 }
@@ -37,18 +34,21 @@
   height: 50%;
   background: linear-gradient(
     180deg, 
-    rgba(255, 255, 255, 0.4) 0%, 
-    rgba(255, 255, 255, 0) 100%
+    rgba(255, 255, 255, 0.15) 0%, 
+    transparent 100%
   );
   pointer-events: none;
 }
 
 .title {
-  color: #004a99;
+  color: var(--text-accent);
   text-align: center;
   margin-bottom: 2rem;
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  font-family: var(--font-titles) !important;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .formGroup {
@@ -59,55 +59,64 @@
 
 .label {
   display: block;
-  color: #003366;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.8rem 1rem;
   border-radius: 8px;
-  border: 1px solid rgba(0, 102, 204, 0.3);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-primary);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   outline: none;
   transition: all 0.2s;
+  font-family: var(--font-body);
+  font-size: 1rem;
 }
 
 .input:focus {
-  border-color: #0099ff;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 8px rgba(0, 153, 255, 0.4);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 10px rgba(0, 153, 255, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .error {
-  background: rgba(255, 100, 100, 0.2);
-  color: #b30000;
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
-  border: 1px solid rgba(255, 0, 0, 0.2);
+  background: rgba(255, 68, 68, 0.1);
+  color: #ff4444; /* Vermelho que contrasta nos dois modos */
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  text-align: center;
 }
 
 .button {
   width: 100%;
-  padding: 0.8rem;
-  border-radius: 20px; /* Botão estilo bolha */
-  border: 1px solid rgba(0, 102, 204, 0.5);
-  background: linear-gradient(180deg, #66ccff 0%, #3399ff 50%, #0066cc 51%, #0052a3 100%);
+  padding: 1rem;
+  border-radius: 50px; /* Estilo bolha em conformidade com os outros botões */
+  border: 1px solid var(--text-accent);
+  background: var(--button-bg);
   color: white;
-  font-weight: 600;
+  font-family: var(--font-titles) !important;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition: transform 0.1s, filter 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.2s;
+  position: relative;
+  z-index: 2;
 }
 
 .button:hover {
   filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-main), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .button:active {

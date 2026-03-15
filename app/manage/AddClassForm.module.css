@@ -1,22 +1,33 @@
-/* AddClassForm.module.css - Estilo Aero Glass Premium */
+/* AddClassForm.module.css - Estilo Aero Glass Premium (Light/Dark Ready) */
 
 .aeroForm {
   max-width: 850px;
   margin: 0 auto 3rem;
-  background: rgba(255, 255, 255, 0.45);
+  background: var(--bg-secondary);
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-main), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  position: relative;
 }
 
 .formHeader {
   padding: 1.1rem 2rem;
-  background: linear-gradient(180deg, #55aaff 0%, #2288ee 49%, #0066cc 50%, #0044aa 100%);
-  border-bottom: 2px solid #003388;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: var(--button-bg);
+  border-bottom: 2px solid var(--border-color);
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.formHeader::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .formTitle {
@@ -27,6 +38,8 @@
   letter-spacing: 2px;
   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .formContent {
@@ -43,16 +56,16 @@
 .aeroButton {
   width: 100%;
   padding: 1.1rem;
-  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  background: var(--button-bg);
   color: white;
-  border: 1px solid #004a99;
+  border: 1px solid var(--text-accent);
   border-radius: 50px;
   font-family: var(--font-titles) !important;
   font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-main), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   margin-top: 1.5rem;
 }
@@ -60,7 +73,7 @@
 .aeroButton:hover:not(:disabled) {
   filter: brightness(1.1);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 153, 255, 0.3);
 }
 
 .message {
@@ -68,31 +81,30 @@
   padding: 1rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-color);
   font-family: var(--font-body);
+  box-shadow: var(--shadow-main);
 }
 
 .message.success {
-  background: linear-gradient(180deg, rgba(168, 230, 207, 0.6) 0%, rgba(121, 212, 178, 0.6) 100%);
-  color: #00441b;
+  background: rgba(168, 230, 207, 0.2);
+  color: #00a850;
+  border-color: #00a850;
 }
 
 .message.error {
-  background: linear-gradient(180deg, rgba(255, 204, 204, 0.6) 0%, rgba(255, 170, 170, 0.6) 100%);
-  color: #880000;
-}
-
-@media (max-width: 768px) {
-  .grid { grid-template-columns: 1fr; }
+  background: rgba(255, 204, 204, 0.2);
+  color: #ff4444;
+  border-color: #cc0000;
 }
 
 .sectionDivider {
   font-family: var(--font-titles) !important;
   font-size: 1.2rem;
-  color: #004a99;
+  color: var(--text-accent);
   margin: 2rem 0 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px dashed rgba(0, 102, 204, 0.3);
+  border-bottom: 2px dashed var(--border-color);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -105,33 +117,64 @@
 }
 
 .statBox {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 102, 204, 0.2);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.2rem;
-  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05), 0 4px 10px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
 }
 
 .statBox:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: #0099ff;
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
   transform: translateY(-2px);
-  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 1), 0 6px 15px rgba(0, 102, 204, 0.1);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1), 0 6px 15px rgba(0, 153, 255, 0.1);
 }
 
 .statBoxTitle {
   font-family: var(--font-titles) !important;
   font-size: 1.05rem;
-  color: #cc0000; /* Cor de destaque para os blocos de stat */
+  color: #ff4444; /* Vermelho vivo, dá bom contraste no escuro e claro */
   margin: 0 0 1rem 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-align: center;
-  border-bottom: 1px solid rgba(204, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 68, 68, 0.3);
   padding-bottom: 0.5rem;
 }
 
 @media (max-width: 900px) {
   .statsGrid { grid-template-columns: 1fr; gap: 1rem; }
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* INPUTS, TEXTAREAS E SELECTS (Para forçar a largura a 100%) */
+.formContent input, 
+.formContent select, 
+.formContent textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  font-family: var(--font-body);
+  box-sizing: border-box; /* Muito importante para o padding não partir a grid */
+}
+
+.formContent input:focus, 
+.formContent select:focus,
+.formContent textarea:focus {
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 12px rgba(0, 153, 255, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
 }

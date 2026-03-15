@@ -1,4 +1,4 @@
-/* EditModal.module.css - Aero Edit Interface */
+/* EditModal.module.css - Aero Edit Interface (Light/Dark Ready) */
 
 .overlay {
   position: fixed;
@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 15, 30, 0.65);
+  background: rgba(0, 15, 30, 0.65); /* Mantém-se escuro nos dois temas para dar destaque ao modal */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -23,20 +23,24 @@
 }
 
 .modal {
-  background: rgba(245, 250, 255, 0.85);
+  background: var(--bg-secondary);
   backdrop-filter: blur(25px) saturate(200%);
   -webkit-backdrop-filter: blur(25px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
-  max-width: 850px; /* Mais largo para o grid funcionar bem */
+  max-width: 850px;
   width: 100%;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 1);
+  box-shadow: var(--shadow-main);
   overflow: hidden;
   animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* Fundo quase sólido para garantir a legibilidade do formulário */
+:global([data-theme='light']) .modal { background: rgba(245, 250, 255, 0.95); }
+:global([data-theme='dark']) .modal { background: rgba(13, 18, 33, 0.95); }
 
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(-20px) scale(0.95); }
@@ -45,11 +49,12 @@
 
 .header {
   padding: 1.2rem 2rem;
-  background: linear-gradient(180deg, #55aaff 0%, #2288ee 49%, #0066cc 50%, #0044aa 100%);
-  border-bottom: 2px solid #003388;
+  background: var(--button-bg); /* Usa o teu gradiente global para o cabeçalho de edição */
+  border-bottom: 2px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  z-index: 10;
 }
 
 .title {
@@ -86,7 +91,7 @@
 .formContent {
   padding: 2rem;
   overflow-y: auto;
-  color: #222;
+  color: var(--text-primary);
 }
 
 .grid {
@@ -128,7 +133,7 @@
 }
 
 .paranormalText {
-  color: #c026d3;
+  color: #d946d9; /* Ajustado para um tom paranormal que contraste em ambos */
   font-family: var(--font-body);
   font-size: 0.95rem;
   white-space: nowrap;
@@ -147,15 +152,15 @@
   font-weight: 500;
 }
 
-.message.success { background: #a8e6cf; color: #005522; border: 1px solid #00a850; }
-.message.error { background: #ffcccc; color: #880000; border: 1px solid #cc0000; }
+.message.success { background: rgba(168, 230, 207, 0.2); color: #00a850; border: 1px solid #00a850; }
+.message.error { background: rgba(255, 204, 204, 0.2); color: #ff4444; border: 1px solid #cc0000; }
 
 .actions {
   display: flex;
   gap: 1.5rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px dashed rgba(0, 102, 204, 0.3);
+  border-top: 1px dashed var(--border-color);
 }
 
 .cancelButton, .submitButton {
@@ -171,34 +176,34 @@
 }
 
 .cancelButton {
-  background: rgba(255, 255, 255, 0.5);
-  color: #004a99;
-  border: 1px solid rgba(0, 102, 204, 0.3);
+  background: var(--input-bg);
+  color: var(--text-accent);
+  border: 1px solid var(--border-color);
 }
 
 .cancelButton:hover {
-  background: #ffe6e6;
-  color: #cc0000;
-  border-color: #cc0000;
+  background: rgba(204, 0, 0, 0.1);
+  color: #ff4444;
+  border-color: #ff4444;
 }
 
 .submitButton {
-  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  background: var(--button-bg);
   color: white;
-  border: 1px solid #004a99;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--text-accent);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .submitButton:hover:not(:disabled) {
   filter: brightness(1.1);
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
+  box-shadow: var(--shadow-main);
 }
 
 /* Scrollbar Aero */
 .formContent::-webkit-scrollbar { width: 8px; }
-.formContent::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.02); border-radius: 4px; }
-.formContent::-webkit-scrollbar-thumb { background: rgba(0, 102, 204, 0.3); border-radius: 4px; }
+.formContent::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 4px; }
+.formContent::-webkit-scrollbar-thumb { background: var(--button-bg); border-radius: 4px; }
 
 @media (max-width: 768px) {
   .grid, .grid3, .tripleGrid { grid-template-columns: 1fr; }
@@ -206,11 +211,9 @@
   .actions { flex-direction: column-reverse; }
 }
 
-/* ... (teu CSS anterior do EditModal) ... */
-
 .fieldLabel {
   display: block;
-  color: #004a99;
+  color: var(--text-accent);
   font-family: var(--font-titles) !important;
   font-size: 0.95rem;
   letter-spacing: 1px;
@@ -220,16 +223,17 @@
 .abilitiesSection {
   margin: 1.5rem 0;
   padding: 1.2rem;
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--input-bg);
   border-radius: 15px;
-  border: 1px solid rgba(0, 102, 204, 0.15);
+  border: 1px solid var(--border-color);
 }
 
 .aeroSearch {
   width: 100%;
   padding: 0.7rem 1.2rem;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 102, 204, 0.2);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   margin-bottom: 1rem;
   font-family: var(--font-body);
@@ -238,8 +242,8 @@
 }
 
 .aeroSearch:focus {
-  border-color: #0099ff;
-  box-shadow: 0 0 8px rgba(0, 153, 255, 0.3);
+  border-color: var(--text-accent);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px var(--border-color);
 }
 
 .abilitiesContainer {
@@ -256,8 +260,8 @@
 
 .abilityCard {
   padding: 0.8rem 1rem;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 102, 204, 0.1);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -267,35 +271,37 @@
 }
 
 .abilityCard:hover {
-  background: #ffffff;
-  border-color: #0099ff;
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
 }
 
 .abilityCard.selected {
-  background: linear-gradient(135deg, rgba(0, 153, 255, 0.1), rgba(0, 102, 204, 0.2));
-  border-color: #0066cc;
-  box-shadow: inset 0 0 10px rgba(0, 102, 204, 0.05);
+  background: var(--button-bg);
+  border-color: var(--text-accent);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .abilityName {
   font-size: 0.9rem;
-  color: #003366;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
+.abilityCard.selected .abilityName {
+  color: white; /* Contraste quando selecionado */
+}
+
 .checkIcon {
-  color: #008800;
+  color: #00ff00; /* Verde néon para dar pop no tema escuro */
   font-weight: bold;
 }
 
 /* Scrollbar Aero para os Poderes */
 .abilitiesContainer::-webkit-scrollbar { width: 6px; }
 .abilitiesContainer::-webkit-scrollbar-thumb {
-  background: rgba(0, 102, 204, 0.3);
+  background: var(--button-bg);
   border-radius: 10px;
 }
-
-/* ... Resto do teu código CSS de EditModal ... */
 
 .grid5 {
   display: grid;
@@ -306,18 +312,18 @@
 
 .sectionTitle {
   font-family: var(--font-titles) !important;
-  color: #004a99;
+  color: var(--text-accent);
   font-size: 1.2rem;
   margin: 2rem 0 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(0, 102, 204, 0.2);
+  border-bottom: 2px solid var(--border-color);
   text-transform: uppercase;
 }
 
 /* Blocos Dinâmicos */
 .dynamicBlock {
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(0, 102, 204, 0.15);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
@@ -326,8 +332,8 @@
 }
 
 .dynamicBlock:hover {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: #0099ff;
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
 }
 
 .removeBtn {
@@ -335,7 +341,7 @@
   top: 10px;
   right: 10px;
   background: rgba(204, 0, 0, 0.1);
-  color: #cc0000;
+  color: #ff4444;
   border: 1px solid #cc0000;
   border-radius: 50%;
   width: 28px;
@@ -356,9 +362,9 @@
 .addBtn {
   width: 100%;
   padding: 0.8rem;
-  background: rgba(255, 255, 255, 0.5);
-  border: 2px dashed #0066cc;
-  color: #0066cc;
+  background: var(--input-bg);
+  border: 2px dashed var(--text-accent);
+  color: var(--text-accent);
   border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
@@ -367,7 +373,7 @@
 }
 
 .addBtn:hover {
-  background: rgba(0, 102, 204, 0.1);
+  background: var(--bg-secondary);
   border-style: solid;
 }
 
@@ -398,22 +404,15 @@
   gap: 0.2rem;
 }
 
-.abilityName {
-  font-size: 0.95rem;
-  color: #003366;
-  font-weight: 700;
-}
-
 .abilityCategory {
   font-size: 0.7rem;
-  color: #666666;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
 }
 
-/* Quando o cartão está selecionado, a categoria fica com uma cor que condiz com o fundo azulado */
+/* Quando o cartão está selecionado, a categoria fica branca para legibilidade */
 .abilityCard.selected .abilityCategory {
-  color: #005bb8;
-  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.8);
 }

@@ -1,22 +1,33 @@
-/* AddRuleForm.module.css - Aero Premium Style */
+/* AddRuleForm.module.css - Aero Premium Style (Light/Dark Ready) */
 
 .aeroForm {
   max-width: 850px;
   margin: 0 auto 3rem;
-  background: rgba(255, 255, 255, 0.45);
+  background: var(--bg-secondary);
   backdrop-filter: blur(20px) saturate(170%);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-main), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
+  position: relative;
 }
 
 .formHeader {
   padding: 1.2rem 2rem;
-  background: linear-gradient(180deg, #55aaff 0%, #2288ee 49%, #0066cc 50%, #0044aa 100%);
-  border-bottom: 2px solid #003388;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: var(--button-bg);
+  border-bottom: 2px solid var(--border-color);
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.formHeader::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .formTitle {
@@ -27,6 +38,8 @@
   letter-spacing: 2px;
   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .formContent {
@@ -40,19 +53,47 @@
   margin-bottom: 0.5rem;
 }
 
+/* INPUTS, TEXTAREAS E SELECTS (Garantir que preenchem as grids e respeitam o tema) */
+.formContent input, 
+.formContent select, 
+.formContent textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  font-family: var(--font-body);
+  box-sizing: border-box;
+}
+
+.formContent input:focus, 
+.formContent select:focus,
+.formContent textarea:focus {
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 12px rgba(0, 153, 255, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
 .aeroButton {
   width: 100%;
   padding: 1.1rem;
-  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  background: var(--button-bg);
   color: white;
-  border: 1px solid #004a99;
+  border: 1px solid var(--text-accent);
   border-radius: 50px;
+  font-family: var(--font-titles) !important;
   font-weight: 400;
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-main), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 0.2s;
   margin-top: 1.5rem;
 }
@@ -60,7 +101,7 @@
 .aeroButton:hover {
   filter: brightness(1.1);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 153, 255, 0.3);
 }
 
 .message {
@@ -68,17 +109,21 @@
   padding: 1rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-color);
+  font-family: var(--font-body);
+  box-shadow: var(--shadow-main);
 }
 
 .message.success {
-  background: linear-gradient(180deg, #a8e6cf 0%, #77ddaa 100%);
-  color: #005522;
+  background: rgba(168, 230, 207, 0.2);
+  color: #00a850;
+  border-color: #00a850;
 }
 
 .message.error {
-  background: linear-gradient(180deg, #ffcccc 0%, #ffaaaa 100%);
-  color: #880000;
+  background: rgba(255, 204, 204, 0.2);
+  color: #ff4444;
+  border-color: #cc0000;
 }
 
 @media (max-width: 768px) {

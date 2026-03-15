@@ -1,4 +1,4 @@
-/* SearchResults.module.css - Aero Premium Aesthetics */
+/* SearchResults.module.css - Aero Premium Aesthetics (Light/Dark Ready) */
 
 .container {
   max-width: 1400px;
@@ -21,19 +21,19 @@
 .header h2 {
   font-size: 2.5rem;
   font-family: var(--font-titles) !important;
-  color: #003366;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .resultCount {
-  color: #004a99;
+  color: var(--text-accent);
   font-size: 1.1rem;
 }
 
 .resultCount strong {
-  color: #cc0000;
+  color: #ff4444; /* Usamos um vermelho mais vivo para dar contraste tanto no modo claro como escuro */
   font-weight: 700;
 }
 
@@ -45,11 +45,11 @@
   justify-content: center;
   padding: 4rem 2rem;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.45);
+  background: var(--bg-secondary);
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
   text-align: center;
   animation: slideInUp 0.4s ease;
 }
@@ -62,8 +62,8 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(0, 102, 204, 0.2);
-  border-top: 4px solid #0066cc;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--text-accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 1.5rem;
@@ -72,7 +72,7 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .loadingBox p, .noResults p {
-  color: #003366;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 1.1rem;
 }
@@ -92,10 +92,10 @@
 .sectionTitle {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #004a99;
+  color: var(--text-accent);
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(0, 102, 204, 0.2);
+  border-bottom: 2px solid var(--border-color);
   font-family: var(--font-titles) !important;
   text-transform: uppercase;
 }
@@ -117,30 +117,30 @@
 
 .filterButton {
   padding: 0.6rem 1.2rem;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--input-bg);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-color);
   border-radius: 50px;
   font-weight: 700;
-  color: #004a99;
+  color: var(--text-accent);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   font-size: 0.95rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
 }
 
 .filterButton:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: #0099ff;
-  color: #0066cc;
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
+  color: var(--text-primary);
   transform: translateY(-1px);
 }
 
 .filterButton.active {
-  background: linear-gradient(180deg, #55aaff 0%, #0066cc 100%);
+  background: var(--button-bg);
   color: white;
-  border-color: #004a99;
-  box-shadow: 0 4px 10px rgba(0, 102, 204, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border-color: var(--text-accent);
+  box-shadow: var(--shadow-main);
 }
 
 .originContainer {
@@ -150,19 +150,19 @@
 /* Agrupamento de Origens */
 .originGroup {
   margin-bottom: 2.5rem;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--input-bg);
   padding: 1.5rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--border-color);
 }
 
 .originGroupTitle {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #cc0000;
+  color: #ff4444; /* Adaptado para garantir contraste em ambos os modos */
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px dashed rgba(204, 0, 0, 0.2);
+  border-bottom: 2px dashed rgba(255, 68, 68, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
 }

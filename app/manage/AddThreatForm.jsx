@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
-import AeroSelect from '../components/AeroSelect'; // Importante para os selects Aero
-import styles from './AddThreatForm.module.css'; // Apontar para o ficheiro correto
+import AeroSelect from '../components/AeroSelect';
+import styles from './AddThreatForm.module.css';
 
 const TYPES = ['Criatura', 'Humano', 'Animal'];
 const SIZES = ['Minúsculo', 'Pequeno', 'Médio', 'Grande', 'Enorme', 'Colossal'];
 const ACTION_TYPES = ['Padrão', 'Movimento', 'Livre', 'Reação', 'Completa'];
+const BOOLEAN_OPTIONS = ['Não', 'Sim']; // Opções para o Enigma
 
 export default function AddThreatForm({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ export default function AddThreatForm({ onSuccess }) {
     passives: [],
     actions: [],
     enigmaOfFear: { hasEnigma: false, description: '', mechanics: '' },
-    book: '' // Restaurado
+    book: '' 
   });
   
   const [loading, setLoading] = useState(false);
@@ -57,12 +58,12 @@ export default function AddThreatForm({ onSuccess }) {
     }));
   };
 
-  const handleEnigmaToggle = (e) => {
-    // Tratamento para Checkbox normal ou FormField booleano
-    const isChecked = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+  // Nova função para tratar o dropdown do Enigma
+  const handleEnigmaDropdown = (value) => {
+    const hasEnigma = value === 'Sim';
     setFormData((prev) => ({
       ...prev,
-      enigmaOfFear: { ...prev.enigmaOfFear, hasEnigma: isChecked }
+      enigmaOfFear: { ...prev.enigmaOfFear, hasEnigma }
     }));
   };
 
@@ -112,7 +113,6 @@ export default function AddThreatForm({ onSuccess }) {
     setFormData((prev) => ({ ...prev, actions: prev.actions.filter((_, index) => index !== indexToRemove) }));
   };
 
-  // --- Submit ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -133,7 +133,6 @@ export default function AddThreatForm({ onSuccess }) {
       };
 
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/threats`, payload);
-
       setMessage({ type: 'success', text: 'Ameaça registada na base de dados.' });
       onSuccess?.();
     } catch (error) {
@@ -158,16 +157,14 @@ export default function AddThreatForm({ onSuccess }) {
         )}
 
         {/* --- DESCRIÇÃO --- */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <FormField 
-            label="Descrição da Ameaça" 
-            name="description" 
-            value={formData.description} 
-            onChange={handleChange} 
-            isTextarea 
-            placeholder="Descrição narrativa da criatura, comportamento, aparência, etc." 
-          />
-        </div>
+        <FormField 
+          label="Descrição da Ameaça" 
+          name="description" 
+          value={formData.description} 
+          onChange={handleChange} 
+          isTextarea 
+          placeholder="Descrição narrativa da criatura, comportamento, aparência, etc." 
+        />
 
         {/* --- IDENTIFICAÇÃO --- */}
         <h4 className={styles.sectionTitle}>Identificação</h4>
@@ -210,8 +207,8 @@ export default function AddThreatForm({ onSuccess }) {
           <FormField label="Vulnerabilidades" name="vulnerabilities" value={formData.vulnerabilities} onChange={handleChange} placeholder="ex: Energia, Fogo" />
         </div>
 
-        {/* --- SENTIDOS E TESTES DE RESISTÊNCIA --- */}
-        <h4 className={styles.sectionTitle}>Sentidos e Testes de Resistência</h4>
+        {/* --- SENTIDOS E RESISTÊNCIAS --- */}
+        <h4 className={styles.sectionTitle}>Sentidos e Resistências</h4>
         <div className={styles.grid3}>
           <FormField label="Percepção" value={formData.senses.perception} onChange={(e) => handleNestedChange('senses', 'perception', e.target.value)} placeholder="ex: 3d20+15" />
           <FormField label="Iniciativa" value={formData.senses.initiative} onChange={(e) => handleNestedChange('senses', 'initiative', e.target.value)} placeholder="ex: 4d20+15" />
@@ -246,19 +243,15 @@ export default function AddThreatForm({ onSuccess }) {
         ))}
         <button type="button" className={styles.addBtn} onClick={addSkillBlock}>+ Adicionar Perícia</button>
 
-        {/* --- ENIGMA DE MEDO --- */}
+        {/* --- ENIGMA DE MEDO (DROPDOWN) --- */}
         <h4 className={styles.sectionTitle}>Enigma de Medo</h4>
-        <div className={styles.checkboxWrapper}>
-          <label className={styles.paranormalToggle}>
-            <FormField 
-              type="checkbox" 
-              name="hasEnigma" 
-              checked={formData.enigmaOfFear.hasEnigma} 
-              onChange={handleEnigmaToggle} 
-              isParanormal
-            />
-            <span className={styles.paranormalText}>Ameaça possui Enigma de Medo?</span>
-          </label>
+        <div className={styles.singleColumn}>
+          <AeroSelect 
+            label="Ameaça possui Enigma de Medo?" 
+            options={BOOLEAN_OPTIONS} 
+            value={formData.enigmaOfFear.hasEnigma ? 'Sim' : 'Não'} 
+            onChange={(e) => handleEnigmaDropdown(e.target.value)} 
+          />
         </div>
         
         {formData.enigmaOfFear.hasEnigma && (
@@ -283,7 +276,7 @@ export default function AddThreatForm({ onSuccess }) {
         ))}
         <button type="button" className={styles.addBtn} onClick={addPassiveBlock}>+ Adicionar Passiva</button>
 
-        {/* --- AÇÕES (ARRAY DINÂMICO) --- */}
+        {/* --- AÇÕES --- */}
         <h4 className={styles.sectionTitle}>Ações</h4>
         {formData.actions.map((action, index) => (
           <div key={index} className={styles.dynamicBlock}>
@@ -306,7 +299,6 @@ export default function AddThreatForm({ onSuccess }) {
         ))}
         <button type="button" className={styles.addBtn} onClick={addActionBlock}>+ Adicionar Ação</button>
 
-        {/* --- LIVRO (Restaurado) --- */}
         <h4 className={styles.sectionTitle}>Metadados</h4>
         <FormField label="Livro de Referência" name="book" value={formData.book} onChange={handleChange} placeholder="Livro e pág." />
 

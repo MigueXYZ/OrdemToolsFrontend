@@ -1,31 +1,26 @@
-/* AddAbilityForm.module.css - Versão Final Consolidada */
+/* AddAbilityForm.module.css - Versão Final Consolidada (Light/Dark Ready) */
 
 .aeroForm {
   max-width: 850px;
   margin: 0 auto 3rem;
-  background: rgba(255, 255, 255, 0.45);
+  background: var(--bg-secondary);
   backdrop-filter: blur(20px) saturate(170%);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    var(--shadow-main),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
   position: relative;
 }
 
 .formHeader {
   padding: 1.2rem 2rem;
-  background: linear-gradient(180deg, 
-    #55aaff 0%, 
-    #2288ee 49%, 
-    #0066cc 50%, 
-    #0044aa 100%
-  );
-  border-bottom: 2px solid #003388;
+  background: var(--button-bg); /* Gradiente de destaque do tema */
+  border-bottom: 2px solid var(--border-color);
   position: relative;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .formHeader::after {
@@ -33,7 +28,7 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
   pointer-events: none;
 }
 
@@ -63,26 +58,24 @@
 
 .formContent label {
   display: block;
-  color: #004488;
+  color: var(--text-accent);
   margin-bottom: 0.6rem;
   font-size: 0.95rem;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* INPUTS, TEXTAREAS E SELECTS */
+/* INPUTS, TEXTAREAS E SELECTS NATIVOS (Caso sejam usados diretamente sem o FormField) */
 .formContent input, 
 .formContent select, 
 .formContent textarea {
   width: 100%;
   padding: 0.8rem 1rem;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 80, 160, 0.25);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
-  color: #003366;
+  color: var(--text-primary);
   font-size: 1rem;
-  box-shadow: 
-    inset 0 2px 5px rgba(0, 0, 0, 0.05),
-    0 1px 0 rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
@@ -95,17 +88,17 @@
   cursor: pointer;
   padding-right: 3rem;
   
-  /* Chevron Aero */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23004488' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  /* Chevron Aero azul ciano (visível em dark e light) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230099ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1.2rem;
 }
 
-/* Corrigir a lista de opções que aparece na imagem */
+/* Corrigir a lista de opções nativa do SO/Browser */
 .formContent select option {
-  background-color: #f0f8ff; /* Fundo azul clarinho sólido */
-  color: #003366;
+  background-color: var(--bg-secondary); 
+  color: var(--text-primary);
   padding: 10px;
   font-family: var(--font-body);
 }
@@ -113,18 +106,18 @@
 .formContent input:focus, 
 .formContent select:focus,
 .formContent textarea:focus {
-  background: #ffffff;
-  border-color: #0099ff;
-  box-shadow: 0 0 12px rgba(0, 153, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 12px rgba(0, 153, 255, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
 
 .aeroButton {
   width: 100%;
   padding: 1.1rem;
-  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  background: var(--button-bg);
   color: white;
-  border: 1px solid #004a99;
+  border: 1px solid var(--text-accent);
   border-radius: 50px;
   font-family: var(--font-body) !important;
   font-weight: 400;
@@ -132,7 +125,7 @@
   text-transform: uppercase;
   letter-spacing: 2px;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-main), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 0.2s;
   margin-top: 2rem;
 }
@@ -140,7 +133,7 @@
 .aeroButton:hover {
   filter: brightness(1.1);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 153, 255, 0.3);
 }
 
 .message {
@@ -149,16 +142,22 @@
   margin-bottom: 1.5rem;
   font-weight: 400;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
 }
 
 .message.success {
-  background: linear-gradient(180deg, #a8e6cf 0%, #77ddaa 100%);
-  color: #005522;
+  background: rgba(168, 230, 207, 0.2);
+  color: #00a850;
+  border-color: #00a850;
 }
 
 .message.error {
-  background: linear-gradient(180deg, #ffcccc 0%, #ffaaaa 100%);
-  color: #880000;
+  background: rgba(255, 204, 204, 0.2);
+  color: #ff4444;
+  border-color: #cc0000;
+}
+
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
 }

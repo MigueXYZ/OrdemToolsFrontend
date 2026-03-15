@@ -1,41 +1,65 @@
 .toggleButton {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 248, 255, 0.8) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(220, 235, 255, 0.8) 100%);
   border: 1px solid rgba(0, 102, 204, 0.3);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 1);
   position: relative;
+  overflow: hidden;
+}
+
+/* Efeito de brilho Aero no topo */
+.toggleButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
+  border-radius: 50% 50% 0 0;
+  pointer-events: none;
 }
 
 .toggleButton:hover {
-  background: linear-gradient(180deg, rgba(230, 245, 255, 0.95) 0%, rgba(200, 230, 255, 0.95) 100%);
-  border-color: rgba(0, 102, 204, 0.5);
-  box-shadow: 0 2px 6px rgba(0, 102, 204, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  transform: scale(1.05);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(180, 220, 255, 0.9) 100%);
+  border-color: #0077e6;
+  box-shadow: 0 6px 15px rgba(0, 102, 204, 0.2), inset 0 1px 1px rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.iconContainer {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.moonIcon { color: #004a99; transition: color 0.3s; }
+.sunIcon { color: #ffaa00; filter: drop-shadow(0 0 5px rgba(255, 170, 0, 0.5)); }
+
+/* TEMA ESCURO */
+:global([data-theme='dark']) .toggleButton {
+  background: linear-gradient(180deg, rgba(30, 45, 70, 0.9) 0%, rgba(15, 25, 45, 0.9) 100%);
+  border-color: rgba(0, 150, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+:global([data-theme='dark']) .toggleButton:hover {
+  background: linear-gradient(180deg, rgba(40, 60, 100, 0.95) 0%, rgba(25, 40, 70, 0.95) 100%);
+  border-color: #00d4ff;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .toggleButton:active {
-  transform: scale(0.95);
-}
-
-@media (prefers-color-scheme: dark) {
-  [data-theme='dark'] .toggleButton {
-    background: linear-gradient(180deg, rgba(50, 70, 100, 0.9) 0%, rgba(40, 60, 90, 0.9) 100%);
-    border-color: rgba(0, 150, 255, 0.4);
-    color: #00d4ff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(200, 230, 255, 0.2);
-  }
-
-  [data-theme='dark'] .toggleButton:hover {
-    background: linear-gradient(180deg, rgba(70, 100, 140, 0.95) 0%, rgba(60, 90, 130, 0.95) 100%);
-    border-color: rgba(100, 180, 255, 0.6);
-    box-shadow: 0 2px 8px rgba(0, 150, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  }
+  transform: scale(0.92);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
 }

@@ -1,4 +1,4 @@
-/* SearchBar.module.css */
+/* SearchBar.module.css - Aero Premium (Light/Dark Ready) */
 
 .container {
   padding: 2.5rem 1rem;
@@ -10,18 +10,19 @@
 .searchForm {
   max-width: 900px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--bg-secondary);
   backdrop-filter: blur(15px) saturate(150%);
-  padding: 0.4rem; /* Reduzi ligeiramente o padding do container */
+  -webkit-backdrop-filter: blur(15px) saturate(150%);
+  padding: 0.4rem;
   border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
 }
 
 .searchBox {
   display: flex;
   position: relative;
-  align-items: stretch; /* Força os filhos a terem a mesma altura */
+  align-items: stretch;
   gap: 0;
   border-radius: 50px;
   overflow: hidden;
@@ -29,109 +30,49 @@
 
 .input {
   flex: 1;
-  padding: 0 1.5rem; /* Removi o padding vertical para usar height fixa */
-  height: 45px; /* Altura definida para o input */
+  padding: 0 1.5rem;
+  height: 45px;
   border-radius: 50px 0 0 50px;
-  border: 1px solid rgba(0, 102, 204, 0.2);
+  border: 1px solid var(--border-color);
   border-right: none;
-  background: rgba(255, 255, 255, 0.85);
-  color: #003d99;
+  background: var(--input-bg);
+  color: var(--text-primary);
   font-size: 0.95rem;
   outline: none;
+  transition: all 0.2s ease;
 }
 
 .input:focus {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: #0099ff;
+  border-color: var(--text-accent);
   box-shadow: 0 0 15px rgba(0, 153, 255, 0.2), inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .clearButton {
   position: absolute;
-  /* Ajusta aqui se o X ainda estiver em cima do azul. 
-     Aumenta para 160px ou 165px se necessário */
-  right: 155px; 
+  /* IMPORTANTE: Ajusta este valor se necessário para ficar logo antes do botão azul */
+  right: 135px; 
   top: 50%;
   transform: translateY(-50%);
   
-  background: rgba(0, 0, 0, 0.05); /* Um fundo muito leve para parecer vidro */
+  background: transparent;
   border: none;
-  color: #557799;
-  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 15; /* Superior ao input e ao botão se necessário */
+  z-index: 15;
   transition: all 0.2s;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .clearButton:hover {
-  background: #ff4d4d;
-  color: white;
-  opacity: 1;
-  transform: translateY(-50%) scale(1.1);
-}
-
-.searchButton {
-  /* O botão agora herda a altura do container stretch ou usamos a mesma fixa */
-  height: 45px; 
-  padding: 0 1.8rem;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  
-  /* Estilo Glossy */
-  background: linear-gradient(180deg, #82caff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
-  color: white;
-  border: 1px solid #004a99;
-  border-radius: 0 50px 50px 0;
-  
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.searchButton:hover:not(:disabled) {
-  filter: brightness(1.1);
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
-}
-
-.searchButton:hover:not(:disabled) {
-  filter: brightness(1.1);
-}
-
-.clearButton {
-  position: absolute;
-  /* IMPORTANTE: Ajusta este valor para ficar LOGO ANTES do botão azul */
-  /* Se o botão Pesquisar tem ~130px, 'right: 135px' deve funcionar */
-  right: 135px; 
-  top: 50%;
-  transform: translateY(-50%); /* Centraliza verticalmente */
-  
-  background: none;
-  border: none;
-  color: #888; /* Cor neutra inicial */
-  font-size: 1rem; /* Ligeiramente menor para discrição Vista */
-  cursor: pointer;
-  padding: 0.3rem; /* Menor padding para precisão */
-  z-index: 5; /* Garante que fica por cima do input */
-  transition: color 0.2s, transform 0.1s;
-  opacity: 0.6;
-}
-
-.clearButton:hover {
-  color: #ff4d4d; /* Vermelho ao passar o rato */
+  background: rgba(255, 77, 77, 0.1);
+  color: #ff4d4d;
   opacity: 1;
   transform: translateY(-50%) scale(1.1);
 }
@@ -140,16 +81,46 @@
   transform: translateY(-50%) scale(0.95);
 }
 
+.searchButton {
+  height: 45px; 
+  padding: 0 1.8rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  
+  /* Estilo Glossy Global */
+  background: var(--button-bg);
+  color: white;
+  border: 1px solid var(--text-accent);
+  border-radius: 0 50px 50px 0;
+  
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.searchButton:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 153, 255, 0.3);
+}
+
 .suggestions {
   position: absolute;
   top: calc(100% + 15px);
   left: 20px;
   right: 20px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: var(--bg-secondary);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid var(--border-color);
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-main);
   max-height: 250px;
   overflow-y: auto;
   z-index: 100;
@@ -160,22 +131,29 @@
 .suggestions li {
   padding: 0.75rem 1.25rem;
   cursor: pointer;
-  color: #004a99;
+  color: var(--text-primary);
   border-radius: 8px;
   font-weight: 500;
   transition: all 0.2s;
 }
 
 .suggestions li:hover {
-  background: linear-gradient(180deg, #e6f3ff 0%, #cce7ff 100%);
-  color: #003366;
+  background: var(--button-bg);
+  color: white;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
 
 /* Custom Scrollbar para sugestões */
 .suggestions::-webkit-scrollbar {
   width: 6px;
 }
+
+.suggestions::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
 .suggestions::-webkit-scrollbar-thumb {
-  background: #3399ff;
+  background: var(--button-bg);
   border-radius: 10px;
 }

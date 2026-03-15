@@ -1,132 +1,153 @@
-/* FormField.module.css - Estilo Aero Glass Compacto */
+/* AeroSelect.module.css - Alinhado com o FormField (Light/Dark Ready) */
 
-.fieldGroup {
-  margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: column;
+.container {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .label {
   display: block;
-  color: #004488;
+  color: var(--text-accent);
   margin-bottom: 0.6rem;
   font-size: 0.95rem;
-  font-weight: 400; /* Special Elite não precisa de bold */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1); 
+  font-family: var(--font-body) !important;
 }
 
 .required {
-  color: #cc0000;
-  margin-left: 0.25rem;
+  color: #ff4444;
 }
 
-/* INPUTS, TEXTAREAS E SELECTS NATVOS */
-.input,
-.textarea,
-.select {
+/* O Gatilho (Trigger) - Exatamente com as mesmas métricas do FormField */
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  padding: 0.8rem 1.2rem;
-  /* Efeito de Plástico Branco Translúcido */
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
+  padding: 0.8rem 1.2rem; /* Igual ao input nativo */
+  background: var(--input-bg);
+  backdrop-filter: blur(10px); /* Faltava o vidro aqui! */
   -webkit-backdrop-filter: blur(10px);
-  
-  border: 1px solid rgba(0, 80, 160, 0.25);
-  border-radius: 12px; /* Cantos arredondados Aero */
-  
-  color: #003366;
-  font-size: 1rem;
-  
-  /* Sombra interna para profundidade e brilho externo sutil */
-  box-shadow: 
-    inset 0 2px 4px rgba(0, 0, 0, 0.05),
-    0 1px 0 rgba(255, 255, 255, 0.8);
-    
+  border: 1px solid var(--border-color);
+  border-radius: 12px; /* Igual ao input nativo */
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
-/* Placeholder com cor suave mas legível */
-.input::placeholder,
-.textarea::placeholder {
-  color: #8899aa;
-  opacity: 0.8;
-}
-
-/* Efeito de Foco - Brilho Ciano */
-.input:focus,
-.textarea:focus,
-.select:focus {
-  background: #ffffff;
-  border-color: #0099ff;
-  box-shadow: 
-    0 0 12px rgba(0, 153, 255, 0.35), 
-    inset 0 2px 4px rgba(0, 0, 0, 0.05);
+.selectTrigger:hover, .selectTrigger:focus {
+  background: var(--bg-secondary);
+  border-color: var(--text-accent);
+  box-shadow: 0 0 12px rgba(0, 153, 255, 0.25), inset 0 1px 3px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
 
-.textarea {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.5;
+.selectTrigger.open {
+  border-radius: 12px 12px 0 0;
+  border-color: var(--text-accent);
+  border-bottom: none; 
+  padding-bottom: calc(0.8rem + 1px); /* Compensa a borda removida para não saltar */
+  z-index: 1001;
+  background: var(--bg-secondary);
+  transform: none; /* Remove o salto para cima quando a lista abre */
 }
 
-/* Se ainda usares o select nativo em algum lado, este é o estilo Aero */
-.select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23004488' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1.1rem;
-  padding-right: 3rem;
+.value {
+  color: var(--text-primary);
+  font-size: 1rem; /* Igual ao input nativo */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-body) !important;
 }
 
-/* CHECKBOX PARANORMAL - Estilo "Energia" */
-.checkbox {
-  appearance: none;
-  width: 1.4rem;
-  height: 1.4rem;
-  border: 2px solid #d946d9;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(5px);
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.chevron {
+  transition: transform 0.3s ease;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: var(--text-accent);
 }
 
-.checkbox:hover {
-  border-color: #f0abfc;
-  box-shadow: 0 0 15px rgba(217, 70, 217, 0.4);
-  transform: scale(1.05);
+.chevronOpen {
+  transform: rotate(180deg);
 }
 
-.checkbox:checked {
-  background: linear-gradient(135deg, #d946d9, #7e22ce);
-  border-color: #ffffff;
-  box-shadow: 0 0 20px rgba(217, 70, 217, 0.6);
-}
-
-.checkbox:checked::after {
-  content: '✓';
+/* A LISTA DE OPÇÕES */
+.optionsList {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 1rem;
+  top: 100%; /* Como removemos a altura fixa do trigger, o 100% encaixa a lista na perfeição */
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  
+  background: var(--bg-secondary);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  
+  border: 1px solid var(--text-accent);
+  border-top: none; 
+  border-radius: 0 0 12px 12px;
+  box-shadow: var(--shadow-main);
+  
+  max-height: 200px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Item da Lista */
+.optionItem {
+  margin: 0 !important;
+  padding: 0.7rem 1rem !important;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.1s;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  display: block;
+  font-family: var(--font-body) !important;
+  list-style: none;
+}
+
+.optionItem:hover {
+  background: var(--button-bg);
+  color: #ffffff;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.optionItem.selected {
+  background: var(--border-color);
+  color: var(--text-accent);
   font-weight: bold;
 }
 
-.paranormalLabel {
-  color: #c026d3;
-  font-weight: 400; /* Special Elite */
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  cursor: pointer;
-  font-size: 1rem;
+/* Scrollbar Aero */
+.optionsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.optionsList::-webkit-scrollbar-thumb {
+  background: var(--button-bg);
+  border-radius: 12px;
+}
+
+.fadeIn {
+  animation: fadeInEffect 0.2s ease-out;
+}
+
+@keyframes fadeInEffect {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+:global(textarea) {
+  resize: vertical !important;
 }

@@ -1,22 +1,22 @@
-/* page.module.css - Base de Dados Aero Premium */
+/* page.module.css - Base de Dados Aero Premium (Light/Dark Ready) */
 
 .wrapper {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: transparent;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-body);
 }
 
 /* Header */
 .header {
   padding: 1.5rem 2rem;
   text-align: center;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--bg-secondary);
   backdrop-filter: blur(25px) saturate(150%);
   -webkit-backdrop-filter: blur(25px) saturate(150%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
 }
 
 .headerContent {
@@ -32,13 +32,13 @@
 }
 
 .backLink {
-  color: #004a99;
+  color: var(--text-accent);
   font-weight: 700;
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-secondary);
   padding: 0.5rem 1.2rem;
   border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-color);
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   transition: all 0.2s;
   font-family: var(--font-titles) !important;
@@ -47,25 +47,25 @@
 }
 
 .backLink:hover {
-  background: #ffffff;
-  color: #0066cc;
+  background: var(--input-bg);
+  color: var(--text-primary);
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 102, 204, 0.15);
+  box-shadow: var(--shadow-main);
 }
 
 .title {
   font-family: var(--font-titles) !important;
   font-size: 2.8rem;
-  color: #003366;
+  color: var(--text-primary);
   margin: 0.5rem 0;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 0 2px 5px rgba(255, 255, 255, 0.8);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .subtitle {
   font-size: 1.1rem;
-  color: #004a99;
+  color: var(--text-accent);
   margin: 0;
   font-weight: 500;
 }
@@ -89,11 +89,11 @@
 
 .tab {
   padding: 0.8rem 1.5rem;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-secondary);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border-color);
   border-radius: 50px;
-  color: #004a99;
+  color: var(--text-accent);
   font-weight: 700;
   font-size: 1rem;
   font-family: var(--font-titles) !important;
@@ -104,30 +104,30 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
 
 .tab:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--input-bg);
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 102, 204, 0.1), inset 0 2px 0 rgba(255, 255, 255, 1);
+  box-shadow: var(--shadow-main), inset 0 2px 0 rgba(255, 255, 255, 0.3);
 }
 
 .tab.active {
-  background: linear-gradient(180deg, #55aaff 0%, #0066cc 100%);
+  background: var(--button-bg);
   color: white;
-  border-color: #004a99;
-  box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border-color: var(--text-accent);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .tabIcon { font-size: 1.2rem; }
 
 /* Filtros Painel Lateral/Topo */
 .filters {
-  background: rgba(255, 255, 255, 0.45);
+  background: var(--bg-secondary);
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 2rem;
@@ -135,7 +135,7 @@
   flex-wrap: wrap;
   gap: 2rem;
   align-items: flex-start;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-main);
 }
 
 .filterSection { flex: 1; min-width: 220px; }
@@ -148,8 +148,8 @@
   cursor: pointer;
 }
 
-.filterHeader h3 {
-  color: #004a99;
+.filterHeader h3, .expandIcon {
+  color: var(--text-accent);
   font-family: var(--font-titles) !important;
   font-size: 1.1rem;
   margin: 0;
@@ -160,22 +160,21 @@
 .aeroSelect, .tagSearchInput {
   width: 100%;
   padding: 0.8rem 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 102, 204, 0.2);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
-  color: #003366;
+  color: var(--text-primary);
   font-size: 0.95rem;
   font-family: var(--font-body);
   transition: all 0.2s;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   outline: none;
   cursor: pointer;
 }
 
 .aeroSelect:focus, .tagSearchInput:focus {
-  border-color: #0099ff;
-  box-shadow: 0 0 8px rgba(0, 153, 255, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.05);
-  background: #ffffff;
+  border-color: var(--text-accent);
+  box-shadow: 0 0 8px rgba(0, 153, 255, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .tagFilters {
@@ -187,21 +186,25 @@
 
 .tagButton {
   padding: 0.4rem 0.8rem;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 102, 204, 0.2);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
-  color: #004a99;
+  color: var(--text-accent);
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.tagButton:hover { background: #ffffff; border-color: #0099ff; transform: scale(1.05); }
+.tagButton:hover { 
+  background: var(--input-bg); 
+  border-color: var(--text-accent); 
+  transform: scale(1.05); 
+}
 
 .tagSelected {
-  background: #0066cc;
+  background: var(--button-bg);
   color: white;
-  border-color: #004a99;
+  border-color: var(--text-accent);
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
@@ -209,10 +212,10 @@
 
 .sortOrderButton {
   padding: 0.8rem;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 102, 204, 0.2);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
-  color: #004a99;
+  color: var(--text-accent);
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -220,14 +223,14 @@
   justify-content: center;
 }
 
-.sortOrderButton:hover { background: #ffffff; border-color: #0099ff; }
+.sortOrderButton:hover { background: var(--input-bg); border-color: var(--text-accent); }
 
 .clearFiltersButton {
   padding: 0.8rem 1.5rem;
-  background: rgba(255, 0, 0, 0.05);
-  border: 1px solid rgba(204, 0, 0, 0.3);
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(204, 0, 0, 0.4);
   border-radius: 10px;
-  color: #cc0000;
+  color: #ff4444;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
@@ -246,17 +249,17 @@
 }
 
 .categorySection {
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--bg-secondary);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
 }
 
 .categoryTitle {
-  background: linear-gradient(180deg, #55aaff 0%, #0066cc 100%);
+  background: var(--button-bg);
   color: white;
   margin: 0;
   padding: 1.2rem 1.5rem;
@@ -264,7 +267,7 @@
   font-size: 1.4rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  border-bottom: 2px solid #003388;
+  border-bottom: 2px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -273,7 +276,7 @@
 .itemCount {
   font-size: 1rem;
   opacity: 0.8;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   padding: 0.2rem 0.8rem;
   border-radius: 20px;
 }
@@ -287,22 +290,22 @@
 }
 
 .dataTable th {
-  background: rgba(230, 242, 255, 0.8);
-  color: #003366;
+  background: var(--bg-secondary);
+  color: var(--text-accent);
   padding: 1.2rem 1rem;
   text-align: left;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 2px solid rgba(0, 102, 204, 0.2);
+  border-bottom: 2px solid var(--border-color);
   position: sticky;
   top: 0;
 }
 
 .dataTable td {
   padding: 1rem;
-  border-bottom: 1px solid rgba(0, 102, 204, 0.1);
-  color: #333;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
   vertical-align: middle;
 }
 
@@ -313,26 +316,26 @@
 }
 
 .tableRow:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--input-bg);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
 }
 
 .nameCell {
   font-weight: 700;
-  color: #004a99;
+  color: var(--text-accent);
   max-width: 250px;
   word-wrap: break-word;
 }
 
-.bookCell { font-style: italic; color: #666; }
+.bookCell { font-style: italic; color: var(--text-secondary); }
 
 /* Estilo Especial Paranormal / Energia */
 .paranormalSection {
   border-color: rgba(192, 38, 211, 0.4);
-  box-shadow: 0 10px 30px rgba(192, 38, 211, 0.1);
+  box-shadow: 0 10px 30px rgba(192, 38, 211, 0.15);
 }
 
 .paranormalTitle {
@@ -341,14 +344,13 @@
 }
 
 .paranormalTable th {
-  background: rgba(250, 232, 255, 0.8);
-  color: #6b21a8;
+  color: #d946ef;
   border-bottom-color: rgba(192, 38, 211, 0.2);
 }
 
-.paranormalRow .nameCell { color: #9333ea; }
+.paranormalRow .nameCell { color: #d946ef; }
 .paranormalRow:hover {
-  background: rgba(253, 244, 255, 0.9);
+  background: rgba(192, 38, 211, 0.1);
   box-shadow: 0 4px 15px rgba(192, 38, 211, 0.15);
 }
 
@@ -366,17 +368,17 @@
 .tagsCell { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
 .tag {
-  background: rgba(0, 102, 204, 0.1);
-  color: #004a99;
+  background: var(--bg-secondary);
+  color: var(--text-accent);
   padding: 0.3rem 0.6rem;
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 600;
-  border: 1px solid rgba(0, 102, 204, 0.2);
+  border: 1px solid var(--border-color);
 }
 
 .moreTags {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-weight: bold;
   align-self: center;
@@ -386,16 +388,16 @@
 .loadingBox, .emptyState {
   text-align: center;
   padding: 4rem;
-  background: rgba(255, 255, 255, 0.45);
+  background: var(--bg-secondary);
   backdrop-filter: blur(25px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
 }
 
 .emptyState p {
   font-size: 1.2rem;
-  color: #004a99;
+  color: var(--text-accent);
   font-family: var(--font-titles) !important;
   text-transform: uppercase;
 }
@@ -403,8 +405,8 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid rgba(0, 102, 204, 0.2);
-  border-top-color: #0066cc;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--text-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1.5rem;
@@ -414,9 +416,9 @@
 
 /* Scrollbars Aero Tabela */
 .tableWrapper::-webkit-scrollbar { height: 8px; }
-.tableWrapper::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 4px; }
-.tableWrapper::-webkit-scrollbar-thumb { background: rgba(0, 102, 204, 0.3); border-radius: 4px; }
-.tableWrapper::-webkit-scrollbar-thumb:hover { background: rgba(0, 102, 204, 0.5); }
+.tableWrapper::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 4px; }
+.tableWrapper::-webkit-scrollbar-thumb { background: var(--text-accent); border-radius: 4px; }
+.tableWrapper::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
 
 @media (max-width: 768px) {
   .headerTop { flex-direction: column; }

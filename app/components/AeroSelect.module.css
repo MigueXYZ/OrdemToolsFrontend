@@ -1,4 +1,4 @@
-/* AeroSelect.module.css - Ajuste de Alinhamento Cirúrgico */
+/* AeroSelect.module.css - Ajuste de Alinhamento Cirúrgico (Light/Dark Ready) */
 
 .container {
   position: relative;
@@ -8,10 +8,11 @@
 
 .label {
   display: block;
-  color: #004488;
+  color: var(--text-accent);
   margin-bottom: 0.6rem;
   font-size: 0.95rem;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  /* Reduzi a opacidade da sombra para não ficar estranho no Dark Mode */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1); 
   font-family: var(--font-body) !important;
 }
 
@@ -26,40 +27,36 @@
   justify-content: space-between;
   width: 100%;
   padding: 0 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 102, 204, 0.3);
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: 
-    inset 0 1px 3px rgba(0, 0, 0, 0.05),
-    0 1px 0 rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.2s;
   outline: none;
   height: 42px;
-  box-sizing: border-box; /* Fundamental para manter a largura */
+  box-sizing: border-box;
   min-width: 0;
 }
 
 .selectTrigger:hover {
-  background: #ffffff;
-  border-color: #0099ff;
+  border-color: var(--text-accent);
   box-shadow: 0 0 10px rgba(0, 153, 255, 0.2);
 }
 
 .selectTrigger.open {
   border-radius: 10px 10px 0 0;
-  border-color: #0099ff;
+  border-color: var(--text-accent);
   /* Remove a borda inferior para fundir com a lista */
   border-bottom: none; 
   /* Adiciona um pequeno padding extra no fundo para compensar a borda removida */
   padding-bottom: 1px; 
   z-index: 1001;
-  background: #ffffff;
+  background: var(--bg-secondary);
 }
 
-
 .value {
-  color: #003366;
+  color: var(--text-primary);
   font-size: 0.95rem;
   white-space: nowrap;
   overflow: hidden;
@@ -70,6 +67,7 @@
 .chevron {
   transition: transform 0.3s ease;
   flex-shrink: 0;
+  color: var(--text-accent);
 }
 
 .chevronOpen {
@@ -89,15 +87,15 @@
   padding: 0 !important;
   list-style: none !important;
   
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--bg-secondary);
   backdrop-filter: blur(15px) saturate(180%);
   -webkit-backdrop-filter: blur(15px) saturate(180%);
   
-  /* Borda azul que completa o trigger */
-  border: 1px solid #0099ff;
+  /* Borda com cor de destaque que completa o trigger */
+  border: 1px solid var(--text-accent);
   border-top: none; /* Já que o trigger fornece o topo */
   border-radius: 0 0 10px 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-main);
   
   max-height: 200px;
   overflow-y: auto;
@@ -108,7 +106,7 @@
 .optionItem {
   margin: 0 !important;
   padding: 0.7rem 1rem !important;
-  color: #003366;
+  color: var(--text-primary);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.1s;
@@ -122,14 +120,15 @@
 }
 
 .optionItem:hover {
-  background: linear-gradient(180deg, #66ccff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  background: var(--button-bg);
   color: #ffffff;
   text-shadow: 0 1px 1px rgba(0,0,0,0.3);
 }
 
 .optionItem.selected {
-  background: rgba(0, 102, 204, 0.1);
-  color: #004a99;
+  background: var(--border-color);
+  color: var(--text-accent);
+  font-weight: bold;
 }
 
 /* Scrollbar Aero */
@@ -138,7 +137,7 @@
 }
 
 .optionsList::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #82caff 0%, #0077e6 100%);
+  background: var(--button-bg);
   border-radius: 10px;
 }
 
