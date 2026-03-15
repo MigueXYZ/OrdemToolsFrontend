@@ -49,8 +49,7 @@
 
 .clearButton {
   position: absolute;
-  /* IMPORTANTE: Ajusta este valor se necessário para ficar logo antes do botão azul */
-  right: 135px; 
+  right: 11rem; 
   top: 50%;
   transform: translateY(-50%);
   
