@@ -1,36 +1,62 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext'; // Ajusta o caminho se necessário
 import EditModal from './EditModal';
 import styles from './DetailModal.module.css';
 
 export default function DetailModal({ item, type, onClose, onUpdate }) {
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { user } = useContext(AuthContext); // Acedemos ao utilizador logado
 
   if (!item) return null;
 
   const typeConfig = {
-    ability: { color: '#C64D00', label: 'Poder', icon: '⚡' },
-    ritual: { color: '#9933FF', label: 'Ritual', icon: '✨' },
-    rule: { color: '#0076C0', label: 'Regra', icon: '📖' },
-    item: { color: '#3D9970', label: 'Item', icon: '🧭' },
-    class: { color: '#B24C0B', label: 'Classe', icon: '⚔️' },
-    track: { color: '#2E5C7D', label: 'Trilha', icon: '🛤️' },
-    weapon: { color: '#704214', label: 'Arma', icon: '🗡️' },
-    threat: { color: '#8b0000', label: 'Ameaça', icon: '💀' }
+    ability: { color: '#C64D00', label: 'Poder', icon: '⚡', endpoint: '/abilities' },
+    ritual: { color: '#9933FF', label: 'Ritual', icon: '✨', endpoint: '/rituals' },
+    rule: { color: '#0076C0', label: 'Regra', icon: '📖', endpoint: '/rules' },
+    item: { color: '#3D9970', label: 'Item', icon: '🧭', endpoint: '/items' },
+    class: { color: '#B24C0B', label: 'Classe', icon: '⚔️', endpoint: '/classes' },
+    track: { color: '#2E5C7D', label: 'Trilha', icon: '🛤️', endpoint: '/tracks' },
+    weapon: { color: '#704214', label: 'Arma', icon: '🗡️', endpoint: '/weapons' },
+    threat: { color: '#8b0000', label: 'Ameaça', icon: '💀', endpoint: '/threats' }
   };
 
   const config = typeConfig[type] || typeConfig.ability;
 
+  const handleDelete = async () => {
+    if (!window.confirm(`Tens a certeza que queres eliminar "${item.name || item.title}"? Esta ação é permanente.`)) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}${config.endpoint}/${item._id}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` }
+        }
+      );
+      
+      alert('Eliminado com sucesso.');
+      onUpdate?.(); // Recarrega a lista
+      onClose();   // Fecha o modal
+    } catch (error) {
+      console.error('Erro ao eliminar:', error);
+      alert('Erro ao eliminar o registo. Verifica as permissões.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const renderField = (label, value, isArray = false) => {
     if (!value || (Array.isArray(value) && value.length === 0)) return null;
-
     return (
       <div className={styles.field}>
         <strong className={styles.fieldLabel}>{label}</strong>
-        <div className={styles.fieldValue}>
-          {isArray ? value.join(', ') : value}
-        </div>
+        <div className={styles.fieldValue}>{isArray ? value.join(', ') : value}</div>
       </div>
     );
   };
@@ -44,13 +70,25 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
             {config.label}
           </div>
           <div className={styles.headerActions}>
-            <button 
-              className={styles.editButton}
-              onClick={() => setShowEditModal(true)}
-              title="Editar"
-            >
-              ✏️
-            </button>
+              {user && (
+                <>
+                  <button 
+                    className={styles.editButton}
+                    onClick={() => setShowEditModal(true)}
+                    title="Editar"
+                  >
+                    ✏️
+                  </button>
+                  <button 
+                    className={styles.deleteButton}
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    title="Eliminar"
+                  >
+                    {isDeleting ? '...' : '🗑️'}
+                  </button>
+                </>
+              )}
             <button className={styles.closeButton} onClick={onClose}>×</button>
           </div>
         </div>
@@ -94,43 +132,14 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
           {type === 'class' && (
             <>
-              {/* Secção de Estatísticas Iniciais da Classe */}
               {(item.hp?.initial || item.ep?.initial || item.san?.initial) && (
                 <div className={styles.threatSection}>
                   <h3 className={styles.sectionTitle} style={{ color: config.color }}>Características Iniciais</h3>
-                  
-                  <div className={styles.grid3} style={{ marginBottom: '1rem' }}>
-                    {item.hp?.initial && (
-                      <div className={styles.attrBox}>
-                        <span>Pontos de Vida</span>
-                        <div style={{ fontSize: '0.9rem' }}>{item.hp.initial}</div>
-                        {item.hp.perLevel && <div style={{ fontSize: '0.75rem', fontWeight: 'normal', marginTop: '4px' }}>+{item.hp.perLevel}/NEX</div>}
-                      </div>
-                    )}
-                    {item.ep?.initial && (
-                      <div className={styles.attrBox}>
-                        <span>Pontos de Esforço</span>
-                        <div style={{ fontSize: '0.9rem' }}>{item.ep.initial}</div>
-                        {item.ep.perLevel && <div style={{ fontSize: '0.75rem', fontWeight: 'normal', marginTop: '4px' }}>+{item.ep.perLevel}/NEX</div>}
-                      </div>
-                    )}
-                    {item.san?.initial && (
-                      <div className={styles.attrBox}>
-                        <span>Sanidade</span>
-                        <div style={{ fontSize: '0.9rem' }}>{item.san.initial}</div>
-                        {item.san.perLevel && <div style={{ fontSize: '0.75rem', fontWeight: 'normal', marginTop: '4px' }}>+{item.san.perLevel}/NEX</div>}
-                      </div>
-                    )}
+                  <div className={styles.grid3}>
+                    {item.hp?.initial && <div className={styles.attrBox}><span>PV</span>{item.hp.initial}</div>}
+                    {item.ep?.initial && <div className={styles.attrBox}><span>PE</span>{item.ep.initial}</div>}
+                    {item.san?.initial && <div className={styles.attrBox}><span>SAN</span>{item.san.initial}</div>}
                   </div>
-                </div>
-              )}
-
-              {/* Secção de Treino */}
-              {(item.trainedSkills || item.proficiencies) && (
-                <div className={styles.threatSection}>
-                  <h3 className={styles.sectionTitle} style={{ color: config.color }}>Treino</h3>
-                  {renderField('Perícias Treinadas', item.trainedSkills)}
-                  {renderField('Proficiências', item.proficiencies)}
                 </div>
               )}
             </>
