@@ -93,9 +93,47 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
           )}
 
           {type === 'class' && (
-            <div className={styles.grid2}>
-              {/* Classes apenas mostram descrição e metadados por agora */}
-            </div>
+            <>
+              {/* Secção de Estatísticas Iniciais da Classe */}
+              {(item.hp?.initial || item.ep?.initial || item.san?.initial) && (
+                <div className={styles.threatSection}>
+                  <h3 className={styles.sectionTitle} style={{ color: config.color }}>Características Iniciais</h3>
+                  
+                  <div className={styles.grid3} style={{ marginBottom: '1rem' }}>
+                    {item.hp?.initial && (
+                      <div className={styles.attrBox}>
+                        <span>Pontos de Vida</span>
+                        <div style={{ fontSize: '0.9rem' }}>{item.hp.initial}</div>
+                        {item.hp.perLevel && <div style={{ fontSize: '0.75rem', fontWeight: 'normal', marginTop: '4px' }}>+{item.hp.perLevel}/NEX</div>}
+                      </div>
+                    )}
+                    {item.ep?.initial && (
+                      <div className={styles.attrBox}>
+                        <span>Pontos de Esforço</span>
+                        <div style={{ fontSize: '0.9rem' }}>{item.ep.initial}</div>
+                        {item.ep.perLevel && <div style={{ fontSize: '0.75rem', fontWeight: 'normal', marginTop: '4px' }}>+{item.ep.perLevel}/NEX</div>}
+                      </div>
+                    )}
+                    {item.san?.initial && (
+                      <div className={styles.attrBox}>
+                        <span>Sanidade</span>
+                        <div style={{ fontSize: '0.9rem' }}>{item.san.initial}</div>
+                        {item.san.perLevel && <div style={{ fontSize: '0.75rem', fontWeight: 'normal', marginTop: '4px' }}>+{item.san.perLevel}/NEX</div>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Secção de Treino */}
+              {(item.trainedSkills || item.proficiencies) && (
+                <div className={styles.threatSection}>
+                  <h3 className={styles.sectionTitle} style={{ color: config.color }}>Treino</h3>
+                  {renderField('Perícias Treinadas', item.trainedSkills)}
+                  {renderField('Proficiências', item.proficiencies)}
+                </div>
+              )}
+            </>
           )}
 
           {type === 'track' && (
@@ -135,7 +173,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
           {type === 'threat' && (
             <>
-              {/* Identificação Base */}
               <div className={styles.threatSection}>
                 <div className={styles.grid3}>
                   {renderField('VD', item.vd)}
@@ -146,7 +183,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                 {renderField('Deslocamento', item.movement)}
               </div>
 
-              {/* Combate e Sobrevivência */}
               <div className={styles.threatSection}>
                 <h3 className={styles.sectionTitle} style={{ color: config.color }}>Estatísticas</h3>
                 <div className={styles.grid2}>
@@ -180,7 +216,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                 </div>
               </div>
 
-              {/* Atributos */}
               {item.attributes && (
                 <div className={styles.attributesGrid}>
                   <div className={styles.attrBox}><span>AGI</span> {item.attributes.agi}</div>
@@ -191,14 +226,12 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                 </div>
               )}
 
-              {/* Perícias */}
               {item.skills && item.skills.length > 0 && (
                 <div className={styles.inlineInfo}>
                   <strong>Perícias:</strong> {item.skills.map(s => `${s.name} ${s.value}`).join(' | ')}
                 </div>
               )}
 
-              {/* Enigma de Medo */}
               {item.enigmaOfFear?.hasEnigma && (
                 <div className={styles.enigmaBox}>
                   <h4>Enigma de Medo</h4>
@@ -207,7 +240,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                 </div>
               )}
 
-              {/* Passivas */}
               {item.passives && item.passives.length > 0 && (
                 <div className={styles.threatSection}>
                   <h3 className={styles.sectionTitle} style={{ color: config.color }}>Habilidades Passivas</h3>
@@ -220,7 +252,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                 </div>
               )}
 
-              {/* Ações */}
               {item.actions && item.actions.length > 0 && (
                 <div className={styles.threatSection}>
                   <h3 className={styles.sectionTitle} style={{ color: config.color }}>Ações</h3>
@@ -255,6 +286,7 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
           onClose={() => setShowEditModal(false)}
           onSuccess={() => {
             setShowEditModal(false);
+            onUpdate?.();
             onClose?.();
           }}
         />

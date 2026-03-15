@@ -18,7 +18,8 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     origin: item.origin || '',
     requirements: item.requirements || '',
     category: item.category || '',
-    trainedSkills: item.trainedSkills?.join(', ') || '',
+    trainedSkills: item.trainedSkills?.join(', ') || item.trainedSkills || '',
+    proficiencies: item.proficiencies || '',
     circle: item.circle || '',
     elements: item.elements?.join(', ') || '',
     duration: item.duration || '',
@@ -41,11 +42,19 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     class: item.class?._id || item.class || '',
     abilities: item.abilities?.map(a => a._id || a) || [],
     
+    // --- CAMPOS DE CLASSE ---
+    hpInitial: item.hp?.initial || '',
+    hpPerLevel: item.hp?.perLevel || '',
+    epInitial: item.ep?.initial || '',
+    epPerLevel: item.ep?.perLevel || '',
+    sanInitial: item.san?.initial || '',
+    sanPerLevel: item.san?.perLevel || '',
+
     // --- CAMPOS DE AMEAÇA ---
     vd: item.vd || '',
     size: item.size || '',
     defense: item.defense || '',
-    hpTotal: item.hp?.total || '',
+    hpTotal: item.hp?.total || '', // Cuidado para não conflitar com a classe; como o backend separa, está seguro
     hpBloodied: item.hp?.bloodied || '',
     movement: item.movement || '',
     resistances: item.resistances?.join(', ') || '',
@@ -114,7 +123,6 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     });
   };
 
-  // Handlers para Ameaças (Aninhados)
   const handleAttributeChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -138,7 +146,6 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     }));
   };
 
-  // Handlers Dinâmicos (Para Ações, Perícias, Passivas)
   const addBlock = (field, defaultValue) => {
     setFormData(prev => ({ ...prev, [field]: [...prev[field], defaultValue] }));
   };
@@ -165,7 +172,7 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
   const getEndpoint = () => {
     const endpoints = {
       ability: '/abilities', ritual: '/rituals', rule: '/rules', item: '/items',
-      weapon: '/weapons', track: '/tracks', threat: '/threats'
+      weapon: '/weapons', class: '/classes', track: '/tracks', threat: '/threats'
     };
     return endpoints[type] || '/abilities';
   };
@@ -214,6 +221,13 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
       payload.paranormal = formData.paranormal === 'true';
       if (formData.space) payload.space = parseFloat(formData.space);
     }
+    if (type === 'class') {
+      payload.hp = { initial: formData.hpInitial, perLevel: formData.hpPerLevel };
+      payload.ep = { initial: formData.epInitial, perLevel: formData.epPerLevel };
+      payload.san = { initial: formData.sanInitial, perLevel: formData.sanPerLevel };
+      payload.trainedSkills = formData.trainedSkills;
+      payload.proficiencies = formData.proficiencies;
+    }
     if (type === 'track') {
       if (formData.class) payload.class = formData.class;
       payload.abilities = formData.abilities;
@@ -243,8 +257,6 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     return payload;
   };
 
-// Procura a tua função handleSubmit no EditModal.jsx e substitui por esta:
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (type === 'track' && formData.abilities.length !== 4) {
@@ -257,19 +269,12 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
 
     try {
       const payload = buildPayload();
-      
-      // Busca o token de autenticação (ajusta a chave 'token' se usares outro nome no teu login)
       const token = localStorage.getItem('token'); 
 
       await axios.patch(
         `${process.env.NEXT_PUBLIC_API_URL}${getEndpoint()}/${item._id}`,
         payload,
-        {
-          headers: {
-            // Anexa o token ao cabeçalho. O formato "Bearer" é o mais comum, mas ajusta se a tua API for diferente.
-            Authorization: `Bearer ${token}` 
-          }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setMessage({ type: 'success', text: 'Atualização concluída com sucesso!' });
@@ -285,7 +290,7 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     }
   };
 
-  const modalTitle = type === 'ability' ? 'Poder' : type === 'ritual' ? 'Ritual' : type === 'item' ? 'Item' : type === 'rule' ? 'Regra' : type === 'weapon' ? 'Arma' : type === 'track' ? 'Trilha' : type === 'threat' ? 'Ameaça' : 'Registo';
+  const modalTitle = type === 'ability' ? 'Poder' : type === 'ritual' ? 'Ritual' : type === 'item' ? 'Item' : type === 'class' ? 'Classe' : type === 'rule' ? 'Regra' : type === 'weapon' ? 'Arma' : type === 'track' ? 'Trilha' : type === 'threat' ? 'Ameaça' : 'Registo';
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -390,6 +395,37 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
                 <AeroSelect label="Tipo de Dano" options={['Corte', 'Impacto', 'Perfuração', 'Balístico', 'Fogo']} value={formData.damageType} onChange={(e) => handleChange({ target: { name: 'damageType', value: e.target.value } })} />
               </div>
               <FormField label="Notas" name="notes" value={formData.notes} onChange={handleChange} isTextarea />
+            </>
+          )}
+
+          {/* --- IF CLASS --- */}
+          {type === 'class' && (
+            <>
+              <h4 className={styles.sectionTitle}>Características Iniciais</h4>
+              
+              <div className={styles.grid3}>
+                <div className={styles.dynamicBlock} style={{ padding: '1rem' }}>
+                  <h5 style={{ marginTop: 0, color: '#004a99' }}>Pontos de Vida</h5>
+                  <FormField label="Inicial" name="hpInitial" value={formData.hpInitial} onChange={handleChange} placeholder="ex: 20+Vigor" />
+                  <FormField label="+ Por NEX" name="hpPerLevel" value={formData.hpPerLevel} onChange={handleChange} />
+                </div>
+                <div className={styles.dynamicBlock} style={{ padding: '1rem' }}>
+                  <h5 style={{ marginTop: 0, color: '#004a99' }}>Pontos de Esforço</h5>
+                  <FormField label="Inicial" name="epInitial" value={formData.epInitial} onChange={handleChange} placeholder="ex: 2+Pre" />
+                  <FormField label="+ Por NEX" name="epPerLevel" value={formData.epPerLevel} onChange={handleChange} />
+                </div>
+                <div className={styles.dynamicBlock} style={{ padding: '1rem' }}>
+                  <h5 style={{ marginTop: 0, color: '#004a99' }}>Sanidade</h5>
+                  <FormField label="Inicial" name="sanInitial" value={formData.sanInitial} onChange={handleChange} placeholder="ex: 12" />
+                  <FormField label="+ Por NEX" name="sanPerLevel" value={formData.sanPerLevel} onChange={handleChange} />
+                </div>
+              </div>
+
+              <h4 className={styles.sectionTitle}>Treino</h4>
+              <div className={styles.grid}>
+                <FormField label="Perícias Treinadas" name="trainedSkills" value={formData.trainedSkills} onChange={handleChange} isTextarea />
+                <FormField label="Proficiências" name="proficiencies" value={formData.proficiencies} onChange={handleChange} isTextarea />
+              </div>
             </>
           )}
 
