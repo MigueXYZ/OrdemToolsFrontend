@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
-import FormField from './FormField'; // Assumindo que este componente existe
+import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
 import styles from './AddAbilityForm.module.css';
 
@@ -32,6 +32,7 @@ export default function AddAbilityForm({ onSuccess }) {
     const { name, value } = e.target;
     setFormData((prev) => {
       const updated = { ...prev, [name]: value };
+      // Resetar campos de origem se a categoria mudar
       if (name === 'category' && value !== 'Poder de Origem') {
         updated.origin = '';
         updated.trainedSkills = '';
@@ -46,7 +47,6 @@ export default function AddAbilityForm({ onSuccess }) {
     setMessage(null);
 
     try {
-      // Configurar payload
       const payload = {
         ...formData,
         tags: formData.tags
@@ -64,14 +64,14 @@ export default function AddAbilityForm({ onSuccess }) {
           .filter((s) => s.length > 0);
       }
 
-      // Enviar para a API
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/abilities`,
         payload
       );
 
-      // Sucesso
       setMessage({ type: 'success', text: 'Poder paranormal adicionado ao banco de dados!' });
+      
+      // Limpar formulário após sucesso
       setFormData({
         name: '',
         description: '',
@@ -82,9 +82,9 @@ export default function AddAbilityForm({ onSuccess }) {
         tags: '',
         book: ''
       });
+      
       onSuccess?.();
     } catch (error) {
-      // Erro
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Falha na conexão: ${errorMsg}` });
     } finally {
@@ -94,10 +94,8 @@ export default function AddAbilityForm({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className={styles.aeroForm}>
-      {/* Cabeçalho do formulário com efeito de vidro polido */}
       <div className={styles.formHeader}>
         <h3 className={styles.formTitle}>Adicionar Novo Poder</h3>
-        <div className={styles.glossyReflect}></div>
       </div>
 
       <div className={styles.formContent}>
@@ -116,15 +114,16 @@ export default function AddAbilityForm({ onSuccess }) {
             onChange={handleChange}
             placeholder="ex: Telecinesia"
             required
-            className={styles.aeroInput}
           />
 
+          {/* CORREÇÃO AQUI: Passamos a prop name="category" explicitamente */}
           <AeroSelect
             label="Categoria *"
+            name="category"
             options={ABILITY_CATEGORIES}
             value={formData.category}
             onChange={handleChange}
-            placeholder="-- Selecionar categoria *"
+            placeholder="-- Selecionar categoria --"
             required
           />
         </div>
@@ -137,7 +136,6 @@ export default function AddAbilityForm({ onSuccess }) {
           placeholder="Descreva os efeitos paranormais..."
           isTextarea
           required
-          className={styles.aeroTextarea}
         />
 
         <FormField
@@ -147,7 +145,6 @@ export default function AddAbilityForm({ onSuccess }) {
           onChange={handleChange}
           placeholder="O que o personagem precisa? (ex: NEX 30%)"
           isTextarea
-          className={styles.aeroTextarea}
         />
 
         <div className={styles.grid}>
@@ -157,11 +154,9 @@ export default function AddAbilityForm({ onSuccess }) {
             value={formData.book}
             onChange={handleChange}
             placeholder="ex: Livro Básico - pág. 120"
-            className={styles.aeroInput}
           />
         </div>
 
-        {/* Campos dinâmicos para Poder de Origem */}
         {formData.category === 'Poder de Origem' && (
           <div className={`${styles.grid} ${styles.extraFields} ${styles.fadeIn}`}>
             <FormField
@@ -171,7 +166,6 @@ export default function AddAbilityForm({ onSuccess }) {
               onChange={handleChange}
               placeholder="ex: Acadêmico"
               required
-              className={styles.aeroInput}
             />
 
             <FormField
@@ -180,7 +174,6 @@ export default function AddAbilityForm({ onSuccess }) {
               value={formData.trainedSkills}
               onChange={handleChange}
               placeholder="Separadas por vírgula (ex: Ciências, Investigação)"
-              className={styles.aeroInput}
             />
           </div>
         )}
@@ -191,10 +184,8 @@ export default function AddAbilityForm({ onSuccess }) {
           value={formData.tags}
           onChange={handleChange}
           placeholder="ex: paranormal, combate, dano (separadas por vírgula)"
-          className={styles.aeroInput}
         />
 
-        {/* Botão estilo bolha/gelatina Aero */}
         <button type="submit" disabled={loading} className={styles.aeroButton}>
           {loading ? 'Adicionando...' : 'Adicionar Poder Paranormal'}
         </button>

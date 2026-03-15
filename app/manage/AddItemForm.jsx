@@ -11,7 +11,7 @@ export default function AddItemForm({ onSuccess }) {
     name: '',
     description: '',
     category: '',
-    paranormal: 'false', // Iniciamos como string para o Select
+    paranormal: 'false', 
     space: '1',
     tags: '',
     book: ''
@@ -32,7 +32,7 @@ export default function AddItemForm({ onSuccess }) {
     try {
       const payload = {
         ...formData,
-        paranormal: formData.paranormal === 'true', // Converte para booleano aqui
+        paranormal: formData.paranormal === 'true', 
         space: parseFloat(formData.space) || 0,
         tags: formData.tags
           .split(',')
@@ -79,11 +79,13 @@ export default function AddItemForm({ onSuccess }) {
         </div>
 
         <div className={styles.tripleGrid}>
+          {/* CORREÇÃO: Usando name="category" e o handleChange padrão */}
           <AeroSelect
             label="Categoria"
+            name="category"
             options={['0', '1', '2', '3', '4']}
             value={formData.category}
-            onChange={(val) => setFormData(p => ({...p, category: val.target.value}))}
+            onChange={handleChange}
             placeholder="--"
           />
           
@@ -95,14 +97,16 @@ export default function AddItemForm({ onSuccess }) {
             placeholder="1"
           />
 
+          {/* CORREÇÃO: Usando name="paranormal" e o handleChange padrão */}
           <AeroSelect
             label="Paranormal?"
+            name="paranormal"
             options={[
               { label: 'Sim', value: 'true' },
               { label: 'Não', value: 'false' }
             ]}
             value={formData.paranormal}
-            onChange={(val) => setFormData(p => ({...p, paranormal: val.target.value}))}
+            onChange={handleChange}
           />
         </div>
 

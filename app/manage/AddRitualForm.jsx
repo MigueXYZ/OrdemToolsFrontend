@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
-import AeroSelect from '../components/AeroSelect'; // Ajusta o caminho se necessário
+import AeroSelect from '../components/AeroSelect'; 
 import styles from './AddRitualForm.module.css';
 
 export default function AddRitualForm({ onSuccess }) {
@@ -73,7 +73,7 @@ export default function AddRitualForm({ onSuccess }) {
           </div>
         )}
 
-        <div className={styles.grid}>
+        <div className={styles.singleColumn}>
           <FormField
             label="Nome do Ritual *"
             name="name"
@@ -95,11 +95,13 @@ export default function AddRitualForm({ onSuccess }) {
         />
 
         <div className={styles.grid}>
+          {/* CORREÇÃO: Usando name="circle" e o handleChange padrão */}
           <AeroSelect
             label="Círculo"
+            name="circle"
             options={['1', '2', '3', '4']}
             value={formData.circle}
-            onChange={(val) => setFormData(p => ({...p, circle: val.target.value}))}
+            onChange={handleChange}
             placeholder="-- Escolher Círculo --"
           />
 

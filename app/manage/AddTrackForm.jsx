@@ -96,11 +96,13 @@ export default function AddTrackForm({ onSuccess }) {
             required
           />
 
+          {/* CORREÇÃO: Usando name="class" e o handleChange padrão */}
           <AeroSelect
             label="Classe Base *"
+            name="class"
             options={classes.map(cls => ({ label: cls.name, value: cls._id }))}
             value={formData.class}
-            onChange={(e) => setFormData(p => ({...p, class: e.target.value}))}
+            onChange={handleChange}
             placeholder="-- Selecionar Classe --"
             required
           />
@@ -127,7 +129,9 @@ export default function AddTrackForm({ onSuccess }) {
         </div>
 
         <div className={styles.abilitiesSection}>
-          <label className={styles.sectionLabel}>Poderes da Trilha (4 selecionados)</label>
+          <label className={styles.sectionLabel}>
+            Poderes da Trilha ({formData.abilities.length}/4 selecionados)
+          </label>
           
           <input
             type="text"
@@ -150,7 +154,6 @@ export default function AddTrackForm({ onSuccess }) {
                     <div className={styles.abilityHeader}>
                       <div className={styles.abilityInfo}>
                         <span className={styles.abilityName}>{ability.name}</span>
-                        {/* Adicionada a Categoria aqui */}
                         <span className={styles.abilityCategory}>{ability.category || 'Sem Categoria'}</span>
                       </div>
                       {formData.abilities.includes(ability._id) && <span className={styles.checkIcon}>✓</span>}

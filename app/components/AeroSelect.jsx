@@ -3,18 +3,18 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './AeroSelect.module.css';
 
-export default function AeroSelect({ label, options, value, onChange, placeholder, required }) {
+export default function AeroSelect({ label, options, value, onChange, placeholder, required, name }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
-  // Encontrar o label da opção selecionada para mostrar no botão
+  // Encontrar o label da opção selecionada
   const selectedOption = options.find(opt => 
     (typeof opt === 'object' ? opt.value : opt) === value
   );
   
   const displayValue = selectedOption 
     ? (typeof selectedOption === 'object' ? selectedOption.label : selectedOption)
-    : placeholder || '-- Selecionar categoria --';
+    : placeholder || '-- Selecionar --';
 
   // Fechar o menu se clicar fora
   useEffect(() => {
@@ -29,7 +29,8 @@ export default function AeroSelect({ label, options, value, onChange, placeholde
 
   const handleSelect = (option) => {
     const newValue = typeof option === 'object' ? option.value : option;
-    onChange({ target: { name: 'category', value: newValue } });
+    // Agora usamos a prop 'name' dinâmica ou o 'label' como fallback
+    onChange({ target: { name: name || label?.toLowerCase(), value: newValue } });
     setIsOpen(false);
   };
 
@@ -41,7 +42,6 @@ export default function AeroSelect({ label, options, value, onChange, placeholde
         </label>
       )}
       
-      {/* O "Botão" do Select - Efeito Vidro */}
       <div 
         className={`${styles.selectTrigger} ${isOpen ? styles.open : ''}`}
         onClick={() => setIsOpen(!isOpen)}
@@ -52,13 +52,12 @@ export default function AeroSelect({ label, options, value, onChange, placeholde
           {displayValue}
         </span>
         
-        {/* Chevron Aero Customizado (SVG Inline) */}
+        {/* Chevron que usa as cores do tema via CSS */}
         <svg className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`} width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M5 7.5L10 12.5L15 7.5" stroke="#004a99" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
 
-      {/* A Lista de Opções - Efeito Vidro Glassmorphism */}
       {isOpen && (
         <ul className={`${styles.optionsList} ${styles.fadeIn}`}>
           {options.map((option, index) => {

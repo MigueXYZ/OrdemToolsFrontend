@@ -38,10 +38,6 @@ export default function AddWeaponForm({ onSuccess }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name, value) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -50,7 +46,7 @@ export default function AddWeaponForm({ onSuccess }) {
     try {
       const payload = {
         ...formData,
-        space: parseInt(formData.space),
+        space: parseInt(formData.space) || 1,
         tags: formData.tags.split(',').map(t => t.trim()).filter(t => t.length > 0)
       };
 
@@ -66,7 +62,8 @@ export default function AddWeaponForm({ onSuccess }) {
       });
       onSuccess?.();
     } catch (error) {
-      setMessage({ type: 'error', text: `Erro balístico: ${error.response?.data?.message || error.message}` });
+      const errorMsg = error.response?.data?.message || error.message;
+      setMessage({ type: 'error', text: `Erro balístico: ${errorMsg}` });
     } finally {
       setLoading(false);
     }
@@ -97,9 +94,10 @@ export default function AddWeaponForm({ onSuccess }) {
 
           <AeroSelect
             label="Tipo de Dano *"
+            name="damageType"
             options={DAMAGE_TYPES}
             value={formData.damageType}
-            onChange={(e) => handleSelectChange('damageType', e.target.value)}
+            onChange={handleChange}
             placeholder="-- Selecionar --"
             required
           />
@@ -117,16 +115,18 @@ export default function AddWeaponForm({ onSuccess }) {
         <div className={styles.grid}>
           <AeroSelect
             label="Categoria *"
+            name="category"
             options={CATEGORIES}
             value={formData.category}
-            onChange={(e) => handleSelectChange('category', e.target.value)}
+            onChange={handleChange}
             required
           />
           <AeroSelect
             label="Proficiência *"
+            name="proficiency"
             options={PROFICIENCIES}
             value={formData.proficiency}
-            onChange={(e) => handleSelectChange('proficiency', e.target.value)}
+            onChange={handleChange}
             required
           />
         </div>
@@ -134,16 +134,18 @@ export default function AddWeaponForm({ onSuccess }) {
         <div className={styles.grid}>
           <AeroSelect
             label="Tipo *"
+            name="type"
             options={TYPES}
             value={formData.type}
-            onChange={(e) => handleSelectChange('type', e.target.value)}
+            onChange={handleChange}
             required
           />
           <AeroSelect
             label="Empunhadura *"
+            name="grip"
             options={GRIPS}
             value={formData.grip}
-            onChange={(e) => handleSelectChange('grip', e.target.value)}
+            onChange={handleChange}
             required
           />
         </div>
@@ -167,9 +169,10 @@ export default function AddWeaponForm({ onSuccess }) {
           />
           <AeroSelect
             label="Alcance"
+            name="range"
             options={RANGES}
             value={formData.range}
-            onChange={(e) => handleSelectChange('range', e.target.value)}
+            onChange={handleChange}
             placeholder="Nenhum"
           />
         </div>

@@ -80,11 +80,13 @@ export default function AddRuleForm({ onSuccess }) {
             required
           />
 
+          {/* CORREÇÃO: Usando name="section" e o handleChange padrão */}
           <AeroSelect
             label="Seção *"
+            name="section"
             options={RULE_SECTIONS}
             value={formData.section}
-            onChange={(val) => setFormData(p => ({...p, section: val.target.value}))}
+            onChange={handleChange}
             placeholder="-- Escolher Seção --"
             required
           />

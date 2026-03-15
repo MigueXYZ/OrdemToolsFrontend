@@ -9,7 +9,7 @@ import styles from './AddThreatForm.module.css';
 const TYPES = ['Criatura', 'Humano', 'Animal'];
 const SIZES = ['Minúsculo', 'Pequeno', 'Médio', 'Grande', 'Enorme', 'Colossal'];
 const ACTION_TYPES = ['Padrão', 'Movimento', 'Livre', 'Reação', 'Completa'];
-const BOOLEAN_OPTIONS = ['Não', 'Sim']; // Opções para o Enigma
+const BOOLEAN_OPTIONS = ['Não', 'Sim'];
 
 export default function AddThreatForm({ onSuccess }) {
   const [formData, setFormData] = useState({
@@ -58,7 +58,6 @@ export default function AddThreatForm({ onSuccess }) {
     }));
   };
 
-  // Nova função para tratar o dropdown do Enigma
   const handleEnigmaDropdown = (value) => {
     const hasEnigma = value === 'Sim';
     setFormData((prev) => ({
@@ -156,7 +155,6 @@ export default function AddThreatForm({ onSuccess }) {
           </div>
         )}
 
-        {/* --- DESCRIÇÃO --- */}
         <FormField 
           label="Descrição da Ameaça" 
           name="description" 
@@ -166,7 +164,6 @@ export default function AddThreatForm({ onSuccess }) {
           placeholder="Descrição narrativa da criatura, comportamento, aparência, etc." 
         />
 
-        {/* --- IDENTIFICAÇÃO --- */}
         <h4 className={styles.sectionTitle}>Identificação</h4>
         <div className={styles.grid3}>
           <FormField label="Nome *" name="name" value={formData.name} onChange={handleChange} required />
@@ -177,23 +174,24 @@ export default function AddThreatForm({ onSuccess }) {
         <div className={styles.grid}>
           <AeroSelect 
             label="Tipo *" 
+            name="type"
             options={TYPES} 
             value={formData.type} 
-            onChange={(e) => handleChange({target: {name: 'type', value: e.target.value}})} 
+            onChange={handleChange} 
             required 
             placeholder="-- Selecionar Tipo --"
           />
           <AeroSelect 
             label="Tamanho *" 
+            name="size"
             options={SIZES} 
             value={formData.size} 
-            onChange={(e) => handleChange({target: {name: 'size', value: e.target.value}})} 
+            onChange={handleChange} 
             required 
             placeholder="-- Selecionar Tamanho --"
           />
         </div>
 
-        {/* --- ESTATÍSTICAS DE COMBATE --- */}
         <h4 className={styles.sectionTitle}>Combate e Vidas</h4>
         <div className={styles.grid3}>
           <FormField label="Defesa *" name="defense" type="number" value={formData.defense} onChange={handleChange} required />
@@ -207,7 +205,6 @@ export default function AddThreatForm({ onSuccess }) {
           <FormField label="Vulnerabilidades" name="vulnerabilities" value={formData.vulnerabilities} onChange={handleChange} placeholder="ex: Energia, Fogo" />
         </div>
 
-        {/* --- SENTIDOS E RESISTÊNCIAS --- */}
         <h4 className={styles.sectionTitle}>Sentidos e Resistências</h4>
         <div className={styles.grid3}>
           <FormField label="Percepção" value={formData.senses.perception} onChange={(e) => handleNestedChange('senses', 'perception', e.target.value)} placeholder="ex: 3d20+15" />
@@ -220,7 +217,6 @@ export default function AddThreatForm({ onSuccess }) {
           <FormField label="Vontade" value={formData.savingThrows.will} onChange={(e) => handleNestedChange('savingThrows', 'will', e.target.value)} placeholder="ex: 3d20+15" />
         </div>
 
-        {/* --- ATRIBUTOS --- */}
         <h4 className={styles.sectionTitle}>Atributos</h4>
         <div className={styles.grid5}>
           <FormField label="AGI" name="agi" type="number" value={formData.attributes.agi} onChange={handleAttributeChange} />
@@ -230,7 +226,6 @@ export default function AddThreatForm({ onSuccess }) {
           <FormField label="VIG" name="vig" type="number" value={formData.attributes.vig} onChange={handleAttributeChange} />
         </div>
 
-        {/* --- PERÍCIAS --- */}
         <h4 className={styles.sectionTitle}>Perícias</h4>
         {formData.skills.map((skill, index) => (
           <div key={index} className={styles.dynamicBlock}>
@@ -243,11 +238,11 @@ export default function AddThreatForm({ onSuccess }) {
         ))}
         <button type="button" className={styles.addBtn} onClick={addSkillBlock}>+ Adicionar Perícia</button>
 
-        {/* --- ENIGMA DE MEDO (DROPDOWN) --- */}
         <h4 className={styles.sectionTitle}>Enigma de Medo</h4>
         <div className={styles.singleColumn}>
           <AeroSelect 
             label="Ameaça possui Enigma de Medo?" 
+            name="hasEnigma"
             options={BOOLEAN_OPTIONS} 
             value={formData.enigmaOfFear.hasEnigma ? 'Sim' : 'Não'} 
             onChange={(e) => handleEnigmaDropdown(e.target.value)} 
@@ -263,7 +258,6 @@ export default function AddThreatForm({ onSuccess }) {
           </div>
         )}
 
-        {/* --- HABILIDADES PASSIVAS --- */}
         <h4 className={styles.sectionTitle}>Habilidades Passivas</h4>
         {formData.passives.map((passive, index) => (
           <div key={index} className={styles.dynamicBlock}>
@@ -276,7 +270,6 @@ export default function AddThreatForm({ onSuccess }) {
         ))}
         <button type="button" className={styles.addBtn} onClick={addPassiveBlock}>+ Adicionar Passiva</button>
 
-        {/* --- AÇÕES --- */}
         <h4 className={styles.sectionTitle}>Ações</h4>
         {formData.actions.map((action, index) => (
           <div key={index} className={styles.dynamicBlock}>
@@ -285,6 +278,7 @@ export default function AddThreatForm({ onSuccess }) {
               <FormField label="Nome da Ação" value={action.name} onChange={(e) => handleActionChange(index, 'name', e.target.value)} />
               <AeroSelect 
                 label="Tipo de Ação" 
+                name={`actionType-${index}`}
                 options={ACTION_TYPES} 
                 value={action.actionType} 
                 onChange={(e) => handleActionChange(index, 'actionType', e.target.value)} 
