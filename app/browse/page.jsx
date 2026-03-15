@@ -9,21 +9,20 @@ import ThemeToggle from '../components/ThemeToggle';
 import styles from './page.module.css';
 
 const TABS = [
-  { id: 'abilities', label: 'Poderes', icon: '', endpoint: '/abilities' },
-  { id: 'rituals', label: 'Rituais', icon: '', endpoint: '/rituals' },
-  { id: 'items', label: 'Itens', icon: '', endpoint: '/items' },
-  { id: 'rules', label: 'Regras', icon: '', endpoint: '/rules' },
-  { id: 'classes', label: 'Classes', icon: '', endpoint: '/classes' },
-  { id: 'tracks', label: 'Trilhas', icon: '', endpoint: '/tracks' },
-  { id: 'weapons', label: 'Armas', icon: '', endpoint: '/weapons' },
-  { id: 'threats', label: 'Ameaças', icon: '', endpoint: '/threats' }
+  { id: 'abilities', label: 'Poderes', icon: '⚡', endpoint: '/abilities' },
+  { id: 'rituals', label: 'Rituais', icon: '✨', endpoint: '/rituals' },
+  { id: 'items', label: 'Itens', icon: '🧭', endpoint: '/items' },
+  { id: 'rules', label: 'Regras', icon: '📖', endpoint: '/rules' },
+  { id: 'classes', label: 'Classes', icon: '🛡️', endpoint: '/classes' },
+  { id: 'tracks', label: 'Trilhas', icon: '🛤️', endpoint: '/tracks' },
+  { id: 'weapons', label: 'Armas', icon: '🗡️', endpoint: '/weapons' },
+  { id: 'threats', label: 'Ameaças', icon: '💀', endpoint: '/threats' }
 ];
 
 function BrowsePageContent() {
   const searchParams = useSearchParams();
   const tabQuery = searchParams.get('tab');
 
-  // Inicializa a tab com o valor da URL (se for válido), senão usa 'abilities'
   const [activeTab, setActiveTab] = useState(() => {
     if (tabQuery && TABS.some(t => t.id === tabQuery)) {
       return tabQuery;
@@ -31,7 +30,6 @@ function BrowsePageContent() {
     return 'abilities';
   });
 
-  // Atualiza a tab se a URL mudar enquanto o componente já está montado
   useEffect(() => {
     if (tabQuery && TABS.some(t => t.id === tabQuery)) {
       setActiveTab(tabQuery);
@@ -122,82 +120,47 @@ function BrowsePageContent() {
     }
 
     if (activeTab === 'weapons') {
-      if (selectedCategory) {
-        filtered = filtered.filter(item => item.category === selectedCategory);
-      }
-      if (selectedWeaponType) {
-        filtered = filtered.filter(item => item.type === selectedWeaponType);
-      }
+      if (selectedCategory) filtered = filtered.filter(item => item.category === selectedCategory);
+      if (selectedWeaponType) filtered = filtered.filter(item => item.type === selectedWeaponType);
     }
 
     if (activeTab === 'threats') {
-      if (selectedThreatType) {
-        filtered = filtered.filter(item => item.type === selectedThreatType);
-      }
-      if (selectedElement) {
-        filtered = filtered.filter(item => (item.elements || []).includes(selectedElement));
-      }
-      if (selectedSize) {
-        filtered = filtered.filter(item => item.size === selectedSize);
-      }
+      if (selectedThreatType) filtered = filtered.filter(item => item.type === selectedThreatType);
+      if (selectedElement) filtered = filtered.filter(item => (item.elements || []).includes(selectedElement));
+      if (selectedSize) filtered = filtered.filter(item => item.size === selectedSize);
     }
 
     filtered.sort((a, b) => {
-      let aValue, bValue;
+      let aValue = sortBy === 'name' ? (a.name || a.title || '').toLowerCase() : new Date(a.createdAt || 0);
+      let bValue = sortBy === 'name' ? (b.name || b.title || '').toLowerCase() : new Date(b.createdAt || 0);
 
-      if (sortBy === 'name') {
-        aValue = (a.name || a.title || '').toLowerCase();
-        bValue = (b.name || b.title || '').toLowerCase();
-      } else if (sortBy === 'date') {
-        aValue = new Date(a.createdAt || 0);
-        bValue = new Date(b.createdAt || 0);
-      }
-
-      if (sortOrder === 'asc') {
-        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-      }
+      if (sortOrder === 'asc') return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     });
 
     setFilteredItems(filtered);
   }, [items, selectedTags, selectedBook, sortBy, sortOrder, activeTab, selectedCategory, selectedWeaponType, selectedThreatType, selectedElement, selectedSize]);
 
   const handleTagToggle = (tag) => {
-    setSelectedTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
   };
 
   const clearFilters = () => {
-    setSelectedTags([]);
-    setSelectedBook('');
-    setSelectedCategory('');
-    setSelectedWeaponType('');
-    setSelectedThreatType('');
-    setSelectedElement('');
-    setSelectedSize('');
-    setTagSearchQuery('');
+    setSelectedTags([]); setSelectedBook(''); setSelectedCategory(''); setSelectedWeaponType('');
+    setSelectedThreatType(''); setSelectedElement(''); setSelectedSize(''); setTagSearchQuery('');
   };
 
   const getFilteredTags = useCallback(() => {
-    if (!tagSearchQuery.trim()) {
-      return availableTags;
-    }
+    if (!tagSearchQuery.trim()) return availableTags;
     const query = tagSearchQuery.toLowerCase();
     return availableTags.filter(tag => tag.toLowerCase().includes(query));
   }, [availableTags, tagSearchQuery]);
 
   const openDetailModal = (item) => {
     setSelectedItem(item);
-    setModalType(activeTab === 'abilities' ? 'ability' :
-                 activeTab === 'rituals' ? 'ritual' :
-                 activeTab === 'items' ? 'item' :
-                 activeTab === 'classes' ? 'class' :
-                 activeTab === 'tracks' ? 'track' :
-                 activeTab === 'weapons' ? 'weapon' : 
+    setModalType(activeTab === 'abilities' ? 'ability' : activeTab === 'rituals' ? 'ritual' :
+                 activeTab === 'items' ? 'item' : activeTab === 'classes' ? 'class' :
+                 activeTab === 'tracks' ? 'track' : activeTab === 'weapons' ? 'weapon' : 
                  activeTab === 'threats' ? 'threat' : 'rule');
   };
 
@@ -214,48 +177,20 @@ function BrowsePageContent() {
       let isParanormalGroup = false;
 
       switch (activeTab) {
-        case 'abilities':
-          groupKey = item.origin ? 'Com Origem' : 'Sem Origem';
-          break;
-        case 'rituals':
-          groupKey = item.circle ? `Círculo ${item.circle}` : 'Sem Círculo';
-          break;
+        case 'abilities': groupKey = item.origin ? 'Com Origem' : 'Sem Origem'; break;
+        case 'rituals': groupKey = item.circle ? `Círculo ${item.circle}` : 'Sem Círculo'; break;
         case 'items':
           groupKey = item.paranormal ? 'Itens Paranormais' : 'Itens Comuns';
           isParanormalGroup = item.paranormal === true;
           break;
-        case 'rules':
-          groupKey = item.section || 'Sem Secção';
-          break;
-        case 'classes':
-          groupKey = 'Classes';
-          break;
-        case 'tracks':
-          if (item.class) {
-            if (typeof item.class === 'object') {
-              groupKey = item.class.name || item.class.title || 'Sem Classe';
-            } else {
-              groupKey = item.class;
-            }
-          } else {
-            groupKey = 'Sem Classe';
-          }
-          break;
-        case 'weapons':
-          groupKey = item.type || 'Sem Tipo';
-          break;
-        case 'threats':
-          groupKey = item.type || 'Sem Tipo';
-          break;
+        case 'rules': groupKey = item.section || 'Sem Secção'; break;
+        case 'classes': groupKey = 'Classes'; break;
+        case 'tracks': groupKey = item.class ? (typeof item.class === 'object' ? item.class.name || item.class.title || 'Sem Classe' : item.class) : 'Sem Classe'; break;
+        case 'weapons': groupKey = item.type || 'Sem Tipo'; break;
+        case 'threats': groupKey = item.type || 'Sem Tipo'; break;
       }
 
-      if (!groups[groupKey]) {
-        groups[groupKey] = {
-          title: groupKey,
-          items: [],
-          isParanormal: isParanormalGroup
-        };
-      }
+      if (!groups[groupKey]) groups[groupKey] = { title: groupKey, items: [], isParanormal: isParanormalGroup };
       groups[groupKey].items.push(item);
     });
 
@@ -270,7 +205,7 @@ function BrowsePageContent() {
     return (
       <div key={title} className={`${styles.categorySection} ${isParanormal ? styles.paranormalSection : ''}`}>
         <h3 className={`${styles.categoryTitle} ${isParanormal ? styles.paranormalTitle : ''}`}>
-          {title} ({itemsToRender.length})
+          {title} <span className={styles.itemCount}>({itemsToRender.length})</span>
         </h3>
         <div className={styles.tableWrapper}>
           <table className={`${styles.dataTable} ${isParanormal ? styles.paranormalTable : ''}`}>
@@ -289,52 +224,23 @@ function BrowsePageContent() {
             </thead>
             <tbody>
               {itemsToRender.map((item) => (
-                <tr
-                  key={item._id}
-                  className={`${styles.tableRow} ${isParanormal ? styles.paranormalRow : ''}`}
-                  onClick={() => openDetailModal(item)}
-                >
-                  <td className={styles.nameCell}>
-                    {item.name || item.title}
-                  </td>
-                  {activeTab === 'abilities' && (
-                    <td>{item.origin || '-'}</td>
-                  )}
-                  {activeTab === 'rituals' && (
-                    <td>{item.duration || '-'}</td>
-                  )}
-                  {activeTab === 'rules' && (
-                    <td>{item.section || '-'}</td>
-                  )}
-                  {activeTab === 'items' && (
-                    <td>{item.category || '-'}</td>
-                  )}
-                  {activeTab === 'weapons' && (
-                    <>
-                      <td>{item.category || '-'}</td>
-                      <td>{item.type || '-'}</td>
-                    </>
-                  )}
-                  {activeTab === 'threats' && (
-                    <>
-                      <td>{item.vd || '-'}</td>
-                      <td>{item.size || '-'}</td>
-                      <td>{item.elements && item.elements.length > 0 ? item.elements.join(', ') : 'Nenhum'}</td>
-                    </>
-                  )}
-                  <td>{item.book || item.source || '-'}</td>
+                <tr key={item._id} className={`${styles.tableRow} ${isParanormal ? styles.paranormalRow : ''}`} onClick={() => openDetailModal(item)}>
+                  <td className={styles.nameCell}>{item.name || item.title}</td>
+                  {activeTab === 'abilities' && <td>{item.origin || '-'}</td>}
+                  {activeTab === 'rituals' && <td>{item.duration || '-'}</td>}
+                  {activeTab === 'rules' && <td>{item.section || '-'}</td>}
+                  {activeTab === 'items' && <td>{item.category || '-'}</td>}
+                  {activeTab === 'weapons' && <><td>{item.category || '-'}</td><td>{item.type || '-'}</td></>}
+                  {activeTab === 'threats' && <>
+                    <td><span className={styles.vdBadge}>{item.vd || '-'}</span></td>
+                    <td>{item.size || '-'}</td>
+                    <td>{item.elements && item.elements.length > 0 ? item.elements.join(', ') : 'Nenhum'}</td>
+                  </>}
+                  <td className={styles.bookCell}>{item.book || item.source || '-'}</td>
                   <td>
                     <div className={styles.tagsCell}>
-                      {(item.tags || []).slice(0, 3).map(tag => (
-                        <span key={tag} className={styles.tag}>
-                          {tag}
-                        </span>
-                      ))}
-                      {(item.tags || []).length > 3 && (
-                        <span className={styles.moreTags}>
-                          +{(item.tags || []).length - 3}
-                        </span>
-                      )}
+                      {(item.tags || []).slice(0, 3).map(tag => <span key={tag} className={styles.tag}>{tag}</span>)}
+                      {(item.tags || []).length > 3 && <span className={styles.moreTags}>+{(item.tags || []).length - 3}</span>}
                     </div>
                   </td>
                 </tr>
@@ -351,24 +257,18 @@ function BrowsePageContent() {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.headerTop}>
-            <Link href="/" className={styles.backLink}>
-              &larr; Voltar à Pesquisa
-            </Link>
+            <Link href="/" className={styles.backLink}>&larr; Voltar à Página Principal</Link>
             <ThemeToggle />
           </div>
-          <h1 className={styles.title}>Navegar Banco de Dados</h1>
-          <p className={styles.subtitle}>Visualize todas as entradas organizadas na tabela</p>
+          <h1 className={styles.title}>Arquivo Paranormal</h1>
+          <p className={styles.subtitle}>Aceda à base de dados completa da Ordem.</p>
         </div>
       </header>
 
       <div className={styles.container}>
         <div className={styles.tabNavigation}>
           {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
+            <button key={tab.id} className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`} onClick={() => setActiveTab(tab.id)}>
               {tab.icon && <span className={styles.tabIcon}>{tab.icon}</span>}
               {tab.label}
             </button>
@@ -380,167 +280,86 @@ function BrowsePageContent() {
             <div className={styles.filterSection}>
               <div className={styles.filterHeader} onClick={() => setShowTags(!showTags)}>
                 <h3>Filtrar por Tags</h3>
-                <span className={`${styles.expandIcon} ${showTags ? styles.expanded : ''}`}>
-                  v
-                </span>
+                <span className={`${styles.expandIcon} ${showTags ? styles.expanded : ''}`}>▼</span>
               </div>
-              <input
-                type="text"
-                placeholder="Pesquisar tags..."
-                value={tagSearchQuery}
-                onChange={(e) => setTagSearchQuery(e.target.value)}
-                className={styles.tagSearchInput}
-              />
               {showTags && (
-                <div className={styles.tagFilters}>
-                  {getFilteredTags().length > 0 ? (
-                    getFilteredTags().map(tag => (
-                      <button
-                        key={tag}
-                        className={`${styles.tagButton} ${selectedTags.includes(tag) ? styles.tagSelected : ''}`}
-                        onClick={() => handleTagToggle(tag)}
-                      >
-                        {tag}
-                      </button>
-                    ))
-                  ) : (
-                    <div className={styles.noTagsMessage}>Nenhuma tag encontrada</div>
-                  )}
-                </div>
+                <>
+                  <input type="text" placeholder="🔍 Pesquisar tags..." value={tagSearchQuery} onChange={(e) => setTagSearchQuery(e.target.value)} className={styles.tagSearchInput} />
+                  <div className={styles.tagFilters}>
+                    {getFilteredTags().length > 0 ? (
+                      getFilteredTags().map(tag => (
+                        <button key={tag} className={`${styles.tagButton} ${selectedTags.includes(tag) ? styles.tagSelected : ''}`} onClick={() => handleTagToggle(tag)}>
+                          {tag}
+                        </button>
+                      ))
+                    ) : (<div className={styles.noTagsMessage}>Nenhuma tag encontrada</div>)}
+                  </div>
+                </>
               )}
             </div>
           )}
 
           <div className={styles.filterSection}>
-            <div className={styles.filterHeader}>
-              <h3>Filtrar por Livro</h3>
-            </div>
-            <select
-              value={selectedBook}
-              onChange={(e) => setSelectedBook(e.target.value)}
-              className={styles.bookSelect}
-            >
+            <div className={styles.filterHeader}><h3>Filtrar por Livro</h3></div>
+            <select value={selectedBook} onChange={(e) => setSelectedBook(e.target.value)} className={styles.aeroSelect}>
               <option value="">Todos os livros</option>
-              {availableBooks.map(book => (
-                <option key={book} value={book}>{book}</option>
-              ))}
+              {availableBooks.map(book => <option key={book} value={book}>{book}</option>)}
             </select>
           </div>
 
           {activeTab === 'weapons' && (
             <>
               <div className={styles.filterSection}>
-                <div className={styles.filterHeader}>
-                  <h3>Filtrar por Categoria</h3>
-                </div>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className={styles.bookSelect}
-                >
+                <div className={styles.filterHeader}><h3>Filtrar por Categoria</h3></div>
+                <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className={styles.aeroSelect}>
                   <option value="">Todas as categorias</option>
-                  {availableCategories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
+                  {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
               </div>
-
               <div className={styles.filterSection}>
-                <div className={styles.filterHeader}>
-                  <h3>Filtrar por Tipo</h3>
-                </div>
-                <select
-                  value={selectedWeaponType}
-                  onChange={(e) => setSelectedWeaponType(e.target.value)}
-                  className={styles.bookSelect}
-                >
+                <div className={styles.filterHeader}><h3>Filtrar por Tipo</h3></div>
+                <select value={selectedWeaponType} onChange={(e) => setSelectedWeaponType(e.target.value)} className={styles.aeroSelect}>
                   <option value="">Todos os tipos</option>
-                  {availableWeaponTypes.map(t => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
+                  {availableWeaponTypes.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
             </>
           )}
+
           {activeTab === 'threats' && (
             <>
               <div className={styles.filterSection}>
-                <div className={styles.filterHeader}>
-                  <h3>Filtrar por Tipo</h3>
-                </div>
-                <select
-                  value={selectedThreatType}
-                  onChange={(e) => setSelectedThreatType(e.target.value)}
-                  className={styles.bookSelect}
-                >
+                <div className={styles.filterHeader}><h3>Filtrar por Tipo</h3></div>
+                <select value={selectedThreatType} onChange={(e) => setSelectedThreatType(e.target.value)} className={styles.aeroSelect}>
                   <option value="">Todos os tipos</option>
-                  {availableThreatTypes.map(t => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
+                  {availableThreatTypes.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
-
               <div className={styles.filterSection}>
-                <div className={styles.filterHeader}>
-                  <h3>Filtrar por Elemento</h3>
-                </div>
-                <select
-                  value={selectedElement}
-                  onChange={(e) => setSelectedElement(e.target.value)}
-                  className={styles.bookSelect}
-                >
+                <div className={styles.filterHeader}><h3>Filtrar por Elemento</h3></div>
+                <select value={selectedElement} onChange={(e) => setSelectedElement(e.target.value)} className={styles.aeroSelect}>
                   <option value="">Todos os elementos</option>
-                  {availableElements.map(e => (
-                    <option key={e} value={e}>{e}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className={styles.filterSection}>
-                <div className={styles.filterHeader}>
-                  <h3>Filtrar por Tamanho</h3>
-                </div>
-                <select
-                  value={selectedSize}
-                  onChange={(e) => setSelectedSize(e.target.value)}
-                  className={styles.bookSelect}
-                >
-                  <option value="">Todos os tamanhos</option>
-                  {availableSizes.map(s => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
+                  {availableElements.map(e => <option key={e} value={e}>{e}</option>)}
                 </select>
               </div>
             </>
           )}
 
           <div className={styles.filterSection}>
-            <div className={styles.filterHeader}>
-              <h3>Ordenar por</h3>
-            </div>
+            <div className={styles.filterHeader}><h3>Ordenar</h3></div>
             <div className={styles.sortControls}>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className={styles.sortSelect}
-              >
-                <option value="name">Nome</option>
-                <option value="date">Data de adição</option>
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={styles.aeroSelect}>
+                <option value="name">Nome (A-Z)</option>
+                <option value="date">Adicionado a</option>
               </select>
-              <button
-                className={styles.sortOrderButton}
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                title={`Ordenar ${sortOrder === 'asc' ? 'decrescente' : 'crescente'}`}
-              >
-                {sortOrder === 'asc' ? '^' : 'v'}
+              <button className={styles.sortOrderButton} onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} title="Inverter ordem">
+                {sortOrder === 'asc' ? '⬇️' : '⬆️'}
               </button>
             </div>
           </div>
 
           {(selectedTags.length > 0 || selectedBook || selectedCategory || selectedWeaponType || selectedThreatType || selectedElement || selectedSize) && (
-            <button className={styles.clearFiltersButton} onClick={clearFilters}>
-              Limpar Filtros
-            </button>
+            <button className={styles.clearFiltersButton} onClick={clearFilters}>Limpar Filtros</button>
           )}
         </div>
 
@@ -548,37 +367,30 @@ function BrowsePageContent() {
           {loading ? (
             <div className={styles.loadingBox}>
               <div className={styles.spinner}></div>
-              <p>A carregar {activeTabData.label.toLowerCase()}...</p>
+              <p>A sincronizar dados da Ordem...</p>
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className={`${styles.emptyState} aero-glass`}>
-              <p>Nenhum {activeTabData.label.toLowerCase()} encontrado.</p>
+            <div className={styles.emptyState}>
+              <p>Nenhum registo encontrado com estes parâmetros.</p>
             </div>
           ) : (
             <div className={styles.tablesContainer}>
-              {groupedItems.map(group => 
-                renderTable(group.title, group.items, group.isParanormal)
-              )}
+              {groupedItems.map(group => renderTable(group.title, group.items, group.isParanormal))}
             </div>
           )}
         </div>
       </div>
 
       {selectedItem && (
-        <DetailModal
-          item={selectedItem}
-          type={modalType}
-          onClose={closeDetailModal}
-        />
+        <DetailModal item={selectedItem} type={modalType} onClose={closeDetailModal} onUpdate={fetchData} />
       )}
     </div>
   );
 }
 
-// O componente principal precisa de exportar um Suspense devido ao uso do useSearchParams
 export default function BrowsePage() {
   return (
-    <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>A descodificar ficheiros da Ordem...</div>}>
+    <Suspense fallback={<div className={styles.loadingBox}><div className={styles.spinner}></div><p>A iniciar terminal...</p></div>}>
       <BrowsePageContent />
     </Suspense>
   );
