@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import DetailModal from '../components/DetailModal';
@@ -19,7 +20,24 @@ const TABS = [
 ];
 
 function BrowsePageContent() {
-  const [activeTab, setActiveTab] = useState('abilities');
+  const searchParams = useSearchParams();
+  const tabQuery = searchParams.get('tab');
+
+  // Inicializa a tab com o valor da URL (se for válido), senão usa 'abilities'
+  const [activeTab, setActiveTab] = useState(() => {
+    if (tabQuery && TABS.some(t => t.id === tabQuery)) {
+      return tabQuery;
+    }
+    return 'abilities';
+  });
+
+  // Atualiza a tab se a URL mudar enquanto o componente já está montado
+  useEffect(() => {
+    if (tabQuery && TABS.some(t => t.id === tabQuery)) {
+      setActiveTab(tabQuery);
+    }
+  }, [tabQuery]);
+
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
@@ -42,7 +60,6 @@ function BrowsePageContent() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalType, setModalType] = useState(null);
   
-  // Apenas a visibilidade das tags precisa de ser controlada agora
   const [showTags, setShowTags] = useState(true);
   const [tagSearchQuery, setTagSearchQuery] = useState('');
 
@@ -54,7 +71,7 @@ function BrowsePageContent() {
 
   useEffect(() => {
     applyFilters();
-  }, [items, selectedTags, selectedBook, selectedCategory, selectedWeaponType, sortBy, sortOrder, activeTab]);
+  }, [items, selectedTags, selectedBook, selectedCategory, selectedWeaponType, sortBy, sortOrder, activeTab, selectedThreatType, selectedElement, selectedSize]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -73,7 +90,6 @@ function BrowsePageContent() {
         setAvailableCategories(metaResponse.data.categories || []);
         setAvailableWeaponTypes(metaResponse.data.types || []);
       } else if (activeTab === 'threats') {
-        // Carregar metadados das ameaças
         setAvailableThreatTypes(metaResponse.data.types || []);
         setAvailableElements(metaResponse.data.elements || []);
         setAvailableSizes(metaResponse.data.sizes || []);
@@ -145,7 +161,7 @@ function BrowsePageContent() {
     });
 
     setFilteredItems(filtered);
-  }, [items, selectedTags, selectedBook, sortBy, sortOrder, activeTab, selectedCategory, selectedWeaponType]);
+  }, [items, selectedTags, selectedBook, sortBy, sortOrder, activeTab, selectedCategory, selectedWeaponType, selectedThreatType, selectedElement, selectedSize]);
 
   const handleTagToggle = (tag) => {
     setSelectedTags(prev =>
@@ -155,7 +171,7 @@ function BrowsePageContent() {
     );
   };
 
-const clearFilters = () => {
+  const clearFilters = () => {
     setSelectedTags([]);
     setSelectedBook('');
     setSelectedCategory('');
@@ -190,8 +206,6 @@ const clearFilters = () => {
     setModalType(null);
   };
 
-  // Lógica de agrupamento dinâmico
-// Lógica de agrupamento dinâmico
   const getGroupedItems = () => {
     const groups = {};
 
@@ -217,7 +231,6 @@ const clearFilters = () => {
           groupKey = 'Classes';
           break;
         case 'tracks':
-          // Correção: Se a classe for um objeto populado, sacamos o nome. Se não, usamos como string.
           if (item.class) {
             if (typeof item.class === 'object') {
               groupKey = item.class.name || item.class.title || 'Sem Classe';
@@ -398,7 +411,6 @@ const clearFilters = () => {
             </div>
           )}
 
-          {/* Filtros agora não possuem o estado de "esconder" */}
           <div className={styles.filterSection}>
             <div className={styles.filterHeader}>
               <h3>Filtrar por Livro</h3>
@@ -525,7 +537,7 @@ const clearFilters = () => {
             </div>
           </div>
 
-          {(selectedTags.length > 0 || selectedBook || selectedCategory || selectedWeaponType) && (
+          {(selectedTags.length > 0 || selectedBook || selectedCategory || selectedWeaponType || selectedThreatType || selectedElement || selectedSize) && (
             <button className={styles.clearFiltersButton} onClick={clearFilters}>
               Limpar Filtros
             </button>
@@ -563,8 +575,11 @@ const clearFilters = () => {
   );
 }
 
+// O componente principal precisa de exportar um Suspense devido ao uso do useSearchParams
 export default function BrowsePage() {
   return (
-    <BrowsePageContent />
+    <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>A descodificar ficheiros da Ordem...</div>}>
+      <BrowsePageContent />
+    </Suspense>
   );
 }

@@ -1,8 +1,13 @@
 // app/layout.jsx
 import { Special_Elite } from 'next/font/google';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './lib/ThemeContext'; // Ou o caminho correto do teu ThemeContext
-import "./styles/globals.css"; // Teus estilos
+import { ThemeProvider } from './lib/ThemeContext'; 
+import "./styles/globals.css"; 
+
+export const metadata = {
+  title: 'Ordem Tools',
+  description: 'Arquivo confidencial da Ordem Paranormal.',
+};
 
 const specialElite = Special_Elite({
   weight: '400',
