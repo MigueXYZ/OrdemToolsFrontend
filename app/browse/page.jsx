@@ -6,6 +6,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import DetailModal from '../components/DetailModal';
 import ThemeToggle from '../components/ThemeToggle';
+import SearchBar from '../components/SearchBar';
 import styles from './page.module.css';
 
 const TABS = [
@@ -22,6 +23,8 @@ const TABS = [
 function BrowsePageContent() {
   const searchParams = useSearchParams();
   const tabQuery = searchParams.get('tab');
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [activeTab, setActiveTab] = useState(() => {
     if (tabQuery && TABS.some(t => t.id === tabQuery)) {
@@ -67,9 +70,22 @@ function BrowsePageContent() {
     fetchData();
   }, [activeTab]);
 
-  useEffect(() => {
+useEffect(() => {
     applyFilters();
-  }, [items, selectedTags, selectedBook, selectedCategory, selectedWeaponType, sortBy, sortOrder, activeTab, selectedThreatType, selectedElement, selectedSize]);
+  }, [
+    items, 
+    searchQuery,
+    selectedTags, 
+    selectedBook, 
+    selectedCategory, 
+    selectedWeaponType, 
+    sortBy, 
+    sortOrder, 
+    activeTab, 
+    selectedThreatType, 
+    selectedElement, 
+    selectedSize
+  ]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -108,6 +124,16 @@ function BrowsePageContent() {
   const applyFilters = useCallback(() => {
     let filtered = [...items];
 
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(item => {
+        const name = (item.name || item.title || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        return name.includes(q) || desc.includes(q);
+      });
+    }
+
     if (selectedTags.length > 0) {
       filtered = filtered.filter(item => {
         const itemTags = item.tags || [];
@@ -139,7 +165,7 @@ function BrowsePageContent() {
     });
 
     setFilteredItems(filtered);
-  }, [items, selectedTags, selectedBook, sortBy, sortOrder, activeTab, selectedCategory, selectedWeaponType, selectedThreatType, selectedElement, selectedSize]);
+  },[items, searchQuery, selectedTags, selectedBook, activeTab, selectedCategory, selectedWeaponType, selectedThreatType, selectedElement, selectedSize, sortBy, sortOrder]);
 
   const handleTagToggle = (tag) => {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
@@ -274,7 +300,12 @@ function BrowsePageContent() {
             </button>
           ))}
         </div>
-
+        <div className={styles.searchWrapper}>
+          <SearchBar 
+            isRealTime={true} 
+            onQueryChange={setSearchQuery} 
+          />
+        </div>
         <div className={styles.filters}>
 {activeTab !== 'classes' && activeTab !== 'tracks' && (
             <div className={styles.filterSection}>
