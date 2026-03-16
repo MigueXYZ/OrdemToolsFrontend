@@ -2,14 +2,16 @@
 
 import { useState, useContext } from 'react';
 import axios from 'axios';
-import { AuthContext } from '../context/AuthContext'; // Ajusta o caminho se necessário
+import { useRouter } from 'next/navigation'; // Adicionado
+import { AuthContext } from '../context/AuthContext';
 import EditModal from './EditModal';
 import styles from './DetailModal.module.css';
 
 export default function DetailModal({ item, type, onClose, onUpdate }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { user } = useContext(AuthContext); // Acedemos ao utilizador logado
+  const { user } = useContext(AuthContext);
+  const router = useRouter(); // Instanciado o router
 
   if (!item) return null;
 
@@ -26,23 +28,35 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
   const config = typeConfig[type] || typeConfig.ability;
 
-  const handleDelete = async () => {
-    if (!window.confirm(`Tens a certeza que queres eliminar "${item.name || item.title}"? Esta ação é permanente.`)) {
-      return;
+  // --- Função Útil de Navegação ---
+  // Fecha o modal atual e navega para a página de pesquisa com o filtro correto
+  const navigateToSearch = (targetTab, searchQuery, classId = null) => {
+    onClose();
+    let url = `/browse?tab=${targetTab}`;
+
+    // Se estivermos a ir para trilhas, passamos o ID da classe para o filtro ser exato
+    if (classId) {
+      url += `&classId=${classId}`;
+    }else{
+      url +=`&search=${encodeURIComponent(searchQuery)}`;
     }
+
+    router.push(url);
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Tens a certeza que queres eliminar "${item.name || item.title}"? Esta ação é permanente.`)) return;
 
     setIsDeleting(true);
     try {
       await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}${config.endpoint}/${item._id}`,
-        {
-          headers: { Authorization: `Bearer ${user.token}` }
-        }
+        { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      
+
       alert('Eliminado com sucesso.');
-      onUpdate?.(); // Recarrega a lista
-      onClose();   // Fecha o modal
+      onUpdate?.();
+      onClose();
     } catch (error) {
       console.error('Erro ao eliminar:', error);
       alert('Erro ao eliminar o registo. Verifica as permissões.');
@@ -61,6 +75,34 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
     );
   };
 
+  const extractTrackFromAbility = (requirements) => {
+    if (!requirements) return null;
+
+    // 1. Procura o padrão "Trilha de [Texto]"
+    const match = requirements.match(/Trilha de ([a-zA-ZÀ-ÿ\s]+)/i);
+    if (!match) return null;
+
+    let trackName = match[1].trim();
+
+    // 2. Se o nome capturado for muito longo ou contiver vírgulas, cortamos na vírgula
+    // (Ex: "Trilha de Especialista Atirador, NEX 40%" -> "Especialista Atirador")
+    trackName = trackName.split(',')[0].trim();
+
+    // 3. Lista de classes para "limpar" do nome da trilha
+    const classes = ['Combatente', 'Especialista', 'Ocultista'];
+
+    // Remove a classe do início da string se ela lá estiver
+    // Ex: "Combatente Operações Especiais" -> "Operações Especiais"
+    classes.forEach(className => {
+      const regex = new RegExp(`^${className}\\s+`, 'i');
+      trackName = trackName.replace(regex, '');
+    });
+
+    return trackName;
+  };
+
+  const possibleTrackName = type === 'ability' ? extractTrackFromAbility(item.requirements) : null;
+
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -70,31 +112,38 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
             {config.label}
           </div>
           <div className={styles.headerActions}>
-              {user && (
-                <>
-                  <button 
-                    className={styles.editButton}
-                    onClick={() => setShowEditModal(true)}
-                    title="Editar"
-                  >
-                    ✏️
-                  </button>
-                  <button 
-                    className={styles.deleteButton}
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    title="Eliminar"
-                  >
-                    {isDeleting ? '...' : '🗑️'}
-                  </button>
-                </>
-              )}
+            {user && (
+              <>
+                <button className={styles.editButton} onClick={() => setShowEditModal(true)} title="Editar">✏️</button>
+                <button className={styles.deleteButton} onClick={handleDelete} disabled={isDeleting} title="Eliminar">
+                  {isDeleting ? '...' : '🗑️'}
+                </button>
+              </>
+            )}
             <button className={styles.closeButton} onClick={onClose}>×</button>
           </div>
         </div>
 
         <div className={styles.content}>
           <h2 className={styles.title}>{item.name || item.title}</h2>
+
+          {/* === BOTÕES GLOBAIS DE INTERLIGAÇÃO (DEPENDENDO DO TIPO) === */}
+          {type === 'class' && (
+            <button
+              className={styles.aeroLinkButton}
+              onClick={() => navigateToSearch('tracks', item.name, item._id)}
+            >
+              🛤️ Ver Trilhas de {item.name}
+            </button>
+          )}
+          {type === 'ability' && possibleTrackName && (
+            <button
+              className={styles.aeroLinkButton}
+              onClick={() => navigateToSearch('tracks', possibleTrackName)}
+            >
+              🛤️ Ver a Trilha: {possibleTrackName}
+            </button>
+          )}
 
           {renderField('Descrição', item.description || item.content)}
 
@@ -148,17 +197,32 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
           {type === 'track' && (
             <>
               <div className={styles.grid2}>
-                {renderField('Classe', item.class?.name)}
+                <div className={styles.field}>
+                  <strong className={styles.fieldLabel}>Classe Base</strong>
+                  <button
+                    className={styles.inlineLink}
+                    onClick={() => navigateToSearch('classes', item.class?.name || '')}
+                  >
+                    ⚔️ {item.class?.name || 'Desconhecida'}
+                  </button>
+                </div>
               </div>
+
               {item.abilities && item.abilities.length > 0 && (
                 <div className={styles.field}>
                   <strong className={styles.fieldLabel}>Poderes da Trilha</strong>
                   <div className={styles.fieldValue}>
-                    <ul className={styles.abilitiesList}>
+                    <div className={styles.aeroGridLinks}>
                       {item.abilities.map((ability) => (
-                        <li key={ability._id}>{ability.name}</li>
+                        <button
+                          key={ability._id || ability}
+                          className={styles.abilityTag}
+                          onClick={() => navigateToSearch('abilities', ability.name || '')}
+                        >
+                          ⚡ {ability.name || 'Poder Desconhecido'}
+                        </button>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </div>
               )}
@@ -198,7 +262,7 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                   {renderField('Defesa', item.defense)}
                   {renderField('PV', `${item.hp?.total || 0} (${item.hp?.bloodied || 0} machucado)`)}
                 </div>
-                
+
                 {item.senses && (item.senses.perception || item.senses.initiative) && (
                   <div className={styles.inlineInfo}>
                     <strong>Sentidos:</strong> {[
@@ -208,7 +272,7 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                     ].filter(Boolean).join(' | ')}
                   </div>
                 )}
-                
+
                 {item.savingThrows && (item.savingThrows.fortitude || item.savingThrows.reflexes || item.savingThrows.will) && (
                   <div className={styles.inlineInfo}>
                     <strong>Testes de Resistência:</strong> {[
@@ -289,9 +353,9 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
       </div>
 
       {showEditModal && (
-        <EditModal 
-          item={item} 
-          type={type} 
+        <EditModal
+          item={item}
+          type={type}
           onClose={() => setShowEditModal(false)}
           onSuccess={() => {
             setShowEditModal(false);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import DetailModal from '../components/DetailModal';
@@ -22,10 +22,14 @@ const TABS = [
 
 function BrowsePageContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Parâmetros da URL para navegação interna
   const tabQuery = searchParams.get('tab');
+  const searchQueryParam = searchParams.get('search');
+  const classIdParam = searchParams.get('classId');
 
   const [searchQuery, setSearchQuery] = useState('');
-
   const [activeTab, setActiveTab] = useState(() => {
     if (tabQuery && TABS.some(t => t.id === tabQuery)) {
       return tabQuery;
@@ -33,12 +37,7 @@ function BrowsePageContent() {
     return 'abilities';
   });
 
-  useEffect(() => {
-    if (tabQuery && TABS.some(t => t.id === tabQuery)) {
-      setActiveTab(tabQuery);
-    }
-  }, [tabQuery]);
-
+  // Estados de dados e filtros
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
@@ -60,32 +59,21 @@ function BrowsePageContent() {
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalType, setModalType] = useState(null);
-  
   const [showTags, setShowTags] = useState(true);
   const [tagSearchQuery, setTagSearchQuery] = useState('');
 
   const activeTabData = TABS.find((tab) => tab.id === activeTab);
 
+  // Sincronização com a URL (Navegação vinda do DetailModal)
   useEffect(() => {
-    fetchData();
-  }, [activeTab]);
-
-useEffect(() => {
-    applyFilters();
-  }, [
-    items, 
-    searchQuery,
-    selectedTags, 
-    selectedBook, 
-    selectedCategory, 
-    selectedWeaponType, 
-    sortBy, 
-    sortOrder, 
-    activeTab, 
-    selectedThreatType, 
-    selectedElement, 
-    selectedSize
-  ]);
+    if (tabQuery && TABS.some(t => t.id === tabQuery)) {
+      setActiveTab(tabQuery);
+    }
+    // Se vier um nome de pesquisa, preenchemos a barra
+    if (searchQueryParam) {
+      setSearchQuery(searchQueryParam);
+    }
+  }, [tabQuery, searchQueryParam, classIdParam]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -99,7 +87,7 @@ useEffect(() => {
       const metaResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${activeTabData.endpoint}/meta`);
       setAvailableTags(metaResponse.data.tags || []);
       setAvailableBooks(metaResponse.data.books || []);
-      
+
       if (activeTab === 'weapons') {
         setAvailableCategories(metaResponse.data.categories || []);
         setAvailableWeaponTypes(metaResponse.data.types || []);
@@ -107,38 +95,41 @@ useEffect(() => {
         setAvailableThreatTypes(metaResponse.data.types || []);
         setAvailableElements(metaResponse.data.elements || []);
         setAvailableSizes(metaResponse.data.sizes || []);
-      } else {
-        setAvailableCategories([]);
-        setAvailableWeaponTypes([]);
       }
     } catch (error) {
       console.error('Fetch error:', error);
       setItems([]);
-      setAvailableTags([]);
-      setAvailableBooks([]);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchData();
+    clearFilters();
+  }, [activeTab]);
+
   const applyFilters = useCallback(() => {
     let filtered = [...items];
-
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(item => {
         const name = (item.name || item.title || '').toLowerCase();
-        const desc = (item.description || '').toLowerCase();
-        return name.includes(q) || desc.includes(q);
+        return name.includes(q);
+      });
+    }
+
+    if (activeTab === 'tracks' && classIdParam) {
+      filtered = filtered.filter(item => {
+        // Verifica se o ID da classe no item coincide com o da URL
+        const itemClassId = item.class?._id || item.class;
+        return itemClassId === classIdParam;
       });
     }
 
     if (selectedTags.length > 0) {
-      filtered = filtered.filter(item => {
-        const itemTags = item.tags || [];
-        return selectedTags.every(tag => itemTags.includes(tag));
-      });
+      filtered = filtered.filter(item => (item.tags || []).some(tag => selectedTags.includes(tag)));
     }
 
     if (selectedBook) {
@@ -159,13 +150,16 @@ useEffect(() => {
     filtered.sort((a, b) => {
       let aValue = sortBy === 'name' ? (a.name || a.title || '').toLowerCase() : new Date(a.createdAt || 0);
       let bValue = sortBy === 'name' ? (b.name || b.title || '').toLowerCase() : new Date(b.createdAt || 0);
-
       if (sortOrder === 'asc') return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
       return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
     });
 
     setFilteredItems(filtered);
-  },[items, searchQuery, selectedTags, selectedBook, activeTab, selectedCategory, selectedWeaponType, selectedThreatType, selectedElement, selectedSize, sortBy, sortOrder]);
+  }, [items, searchQuery, selectedTags, selectedBook, activeTab, classIdParam, selectedCategory, selectedWeaponType, selectedThreatType, selectedElement, selectedSize, sortBy, sortOrder]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
 
   const handleTagToggle = (tag) => {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
@@ -183,11 +177,13 @@ useEffect(() => {
   }, [availableTags, tagSearchQuery]);
 
   const openDetailModal = (item) => {
+    const typeMapping = {
+      abilities: 'ability', rituals: 'ritual', items: 'item',
+      rules: 'rule', classes: 'class', tracks: 'track',
+      weapons: 'weapon', threats: 'threat'
+    };
     setSelectedItem(item);
-    setModalType(activeTab === 'abilities' ? 'ability' : activeTab === 'rituals' ? 'ritual' :
-                 activeTab === 'items' ? 'item' : activeTab === 'classes' ? 'class' :
-                 activeTab === 'tracks' ? 'track' : activeTab === 'weapons' ? 'weapon' : 
-                 activeTab === 'threats' ? 'threat' : 'rule');
+    setModalType(typeMapping[activeTab] || 'ability');
   };
 
   const closeDetailModal = () => {
@@ -197,7 +193,6 @@ useEffect(() => {
 
   const getGroupedItems = () => {
     const groups = {};
-
     filteredItems.forEach(item => {
       let groupKey = 'Outros';
       let isParanormalGroup = false;
@@ -211,7 +206,7 @@ useEffect(() => {
           break;
         case 'rules': groupKey = item.section || 'Sem Secção'; break;
         case 'classes': groupKey = 'Classes'; break;
-        case 'tracks': groupKey = item.class ? (typeof item.class === 'object' ? item.class.name || item.class.title || 'Sem Classe' : item.class) : 'Sem Classe'; break;
+        case 'tracks': groupKey = item.class?.name || item.class || 'Sem Classe'; break;
         case 'weapons': groupKey = item.type || 'Sem Tipo'; break;
         case 'threats': groupKey = item.type || 'Sem Tipo'; break;
       }
@@ -219,7 +214,6 @@ useEffect(() => {
       if (!groups[groupKey]) groups[groupKey] = { title: groupKey, items: [], isParanormal: isParanormalGroup };
       groups[groupKey].items.push(item);
     });
-
     return Object.values(groups).sort((a, b) => a.title.localeCompare(b.title));
   };
 
@@ -227,7 +221,6 @@ useEffect(() => {
 
   const renderTable = (title, itemsToRender, isParanormal) => {
     if (itemsToRender.length === 0) return null;
-
     return (
       <div key={title} className={`${styles.categorySection} ${isParanormal ? styles.paranormalSection : ''}`}>
         <h3 className={`${styles.categoryTitle} ${isParanormal ? styles.paranormalTitle : ''}`}>
@@ -250,7 +243,7 @@ useEffect(() => {
             </thead>
             <tbody>
               {itemsToRender.map((item) => (
-                <tr key={item._id} className={`${styles.tableRow} ${isParanormal ? styles.paranormalRow : ''}`} onClick={() => openDetailModal(item)}>
+                <tr key={item._id} className={styles.tableRow} onClick={() => openDetailModal(item)}>
                   <td className={styles.nameCell}>{item.name || item.title}</td>
                   {activeTab === 'abilities' && <td>{item.origin || '-'}</td>}
                   {activeTab === 'rituals' && <td>{item.duration || '-'}</td>}
@@ -260,13 +253,12 @@ useEffect(() => {
                   {activeTab === 'threats' && <>
                     <td><span className={styles.vdBadge}>{item.vd || '-'}</span></td>
                     <td>{item.size || '-'}</td>
-                    <td>{item.elements && item.elements.length > 0 ? item.elements.join(', ') : 'Nenhum'}</td>
+                    <td>{item.elements?.join(', ') || 'Nenhum'}</td>
                   </>}
                   <td className={styles.bookCell}>{item.book || item.source || '-'}</td>
                   <td>
                     <div className={styles.tagsCell}>
-                      {(item.tags || []).slice(0, 3).map(tag => <span key={tag} className={styles.tag}>{tag}</span>)}
-                      {(item.tags || []).length > 3 && <span className={styles.moreTags}>+{(item.tags || []).length - 3}</span>}
+                      {(item.tags || []).slice(0, 2).map(tag => <span key={tag} className={styles.tag}>{tag}</span>)}
                     </div>
                   </td>
                 </tr>
@@ -294,49 +286,53 @@ useEffect(() => {
       <div className={styles.container}>
         <div className={styles.tabNavigation}>
           {TABS.map((tab) => (
-            <button key={tab.id} className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`} onClick={() => setActiveTab(tab.id)}>
+            <button
+              key={tab.id}
+              className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`}
+              onClick={() => {
+                setActiveTab(tab.id);
+                setSearchQuery('');
+                router.push(`/browse?tab=${tab.id}`);
+              }}
+            >
               {tab.icon && <span className={styles.tabIcon}>{tab.icon}</span>}
               {tab.label}
             </button>
           ))}
         </div>
+
         <div className={styles.searchWrapper}>
-          <SearchBar 
-            isRealTime={true} 
-            onQueryChange={setSearchQuery} 
+          <SearchBar
+            isRealTime={true}
+            onQueryChange={setSearchQuery}
+            initialValue={searchQuery}
           />
         </div>
+
         <div className={styles.filters}>
-{activeTab !== 'classes' && activeTab !== 'tracks' && (
+          {activeTab !== 'classes' && activeTab !== 'tracks' && (
             <div className={styles.filterSection}>
               <div className={styles.filterHeader} onClick={() => setShowTags(!showTags)}>
                 <h3>Filtrar por Tags</h3>
                 <span className={`${styles.expandIcon} ${showTags ? styles.expanded : ''}`}>▼</span>
               </div>
-              
-              {/* A barra de pesquisa fica agora sempre visível */}
-              <input 
-                type="text" 
-                placeholder="🔍 Pesquisar tags..." 
-                value={tagSearchQuery} 
+              <input
+                type="text"
+                placeholder="🔍 Pesquisar tags..."
+                value={tagSearchQuery}
                 onChange={(e) => {
                   setTagSearchQuery(e.target.value);
-                  // Se o utilizador começar a escrever e as tags estiverem escondidas, abre-as automaticamente!
-                  if (!showTags) setShowTags(true); 
-                }} 
-                className={styles.tagSearchInput} 
+                  if (!showTags) setShowTags(true);
+                }}
+                className={styles.tagSearchInput}
               />
-
-              {/* Apenas os botões das tags ficam escondidos/mostrados */}
               {showTags && (
                 <div className={styles.tagFilters}>
-                  {getFilteredTags().length > 0 ? (
-                    getFilteredTags().map(tag => (
-                      <button key={tag} className={`${styles.tagButton} ${selectedTags.includes(tag) ? styles.tagSelected : ''}`} onClick={() => handleTagToggle(tag)}>
-                        {tag}
-                      </button>
-                    ))
-                  ) : (<div className={styles.noTagsMessage}>Nenhuma tag encontrada</div>)}
+                  {getFilteredTags().map(tag => (
+                    <button key={tag} className={`${styles.tagButton} ${selectedTags.includes(tag) ? styles.tagSelected : ''}`} onClick={() => handleTagToggle(tag)}>
+                      {tag}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -401,21 +397,16 @@ useEffect(() => {
             </div>
           </div>
 
-          {(selectedTags.length > 0 || selectedBook || selectedCategory || selectedWeaponType || selectedThreatType || selectedElement || selectedSize) && (
-            <button className={styles.clearFiltersButton} onClick={clearFilters}>Limpar Filtros</button>
+          {(selectedTags.length > 0 || selectedBook || searchQuery) && (
+            <button className={styles.clearFiltersButton} onClick={() => { clearFilters(); setSearchQuery(''); router.push(`/browse?tab=${activeTab}`); }}>Limpar Filtros</button>
           )}
         </div>
 
         <div className={styles.content}>
           {loading ? (
-            <div className={styles.loadingBox}>
-              <div className={styles.spinner}></div>
-              <p>A sincronizar dados da Ordem...</p>
-            </div>
+            <div className={styles.loadingBox}><div className={styles.spinner}></div><p>A sincronizar dados da Ordem...</p></div>
           ) : filteredItems.length === 0 ? (
-            <div className={styles.emptyState}>
-              <p>Nenhum registo encontrado com estes parâmetros.</p>
-            </div>
+            <div className={styles.emptyState}><p>Nenhum registo encontrado.</p></div>
           ) : (
             <div className={styles.tablesContainer}>
               {groupedItems.map(group => renderTable(group.title, group.items, group.isParanormal))}
