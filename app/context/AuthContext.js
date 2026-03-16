@@ -49,13 +49,27 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateUser = (updatedData) => {
+    setUser((prevUser) => {
+      if (!prevUser) return null;
+      
+      // Funde os dados antigos com os novos (ex: altera só o shownName mas mantém o token)
+      const newUser = { ...prevUser, ...updatedData };
+      
+      // Guarda a nova versão atualizada na cache do browser
+      localStorage.setItem('user', JSON.stringify(newUser));
+      
+      return newUser;
+    });
+  };
+
   // Função utilitária para verificar permissões rapidamente no UI
   const hasPermission = (perm) => {
     return user?.permissions?.includes(perm);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading, hasPermission }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, hasPermission, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

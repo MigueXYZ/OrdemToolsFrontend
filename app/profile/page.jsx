@@ -6,11 +6,13 @@ import Link from 'next/link';
 import { AuthContext } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import styles from './page.module.css';
+import EditProfileModal from './EditProfileModal';
 
 export default function ProfilePage() {
-  const { user, logout, hasPermission } = useContext(AuthContext);
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  const { user, logout, hasPermission, updateUser } = useContext(AuthContext); 
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Garantir que a hidratação do cliente ocorreu para evitar erros de renderização
   useEffect(() => {
@@ -19,6 +21,19 @@ export default function ProfilePage() {
       router.push('/login');
     }
   }, [user, isClient, router]);
+
+  // A função deve estar AQUI FORA do useEffect, para poder ser usada no return lá em baixo
+  const handleUpdateSuccess = (updatedUser) => {
+    setShowEditModal(false);
+    
+    // Se o teu AuthContext tiver uma função updateUser, usa-a aqui:
+    if (updateUser) {
+      updateUser(updatedUser);
+    } else {
+      // Se não tiver, a solução mais rápida é recarregar a página para o contexto ir buscar os novos dados
+      window.location.reload();
+    }
+  };
 
   if (!isClient || !user) {
     return (
@@ -72,9 +87,20 @@ export default function ProfilePage() {
           </div>
 
           <div className={styles.actionsSection}>
-            <button className={styles.editButton}>Editar Perfil</button>
+            <button className={styles.editButton} onClick={() => setShowEditModal(true)}>
+              Editar Perfil
+            </button>
             <button onClick={logout} className={styles.logoutButton}>Terminar Sessão</button>
           </div>
+          
+          {showEditModal && (
+            <EditProfileModal
+              user={user}
+              token={user.token}
+              onClose={() => setShowEditModal(false)}
+              onSuccess={handleUpdateSuccess}
+            />
+          )}
         </div>
       </main>
     </div>

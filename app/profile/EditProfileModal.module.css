@@ -1,0 +1,205 @@
+/* EditProfileModal.module.css - Baseado no EditModal nativo */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 15, 30, 0.65); /* Fundo escuro como no EditModal */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* Acima do resto */
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--bg-secondary);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  max-width: 450px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-main);
+  overflow: hidden;
+  animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Fundos quase sólidos baseados no teu código original */
+:global([data-theme='light']) .modal { background: rgba(245, 250, 255, 0.95); }
+:global([data-theme='dark']) .modal { background: rgba(13, 18, 33, 0.95); }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.header {
+  padding: 1.2rem 2rem;
+  background: var(--button-bg); /* Usa o teu gradiente global para o cabeçalho */
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.title {
+  font-family: var(--font-titles) !important;
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+  margin: 0;
+}
+
+.closeButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background: #cc0000;
+  border-color: #ffcccc;
+  transform: scale(1.1);
+}
+
+.form {
+  padding: 2rem;
+  overflow-y: auto;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Scrollbar Aero para o formulário (caso cresça muito) */
+.form::-webkit-scrollbar { width: 8px; }
+.form::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 4px; }
+.form::-webkit-scrollbar-thumb { background: var(--button-bg); border-radius: 4px; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.label {
+  display: block;
+  color: var(--text-accent);
+  font-family: var(--font-titles) !important;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  transition: all 0.2s;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--text-accent);
+  box-shadow: 0 0 10px rgba(0, 153, 255, 0.2);
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.errorMessage {
+  background: rgba(255, 204, 204, 0.2); 
+  color: #ff4444; 
+  border: 1px solid #cc0000;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+/* Baseado no CancelButton e SubmitButton do teu código */
+.cancelButton, .saveButton {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 50px;
+  font-family: var(--font-titles) !important;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cancelButton {
+  background: var(--input-bg);
+  color: var(--text-accent);
+  border: 1px solid var(--border-color);
+}
+
+.cancelButton:hover {
+  background: rgba(204, 0, 0, 0.1);
+  color: #ff4444;
+  border-color: #ff4444;
+}
+
+.saveButton {
+  background: var(--button-bg);
+  color: white;
+  border: 1px solid var(--text-accent);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.saveButton:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-main);
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .actions { flex-direction: column-reverse; gap: 1rem; }
+}
