@@ -20,23 +20,27 @@ export default function LoginPage() {
 
     try {
       const response = await api.post('/auth/login', { username, password });
-      
-      // Enviamos o objeto completo (token, username, shownName, permissions)
-      // que o backend agora devolve
       login(response.data); 
-      
       router.push('/');
     } catch (err) {
-      // Captura o erro da API ou uma mensagem genérica
       setErro(err.response?.data?.message || 'Erro ao iniciar sessão.');
     }
   };
 
+  // Função para voltar
+  const handleBack = () => router.push('/');
+
   return (
     <div className={styles.loginWrapper}>
       <div className={styles.glassCard}>
+        {/* BOTÃO VOLTAR */}
+        <button onClick={handleBack} className={styles.backButton}>
+          ← Voltar
+        </button>
+
         <h2 className={styles.title}>Iniciar Sessão</h2>
         
+        {/* ... resto do formulário igual ... */}
         {erro && (
           <div className={styles.error} role="alert">
             <span className={styles.errorIcon}>⚠️</span> {erro}
