@@ -7,6 +7,7 @@ import axios from 'axios';
 import DetailModal from '../components/DetailModal';
 import ThemeToggle from '../components/ThemeToggle';
 import SearchBar from '../components/SearchBar';
+import AeroSelect from '../components/AeroSelect'; // <-- Importação do teu componente
 import styles from './page.module.css';
 
 const TABS = [
@@ -23,7 +24,7 @@ const TABS = [
 function BrowsePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  
   // Parâmetros da URL para navegação interna
   const tabQuery = searchParams.get('tab');
   const searchQueryParam = searchParams.get('search');
@@ -50,7 +51,7 @@ function BrowsePageContent() {
   const [selectedWeaponType, setSelectedWeaponType] = useState('');
   const [availableThreatTypes, setAvailableThreatTypes] = useState([]);
   const [availableElements, setAvailableElements] = useState([]);
-  const [availableSizes, setAvailableSizes] = useState([]);
+  const [availableSizes, setAvailableSizes] = useState([]); // Mantido caso precises no futuro
   const [selectedThreatType, setSelectedThreatType] = useState('');
   const [selectedElement, setSelectedElement] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
@@ -64,12 +65,11 @@ function BrowsePageContent() {
 
   const activeTabData = TABS.find((tab) => tab.id === activeTab);
 
-  // Sincronização com a URL (Navegação vinda do DetailModal)
+  // Sincronização com a URL
   useEffect(() => {
     if (tabQuery && TABS.some(t => t.id === tabQuery)) {
       setActiveTab(tabQuery);
     }
-    // Se vier um nome de pesquisa, preenchemos a barra
     if (searchQueryParam) {
       setSearchQuery(searchQueryParam);
     }
@@ -86,7 +86,7 @@ function BrowsePageContent() {
 
       const metaResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${activeTabData.endpoint}/meta`);
       setAvailableTags(metaResponse.data.tags || []);
-      setAvailableBooks(metaResponse.data.books || []);
+      setAvailableBooks(['Todos os Livros', ...metaResponse.data.books || []]);
 
       if (activeTab === 'weapons') {
         setAvailableCategories(metaResponse.data.categories || []);
@@ -122,7 +122,6 @@ function BrowsePageContent() {
 
     if (activeTab === 'tracks' && classIdParam) {
       filtered = filtered.filter(item => {
-        // Verifica se o ID da classe no item coincide com o da URL
         const itemClassId = item.class?._id || item.class;
         return itemClassId === classIdParam;
       });
@@ -318,7 +317,7 @@ function BrowsePageContent() {
               </div>
               <input
                 type="text"
-                placeholder="🔍 Pesquisar tags..."
+                placeholder="Pesquisar tags..."
                 value={tagSearchQuery}
                 onChange={(e) => {
                   setTagSearchQuery(e.target.value);
@@ -338,67 +337,82 @@ function BrowsePageContent() {
             </div>
           )}
 
-          <div className={styles.filterSection}>
-            <div className={styles.filterHeader}><h3>Filtrar por Livro</h3></div>
-            <select value={selectedBook} onChange={(e) => setSelectedBook(e.target.value)} className={styles.aeroSelect}>
-              <option value="">Todos os livros</option>
-              {availableBooks.map(book => <option key={book} value={book}>{book}</option>)}
-            </select>
-          </div>
+          {/* UTILIZAÇÃO DO TEU COMPONENTE AEROSELECT */}
+          <AeroSelect
+            label="Filtrar por Livro"
+            name="book"
+            options={availableBooks}
+            value={selectedBook}
+            onChange={(e) => setSelectedBook(e.target.value)}
+            placeholder="Todos os livros"
+          />
 
           {activeTab === 'weapons' && (
             <>
-              <div className={styles.filterSection}>
-                <div className={styles.filterHeader}><h3>Filtrar por Categoria</h3></div>
-                <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className={styles.aeroSelect}>
-                  <option value="">Todas as categorias</option>
-                  {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                </select>
-              </div>
-              <div className={styles.filterSection}>
-                <div className={styles.filterHeader}><h3>Filtrar por Tipo</h3></div>
-                <select value={selectedWeaponType} onChange={(e) => setSelectedWeaponType(e.target.value)} className={styles.aeroSelect}>
-                  <option value="">Todos os tipos</option>
-                  {availableWeaponTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
+              <AeroSelect
+                label="Filtrar por Categoria"
+                name="category"
+                options={availableCategories}
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                placeholder="Todas as categorias"
+              />
+              <AeroSelect
+                label="Filtrar por Tipo"
+                name="weaponType"
+                options={availableWeaponTypes}
+                value={selectedWeaponType}
+                onChange={(e) => setSelectedWeaponType(e.target.value)}
+                placeholder="Todos os tipos"
+              />
             </>
           )}
 
           {activeTab === 'threats' && (
             <>
-              <div className={styles.filterSection}>
-                <div className={styles.filterHeader}><h3>Filtrar por Tipo</h3></div>
-                <select value={selectedThreatType} onChange={(e) => setSelectedThreatType(e.target.value)} className={styles.aeroSelect}>
-                  <option value="">Todos os tipos</option>
-                  {availableThreatTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-              <div className={styles.filterSection}>
-                <div className={styles.filterHeader}><h3>Filtrar por Elemento</h3></div>
-                <select value={selectedElement} onChange={(e) => setSelectedElement(e.target.value)} className={styles.aeroSelect}>
-                  <option value="">Todos os elementos</option>
-                  {availableElements.map(e => <option key={e} value={e}>{e}</option>)}
-                </select>
-              </div>
+              <AeroSelect
+                label="Filtrar por Tipo"
+                name="threatType"
+                options={availableThreatTypes}
+                value={selectedThreatType}
+                onChange={(e) => setSelectedThreatType(e.target.value)}
+                placeholder="Todos os tipos"
+              />
+              <AeroSelect
+                label="Filtrar por Elemento"
+                name="element"
+                options={availableElements}
+                value={selectedElement}
+                onChange={(e) => setSelectedElement(e.target.value)}
+                placeholder="Todos os elementos"
+              />
             </>
           )}
 
           <div className={styles.filterSection}>
-            <div className={styles.filterHeader}><h3>Ordenar</h3></div>
-            <div className={styles.sortControls}>
-              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className={styles.aeroSelect}>
-                <option value="name">Nome (A-Z)</option>
-                <option value="date">Adicionado a</option>
-              </select>
-              <button className={styles.sortOrderButton} onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} title="Inverter ordem">
-                {sortOrder === 'asc' ? '⬇️' : '⬆️'}
+            <AeroSelect
+              label="Ordenar"
+              name="sortBy"
+              options={['Nome (A-Z)', 'Data de Adição']}
+              value={sortBy === 'name' ? 'Nome (A-Z)' : 'Data de Adição'}
+              onChange={(e) => setSortBy(e.target.value === 'Nome (A-Z)' ? 'name' : 'date')}
+              placeholder="Ordenar por..."
+            />
+            <div style={{ marginTop: '0.5rem' }}>
+              <button 
+                className={styles.sortOrderButton} 
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} 
+                title="Inverter ordem"
+              >
+                Inverter Ordem ({sortOrder === 'asc' ? 'Crescente' : 'Decrescente'})
               </button>
             </div>
           </div>
 
-          {(selectedTags.length > 0 || selectedBook || searchQuery) && (
-            <button className={styles.clearFiltersButton} onClick={() => { clearFilters(); setSearchQuery(''); router.push(`/browse?tab=${activeTab}`); }}>Limpar Filtros</button>
+          {(selectedTags.length > 0 || selectedBook || searchQuery || classIdParam || selectedCategory || selectedWeaponType || selectedThreatType || selectedElement) && (
+            <button className={styles.clearFiltersButton} onClick={() => { clearFilters(); setSearchQuery(''); router.push(`/browse?tab=${activeTab}`); }}>
+              Limpar Filtros
+            </button>
           )}
         </div>
 
