@@ -24,15 +24,17 @@ export default function Home() {
             <div className={styles.authControls}>
               {user ? (
                 <>
+                  {/* NOVO: Link para a página de perfil */}
+                  <Link href="/profile" className={styles.profileLink}>
+                    👤 Perfil
+                  </Link>
+
                   {/* Só mostramos o link de gerenciar se for admin ou editor */}
                   {(hasPermission('admin') || hasPermission('editor')) && (
                     <Link href="/manage" className={styles.manageLink}>
                       + Gerenciar Conteúdo
                     </Link>
                   )}
-                  <button onClick={logout} className={styles.logoutButton}>
-                    Sair ({user.shownName || user.username})
-                  </button>
                 </>
               ) : (
                 <Link href="/login" className={styles.loginLink}>
@@ -78,7 +80,6 @@ export default function Home() {
             <Link href="/browse?tab=weapons" className={styles.browseButton}>
               <span>🗡️ Armas</span>
             </Link>
-            {/* Adicionado o botão de Ameaças que faltava */}
             <Link href="/browse?tab=threats" className={styles.browseButton}>
               <span>💀 Ameaças</span>
             </Link>
