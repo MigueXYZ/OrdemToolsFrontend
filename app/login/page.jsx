@@ -4,7 +4,7 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import api from '../lib/api';
-import styles from './login.module.css'; // Importa o novo CSS
+import styles from './login.module.css';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -20,9 +20,14 @@ export default function LoginPage() {
 
     try {
       const response = await api.post('/auth/login', { username, password });
-      login(response.data.token, response.data.username);
+      
+      // Enviamos o objeto completo (token, username, shownName, permissions)
+      // que o backend agora devolve
+      login(response.data); 
+      
       router.push('/');
     } catch (err) {
+      // Captura o erro da API ou uma mensagem genérica
       setErro(err.response?.data?.message || 'Erro ao iniciar sessão.');
     }
   };
@@ -32,17 +37,23 @@ export default function LoginPage() {
       <div className={styles.glassCard}>
         <h2 className={styles.title}>Iniciar Sessão</h2>
         
-        {erro && <div className={styles.error} role="alert">{erro}</div>}
+        {erro && (
+          <div className={styles.error} role="alert">
+            <span className={styles.errorIcon}>⚠️</span> {erro}
+          </div>
+        )}
         
         <form onSubmit={handleLogin}>
           <div className={styles.formGroup}>
-            <label className={styles.label}>Nome de Utilizador</label>
+            <label className={styles.label}>Utilizador</label>
             <input
               className={styles.input}
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
+              autoComplete="username"
+              placeholder="Ex: admin"
             />
           </div>
           
@@ -54,11 +65,13 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
+              placeholder="••••••••"
             />
           </div>
           
           <button type="submit" className={styles.button}>
-            Entrar
+            Aceder ao Arquivo
           </button>
         </form>
       </div>

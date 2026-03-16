@@ -2,7 +2,7 @@
 
 import { useState, useContext } from 'react';
 import Link from 'next/link';
-import { AuthContext } from './context/AuthContext'; // Importar o contexto
+import { AuthContext } from './context/AuthContext';
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
 import ThemeToggle from './components/ThemeToggle';
@@ -13,8 +13,8 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState(null);
   const [loading, setLoading] = useState(false);
   
-  // Aceder ao estado do utilizador
-  const { user, logout } = useContext(AuthContext);
+  // Extraímos também o hasPermission para controlar a visibilidade do link
+  const { user, logout, hasPermission } = useContext(AuthContext);
 
   return (
     <div className={styles.wrapper}>
@@ -24,11 +24,14 @@ export default function Home() {
             <div className={styles.authControls}>
               {user ? (
                 <>
-                  <Link href="/manage" className={styles.manageLink}>
-                    + Gerenciar Conteúdo
-                  </Link>
+                  {/* Só mostramos o link de gerenciar se for admin ou editor */}
+                  {(hasPermission('admin') || hasPermission('editor')) && (
+                    <Link href="/manage" className={styles.manageLink}>
+                      + Gerenciar Conteúdo
+                    </Link>
+                  )}
                   <button onClick={logout} className={styles.logoutButton}>
-                    Sair ({user.username})
+                    Sair ({user.shownName || user.username})
                   </button>
                 </>
               ) : (
@@ -74,6 +77,10 @@ export default function Home() {
             </Link>
             <Link href="/browse?tab=weapons" className={styles.browseButton}>
               <span>🗡️ Armas</span>
+            </Link>
+            {/* Adicionado o botão de Ameaças que faltava */}
+            <Link href="/browse?tab=threats" className={styles.browseButton}>
+              <span>💀 Ameaças</span>
             </Link>
           </div>
         </div>
