@@ -7,7 +7,7 @@ import axios from 'axios';
 import DetailModal from '../components/DetailModal';
 import ThemeToggle from '../components/ThemeToggle';
 import SearchBar from '../components/SearchBar';
-import AeroSelect from '../components/AeroSelect'; // <-- Importação do teu componente
+import AeroSelect from '../components/AeroSelect';
 import styles from './page.module.css';
 
 const TABS = [
@@ -24,7 +24,7 @@ const TABS = [
 function BrowsePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   // Parâmetros da URL para navegação interna
   const tabQuery = searchParams.get('tab');
   const searchQueryParam = searchParams.get('search');
@@ -51,7 +51,7 @@ function BrowsePageContent() {
   const [selectedWeaponType, setSelectedWeaponType] = useState('');
   const [availableThreatTypes, setAvailableThreatTypes] = useState([]);
   const [availableElements, setAvailableElements] = useState([]);
-  const [availableSizes, setAvailableSizes] = useState([]); // Mantido caso precises no futuro
+  const [availableSizes, setAvailableSizes] = useState([]); 
   const [selectedThreatType, setSelectedThreatType] = useState('');
   const [selectedElement, setSelectedElement] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
@@ -70,9 +70,7 @@ function BrowsePageContent() {
     if (tabQuery && TABS.some(t => t.id === tabQuery)) {
       setActiveTab(tabQuery);
     }
-    if (searchQueryParam) {
-      setSearchQuery(searchQueryParam);
-    }
+    setSearchQuery(searchQueryParam || '');
   }, [tabQuery, searchQueryParam, classIdParam]);
 
   const fetchData = async () => {
@@ -86,7 +84,7 @@ function BrowsePageContent() {
 
       const metaResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${activeTabData.endpoint}/meta`);
       setAvailableTags(metaResponse.data.tags || []);
-      setAvailableBooks(['Todos os Livros', ...metaResponse.data.books || []]);
+      setAvailableBooks(metaResponse.data.books || []);
 
       if (activeTab === 'weapons') {
         setAvailableCategories(metaResponse.data.categories || []);
@@ -104,26 +102,48 @@ function BrowsePageContent() {
     }
   };
 
+  const clearFilters = useCallback(() => {
+    setSelectedTags([]);
+    setSelectedBook('');
+    setSelectedCategory('');
+    setSelectedWeaponType('');
+    setSelectedThreatType('');
+    setSelectedElement('');
+    setSelectedSize('');
+    setTagSearchQuery('');
+    setSortBy('name');
+    setSortOrder('asc');
+  }, []);
+
   useEffect(() => {
     fetchData();
     clearFilters();
-  }, [activeTab]);
+  }, [activeTab, clearFilters]);
+
+  const getSafeId = (idObj) => {
+    if (!idObj) return null;
+    if (typeof idObj === 'string') return idObj;
+    if (idObj.$oid) return idObj.$oid;
+    if (idObj._id) return typeof idObj._id === 'string' ? idObj._id : idObj._id.$oid;
+    return String(idObj);
+  };
 
   const applyFilters = useCallback(() => {
     let filtered = [...items];
 
-    if (searchQuery.trim()) {
+    // Se estivermos a filtrar estritamente por ID de Classe
+    if (activeTab === 'tracks' && classIdParam) {
+      filtered = filtered.filter(item => {
+        const itemClassId = getSafeId(item.class);
+        return itemClassId === classIdParam;
+      });
+    } 
+    // Caso contrário, usamos a pesquisa normal por texto
+    else if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(item => {
         const name = (item.name || item.title || '').toLowerCase();
         return name.includes(q);
-      });
-    }
-
-    if (activeTab === 'tracks' && classIdParam) {
-      filtered = filtered.filter(item => {
-        const itemClassId = item.class?._id || item.class;
-        return itemClassId === classIdParam;
       });
     }
 
@@ -162,11 +182,6 @@ function BrowsePageContent() {
 
   const handleTagToggle = (tag) => {
     setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
-  };
-
-  const clearFilters = () => {
-    setSelectedTags([]); setSelectedBook(''); setSelectedCategory(''); setSelectedWeaponType('');
-    setSelectedThreatType(''); setSelectedElement(''); setSelectedSize(''); setTagSearchQuery('');
   };
 
   const getFilteredTags = useCallback(() => {
@@ -337,11 +352,10 @@ function BrowsePageContent() {
             </div>
           )}
 
-          {/* UTILIZAÇÃO DO TEU COMPONENTE AEROSELECT */}
           <AeroSelect
             label="Filtrar por Livro"
             name="book"
-            options={availableBooks}
+            options={[{ value: '', label: 'Todos os livros' }, ...availableBooks]}
             value={selectedBook}
             onChange={(e) => setSelectedBook(e.target.value)}
             placeholder="Todos os livros"
@@ -352,7 +366,7 @@ function BrowsePageContent() {
               <AeroSelect
                 label="Filtrar por Categoria"
                 name="category"
-                options={availableCategories}
+                options={[{ value: '', label: 'Todas as categorias' }, ...availableCategories]}
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 placeholder="Todas as categorias"
@@ -360,7 +374,7 @@ function BrowsePageContent() {
               <AeroSelect
                 label="Filtrar por Tipo"
                 name="weaponType"
-                options={availableWeaponTypes}
+                options={[{ value: '', label: 'Todos os tipos' }, ...availableWeaponTypes]}
                 value={selectedWeaponType}
                 onChange={(e) => setSelectedWeaponType(e.target.value)}
                 placeholder="Todos os tipos"
@@ -373,7 +387,7 @@ function BrowsePageContent() {
               <AeroSelect
                 label="Filtrar por Tipo"
                 name="threatType"
-                options={availableThreatTypes}
+                options={[{ value: '', label: 'Todos os tipos' }, ...availableThreatTypes]}
                 value={selectedThreatType}
                 onChange={(e) => setSelectedThreatType(e.target.value)}
                 placeholder="Todos os tipos"
@@ -381,7 +395,7 @@ function BrowsePageContent() {
               <AeroSelect
                 label="Filtrar por Elemento"
                 name="element"
-                options={availableElements}
+                options={[{ value: '', label: 'Todos os elementos' }, ...availableElements]}
                 value={selectedElement}
                 onChange={(e) => setSelectedElement(e.target.value)}
                 placeholder="Todos os elementos"
@@ -390,21 +404,24 @@ function BrowsePageContent() {
           )}
 
           <div className={styles.filterSection}>
-            <AeroSelect
-              label="Ordenar"
-              name="sortBy"
-              options={['Nome (A-Z)', 'Data de Adição']}
-              value={sortBy === 'name' ? 'Nome (A-Z)' : 'Data de Adição'}
-              onChange={(e) => setSortBy(e.target.value === 'Nome (A-Z)' ? 'name' : 'date')}
-              placeholder="Ordenar por..."
-            />
-            <div style={{ marginTop: '0.5rem' }}>
+            <div className={styles.sortControls}>
+              <AeroSelect
+                label="Ordenar"
+                name="sortBy"
+                options={[
+                  { value: 'name', label: 'Nome (A-Z)' },
+                  { value: 'date', label: 'Data de Adição' }
+                ]}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                placeholder="Ordenar por..."
+              />
               <button 
                 className={styles.sortOrderButton} 
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} 
                 title="Inverter ordem"
               >
-                Inverter Ordem ({sortOrder === 'asc' ? 'Crescente' : 'Decrescente'})
+                {sortOrder === 'asc' ? '⬇️' : '⬆️'}
               </button>
             </div>
           </div>
