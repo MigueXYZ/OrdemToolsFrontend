@@ -35,9 +35,6 @@ export default function ManagePage() {
       // 2. Se estiver logado mas NÃO for admin nem editor, volta para a home
       const isAuthorized = hasPermission('admin') || hasPermission('editor');
       
-      console.log('User:', user);
-      console.log('Is Admin:', hasPermission('admin'));
-      console.log('Is Editor:', hasPermission('editor'));
 
       if (!isAuthorized) {
         router.push('/');
