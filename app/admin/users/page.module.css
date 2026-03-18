@@ -1,0 +1,205 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  font-family: var(--font-body);
+}
+
+.header {
+  padding: 1.5rem 2rem;
+  text-align: center;
+  background: var(--bg-secondary);
+  backdrop-filter: blur(25px) saturate(150%);
+  -webkit-backdrop-filter: blur(25px) saturate(150%);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
+}
+
+.headerContent {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.headerTop {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backLink {
+  color: var(--text-accent);
+  font-weight: 700;
+  text-decoration: none;
+  background: var(--bg-secondary);
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s;
+  font-family: var(--font-titles) !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.backLink:hover {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.title {
+  font-family: var(--font-titles) !important;
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin: 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-accent);
+  margin: 0;
+  font-weight: 500;
+}
+
+.container {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.categorySection {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-main);
+}
+
+.categoryTitle {
+  background: linear-gradient(180deg, #1a2a40 0%, #0d1624 100%);
+  color: white;
+  padding: 1.2rem 1.5rem;
+  font-family: var(--font-titles) !important;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border-color);
+  margin: 0;
+}
+
+/* Suporte para tema claro no cabeçalho da tabela */
+:global([data-theme='light']) .categoryTitle {
+  background: linear-gradient(180deg, #4b6cb7 0%, #182848 100%);
+}
+
+.itemCount {
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.2rem 0.8rem;
+  border-radius: 20px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dataTable th {
+  background: var(--bg-secondary);
+  color: var(--text-accent);
+  padding: 1.2rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--border-color);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.dataTable td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.tableRow {
+  transition: all 0.2s;
+}
+
+.tableRow:hover {
+  background: var(--input-bg);
+}
+
+.nameCell {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tagsCell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border-color);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.tagAdmin {
+  background: rgba(218, 165, 32, 0.1);
+  color: #daa520;
+  border-color: #daa520;
+}
+
+.editButton {
+  padding: 0.6rem 1rem;
+  background: var(--button-bg);
+  border: 1px solid var(--text-accent);
+  border-radius: 8px;
+  color: white;
+  font-family: var(--font-titles) !important;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.editButton:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 153, 255, 0.3);
+}
+
+.loadingBox, .errorBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: var(--font-titles) !important;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.loadingBox { color: var(--text-accent); }
+.errorBox { color: #ff4444; }
+
