@@ -5,6 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import api from '../lib/api';
 import styles from './login.module.css';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -78,6 +79,11 @@ export default function LoginPage() {
             Aceder ao Arquivo
           </button>
         </form>
+        <div className={styles.footer}>
+          <Link href="./register" className={styles.link}>
+            Ainda não tem acesso? Criar Credenciais
+          </Link>
+        </div>
       </div>
     </div>
   );
