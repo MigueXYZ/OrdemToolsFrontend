@@ -16,26 +16,27 @@ import AddThreatForm from './AddThreatForm';
 
 // Componentes Globais
 import ThemeToggle from '../components/ThemeToggle';
+// 1. IMPORTAR O NOVO MODAL DE IMPORTAÇÃO
+import ImportJsonModal from '../components/ImportJsonModal';
 import styles from './page.module.css';
 
 export default function ManagePage() {
   const [activeTab, setActiveTab] = useState('abilities');
-  const { user, loading, hasPermission } = useContext(AuthContext); // Adicionado hasPermission
+  // 2. ADICIONAR ESTADO PARA O MODAL
+  const [showImportModal, setShowImportModal] = useState(false);
+  const { user, loading, hasPermission } = useContext(AuthContext);
   const router = useRouter();
 
   // Proteção de Rota Reforçada
   useEffect(() => {
     if (!loading) {
-      // 1. Se não estiver logado, vai para o login
       if (!user) {
         router.push('/login');
         return;
       }
 
-      // 2. Se estiver logado mas NÃO for admin nem editor, volta para a home
       const isAuthorized = hasPermission('admin') || hasPermission('editor');
       
-
       if (!isAuthorized) {
         router.push('/');
       }
@@ -63,16 +64,46 @@ export default function ManagePage() {
             </button>
             <ThemeToggle />
           </div>
-          <h1 className={styles.title}>Gerenciador de Conteúdo</h1>
-          <p className={styles.subtitle}>
-            Olá, **{user.shownName || user.username}**. Adicione novos elementos ao arquivo.
-          </p>
+          
+          {/* Organização do Título e Botão de Importação */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginTop: '1rem' }}>
+            <div>
+              <h1 className={styles.title}>Gerenciador de Conteúdo</h1>
+              <p className={styles.subtitle}>
+                Olá, <strong>{user.shownName || user.username}</strong>. Adicione novos elementos ao arquivo.
+              </p>
+            </div>
+            
+            {/* 3. BOTÃO DE IMPORTAÇÃO APENAS PARA ADMINS */}
+            {hasPermission('admin') && (
+              <button 
+                onClick={() => setShowImportModal(true)}
+                style={{
+                  background: 'linear-gradient(180deg, rgba(75, 0, 130, 0.9) 0%, rgba(50, 0, 90, 0.95) 100%)',
+                  color: 'white',
+                  border: '1px solid #2d004d',
+                  padding: '0.8rem 1.5rem',
+                  borderRadius: '12px',
+                  fontFamily: 'var(--font-titles)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  cursor: 'pointer',
+                  boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 4px 10px rgba(0,0,0,0.2)',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.filter = 'brightness(1.1)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = 'none'; }}
+              >
+                📦 Importação JSON
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
       <div className={styles.container}>
         <nav className={styles.tabNavigation}>
-          {/* Tabs mantidas como estavam */}
           <button className={`${styles.tab} ${activeTab === 'abilities' ? styles.active : ''}`} onClick={() => setActiveTab('abilities')}>
             <span className={styles.tabIcon}>⚡</span> Poderes
           </button>
@@ -110,6 +141,16 @@ export default function ManagePage() {
           {activeTab === 'threats' && <AddThreatForm />}
         </main>
       </div>
+
+      {/* 4. RENDERIZAR O MODAL SE O ESTADO FOR TRUE */}
+      {showImportModal && (
+        <ImportJsonModal 
+          onClose={() => setShowImportModal(false)}
+          onSuccess={() => {
+            // Se quiseres recarregar ou mudar a tab quando tem sucesso, podes fazer aqui.
+          }}
+        />
+      )}
     </div>
   );
 }
