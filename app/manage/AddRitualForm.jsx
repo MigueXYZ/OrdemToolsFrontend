@@ -1,12 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+// 1. IMPORTAR O useContext
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect'; 
+import { AuthContext } from '../context/AuthContext'; // Ajustar o caminho se necessário
 import styles from './AddRitualForm.module.css';
 
 export default function AddRitualForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -29,6 +34,13 @@ export default function AddRitualForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
+    // SEGURANÇA BÁSICA: Verificar se existe token
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -43,13 +55,25 @@ export default function AddRitualForm({ onSuccess }) {
           .filter((tag) => tag.length > 0)
       };
 
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/rituals`, payload);
+      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/rituals`, 
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
 
       setMessage({ type: 'success', text: 'Ritual de Ordem adicionado com sucesso!' });
+      
+      // Limpar formulário após o sucesso
       setFormData({
         name: '', description: '', circle: '', elements: '',
         duration: '', tags: '', book: ''
       });
+      
       onSuccess?.();
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
@@ -95,7 +119,6 @@ export default function AddRitualForm({ onSuccess }) {
         />
 
         <div className={styles.grid}>
-          {/* CORREÇÃO: Usando name="circle" e o handleChange padrão */}
           <AeroSelect
             label="Círculo"
             name="circle"

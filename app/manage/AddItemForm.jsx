@@ -1,12 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+// 1. IMPORTAR O useContext
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
+import { AuthContext } from '../context/AuthContext'; // Ajusta o caminho se necessário
 import styles from './AddItemForm.module.css';
 
 export default function AddItemForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -16,6 +21,7 @@ export default function AddItemForm({ onSuccess }) {
     tags: '',
     book: ''
   });
+  
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -29,6 +35,13 @@ export default function AddItemForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
+    // SEGURANÇA BÁSICA: Verificar se existe token
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -40,10 +53,22 @@ export default function AddItemForm({ onSuccess }) {
           .filter((tag) => tag.length > 0)
       };
 
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/items`, payload);
+      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO DO PEDIDO
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/items`, 
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
 
       setMessage({ type: 'success', text: 'Item de inventário adicionado com sucesso!' });
+      
+      // Limpar formulário
       setFormData({ name: '', description: '', category: '', paranormal: 'false', space: '1', tags: '', book: '' });
+      
       onSuccess?.();
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
@@ -79,7 +104,6 @@ export default function AddItemForm({ onSuccess }) {
         </div>
 
         <div className={styles.tripleGrid}>
-          {/* CORREÇÃO: Usando name="category" e o handleChange padrão */}
           <AeroSelect
             label="Categoria"
             name="category"
@@ -97,7 +121,6 @@ export default function AddItemForm({ onSuccess }) {
             placeholder="1"
           />
 
-          {/* CORREÇÃO: Usando name="paranormal" e o handleChange padrão */}
           <AeroSelect
             label="Paranormal?"
             name="paranormal"

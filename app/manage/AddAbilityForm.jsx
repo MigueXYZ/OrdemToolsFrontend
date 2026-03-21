@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+// 1. IMPORTAR O useContext E O AuthContext
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
+import { AuthContext } from '../context/AuthContext'; // Ajusta o caminho se for diferente
 import styles from './AddAbilityForm.module.css';
 
 const ABILITY_CATEGORIES = [
@@ -15,6 +17,9 @@ const ABILITY_CATEGORIES = [
 ];
 
 export default function AddAbilityForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -46,6 +51,13 @@ export default function AddAbilityForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
+    // 3. SEGURANÇA: Verificar se há um token disponível antes sequer de tentar enviar
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -64,14 +76,20 @@ export default function AddAbilityForm({ onSuccess }) {
           .filter((s) => s.length > 0);
       }
 
+      // 4. INCLUIR O TOKEN NOS HEADERS DO AXIOS
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/abilities`,
-        payload
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
       );
 
       setMessage({ type: 'success', text: 'Poder paranormal adicionado ao banco de dados!' });
       
-      // Limpar formulário após sucesso
+      // Limpar formulário após sucesso confirmado
       setFormData({
         name: '',
         description: '',
@@ -116,7 +134,6 @@ export default function AddAbilityForm({ onSuccess }) {
             required
           />
 
-          {/* CORREÇÃO AQUI: Passamos a prop name="category" explicitamente */}
           <AeroSelect
             label="Categoria *"
             name="category"

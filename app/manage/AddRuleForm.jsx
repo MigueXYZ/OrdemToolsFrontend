@@ -1,14 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+// 1. IMPORTAR O useContext
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
+import { AuthContext } from '../context/AuthContext'; // Ajustar o caminho se necessário
 import styles from './AddRuleForm.module.css';
 
 const RULE_SECTIONS = ['Personagem', 'Combate', 'Perícias', 'Sanidade', 'Investigação', 'Equipamento', 'Geral'];
 
 export default function AddRuleForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     title: '',
     section: '',
@@ -31,6 +36,13 @@ export default function AddRuleForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
+    // SEGURANÇA BÁSICA: Verificar se existe token
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -40,13 +52,25 @@ export default function AddRuleForm({ onSuccess }) {
           .filter((tag) => tag.length > 0)
       };
 
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/rules`, payload);
+      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/rules`, 
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
 
       setMessage({ type: 'success', text: 'Regra de investigação adicionada com sucesso!' });
+      
+      // Limpar formulário após o sucesso
       setFormData({
         title: '', section: '', content: '', subsection: '',
         tags: '', source: '', pageReference: ''
       });
+      
       onSuccess?.();
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
@@ -80,7 +104,6 @@ export default function AddRuleForm({ onSuccess }) {
             required
           />
 
-          {/* CORREÇÃO: Usando name="section" e o handleChange padrão */}
           <AeroSelect
             label="Seção *"
             name="section"

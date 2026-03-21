@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+// 1. IMPORTAR O useContext
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
+import { AuthContext } from '../context/AuthContext'; // Ajustar o caminho se necessário
 import styles from './AddThreatForm.module.css';
 
 const TYPES = ['Criatura', 'Humano', 'Animal'];
@@ -12,6 +14,9 @@ const ACTION_TYPES = ['Padrão', 'Movimento', 'Livre', 'Reação', 'Completa'];
 const BOOLEAN_OPTIONS = ['Não', 'Sim'];
 
 export default function AddThreatForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     name: '',
     vd: '',
@@ -58,7 +63,8 @@ export default function AddThreatForm({ onSuccess }) {
     }));
   };
 
-  const handleEnigmaDropdown = (value) => {
+  const handleEnigmaDropdown = (e) => {
+    const value = e.target.value;
     const hasEnigma = value === 'Sim';
     setFormData((prev) => ({
       ...prev,
@@ -117,22 +123,41 @@ export default function AddThreatForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
+    // SEGURANÇA BÁSICA: Verificar se existe token
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
-        vd: parseInt(formData.vd),
-        defense: parseInt(formData.defense),
+        vd: parseInt(formData.vd) || 0,
+        defense: parseInt(formData.defense) || 0,
         hp: {
-          total: parseInt(formData.hpTotal),
-          bloodied: parseInt(formData.hpBloodied) || Math.floor(parseInt(formData.hpTotal) / 2)
+          total: parseInt(formData.hpTotal) || 0,
+          bloodied: parseInt(formData.hpBloodied) || Math.floor((parseInt(formData.hpTotal) || 0) / 2)
         },
         elements: formData.elements.split(',').map((e) => e.trim()).filter(Boolean),
         resistances: formData.resistances.split(',').map((r) => r.trim()).filter(Boolean),
         vulnerabilities: formData.vulnerabilities.split(',').map((v) => v.trim()).filter(Boolean)
       };
 
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/threats`, payload);
+      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/threats`, 
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
+
       setMessage({ type: 'success', text: 'Ameaça registada na base de dados.' });
+      
+      // Limpeza opcional do form aqui (ou podes deixar fechado pelo onSuccess)
       onSuccess?.();
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
@@ -227,6 +252,7 @@ export default function AddThreatForm({ onSuccess }) {
         </div>
 
         <h4 className={styles.sectionTitle}>Perícias</h4>
+        {/* CORREÇÃO AQUI: JSX das perícias fechado corretamente */}
         {formData.skills.map((skill, index) => (
           <div key={index} className={styles.dynamicBlock}>
             <button type="button" className={styles.removeBtn} onClick={() => removeSkillBlock(index)}>X</button>
@@ -245,7 +271,7 @@ export default function AddThreatForm({ onSuccess }) {
             name="hasEnigma"
             options={BOOLEAN_OPTIONS} 
             value={formData.enigmaOfFear.hasEnigma ? 'Sim' : 'Não'} 
-            onChange={(e) => handleEnigmaDropdown(e.target.value)} 
+            onChange={handleEnigmaDropdown} 
           />
         </div>
         

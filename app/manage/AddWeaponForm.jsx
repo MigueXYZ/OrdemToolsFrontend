@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+// 1. IMPORTAR O useContext
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
+import { AuthContext } from '../context/AuthContext'; // Ajustar caminho se necessário
 import styles from './AddWeaponForm.module.css';
 
 const PROFICIENCIES = ['Simples', 'Tática', 'Pesada'];
@@ -14,6 +16,9 @@ const CATEGORIES = ['0', '1', '2', '3', '4'];
 const RANGES = ['Nenhum', 'Curto', 'Médio', 'Longo', 'Extremo'];
 
 export default function AddWeaponForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -43,6 +48,13 @@ export default function AddWeaponForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
+    // SEGURANÇA BÁSICA: Verificar se existe token
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
@@ -52,7 +64,16 @@ export default function AddWeaponForm({ onSuccess }) {
 
       if (formData.range === 'Nenhum' || !formData.range) delete payload.range;
 
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/weapons`, payload);
+      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/weapons`, 
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
 
       setMessage({ type: 'success', text: 'Armamento registado no arsenal!' });
       setFormData({

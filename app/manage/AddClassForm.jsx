@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+// 1. IMPORTAR O useContext
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
+import { AuthContext } from '../context/AuthContext'; // Ajusta o caminho se for diferente
 import styles from './AddClassForm.module.css';
 
 export default function AddClassForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -33,8 +38,14 @@ export default function AddClassForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
+    // SEGURANÇA BÁSICA: Verificar se existe token
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Reconstruir o payload para corresponder à nova estrutura do Backend
       const payload = {
         name: formData.name,
         description: formData.description,
@@ -55,19 +66,19 @@ export default function AddClassForm({ onSuccess }) {
         proficiencies: formData.proficiencies
       };
 
+      // 3. USAR O user.token DO CONTEXTO
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/classes`,
         payload,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}` // Garantir autenticação
+            Authorization: `Bearer ${user.token}`
           }
         }
       );
 
       setMessage({ type: 'success', text: 'Classe de prestígio registada com sucesso!' });
       
-      // Limpar formulário após sucesso
       setFormData({ 
         name: '', description: '', book: '',
         hpInitial: '', hpPerLevel: '',
@@ -99,7 +110,6 @@ export default function AddClassForm({ onSuccess }) {
           </div>
         )}
 
-        {/* Informação Básica */}
         <div className={styles.grid}>
           <FormField
             label="Nome da Classe *"
@@ -128,25 +138,21 @@ export default function AddClassForm({ onSuccess }) {
           required
         />
 
-        {/* Estatísticas Vitais */}
         <h4 className={styles.sectionDivider}>Características Iniciais</h4>
         
         <div className={styles.statsGrid}>
-          {/* Pontos de Vida */}
           <div className={styles.statBox}>
             <h5 className={styles.statBoxTitle}>Pontos de Vida (PV)</h5>
             <FormField label="Iniciais" name="hpInitial" value={formData.hpInitial} onChange={handleChange} placeholder="ex: 20 + Vigor" />
             <FormField label="A cada novo NEX" name="hpPerLevel" value={formData.hpPerLevel} onChange={handleChange} placeholder="ex: 4 PV (+Vig)" />
           </div>
 
-          {/* Pontos de Esforço */}
           <div className={styles.statBox}>
             <h5 className={styles.statBoxTitle}>Pontos de Esforço (PE)</h5>
             <FormField label="Iniciais" name="epInitial" value={formData.epInitial} onChange={handleChange} placeholder="ex: 2 + Presença" />
             <FormField label="A cada novo NEX" name="epPerLevel" value={formData.epPerLevel} onChange={handleChange} placeholder="ex: 2 PE (+Pre)" />
           </div>
 
-          {/* Sanidade */}
           <div className={styles.statBox}>
             <h5 className={styles.statBoxTitle}>Sanidade (SAN)</h5>
             <FormField label="Inicial" name="sanInitial" value={formData.sanInitial} onChange={handleChange} placeholder="ex: 12" />
@@ -154,7 +160,6 @@ export default function AddClassForm({ onSuccess }) {
           </div>
         </div>
 
-        {/* Proficiências e Perícias */}
         <h4 className={styles.sectionDivider}>Treino</h4>
         <div className={styles.grid}>
           <FormField

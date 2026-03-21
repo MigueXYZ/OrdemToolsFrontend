@@ -1,12 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+// 1. IMPORTAR O useContext (junto com os outros hooks)
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
+import { AuthContext } from '../context/AuthContext'; // Ajustar caminho se necessário
 import styles from './AddTrackForm.module.css';
 
 export default function AddTrackForm({ onSuccess }) {
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  const { user } = useContext(AuthContext);
+
   const [formData, setFormData] = useState({
     name: '',
     class: '',
@@ -55,14 +60,32 @@ export default function AddTrackForm({ onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     if (formData.abilities.length !== 4) {
       setMessage({ type: 'error', text: 'Protocolo incompleto: selecione exatamente 4 poderes' });
       setLoading(false);
       return;
     }
 
+    // SEGURANÇA BÁSICA: Verificar se existe token
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tracks`, formData);
+      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/tracks`, 
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
+      
       setMessage({ type: 'success', text: 'Nova Trilha registada no arquivo!' });
       setFormData({ name: '', class: '', abilities: [], description: '', book: '' });
       onSuccess?.();
@@ -96,7 +119,6 @@ export default function AddTrackForm({ onSuccess }) {
             required
           />
 
-          {/* CORREÇÃO: Usando name="class" e o handleChange padrão */}
           <AeroSelect
             label="Classe Base *"
             name="class"
