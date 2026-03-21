@@ -2,7 +2,7 @@
 
 import { useState, useContext } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/navigation'; // Adicionado
+import { useRouter } from 'next/navigation';
 import { AuthContext } from '../context/AuthContext';
 import EditModal from './EditModal';
 import styles from './DetailModal.module.css';
@@ -11,7 +11,7 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useContext(AuthContext);
-  const router = useRouter(); // Instanciado o router
+  const router = useRouter();
 
   if (!item) return null;
 
@@ -28,13 +28,10 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
   const config = typeConfig[type] || typeConfig.ability;
 
-  // --- Função Útil de Navegação ---
-  // Fecha o modal atual e navega para a página de pesquisa com o filtro correto
   const navigateToSearch = (targetTab, searchQuery, classId = null) => {
     onClose();
     let url = `/browse?tab=${targetTab}`;
 
-    // Se estivermos a ir para trilhas, passamos o ID da classe para o filtro ser exato
     if (classId) {
       url += `&classId=${classId}`;
     }else{
@@ -78,21 +75,14 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
   const extractTrackFromAbility = (requirements) => {
     if (!requirements) return null;
 
-    // 1. Procura o padrão "Trilha de [Texto]"
     const match = requirements.match(/Trilha de ([a-zA-ZÀ-ÿ\s]+)/i);
     if (!match) return null;
 
     let trackName = match[1].trim();
-
-    // 2. Se o nome capturado for muito longo ou contiver vírgulas, cortamos na vírgula
-    // (Ex: "Trilha de Especialista Atirador, NEX 40%" -> "Especialista Atirador")
     trackName = trackName.split(',')[0].trim();
 
-    // 3. Lista de classes para "limpar" do nome da trilha
     const classes = ['Combatente', 'Especialista', 'Ocultista'];
 
-    // Remove a classe do início da string se ela lá estiver
-    // Ex: "Combatente Operações Especiais" -> "Operações Especiais"
     classes.forEach(className => {
       const regex = new RegExp(`^${className}\\s+`, 'i');
       trackName = trackName.replace(regex, '');
@@ -127,7 +117,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
         <div className={styles.content}>
           <h2 className={styles.title}>{item.name || item.title}</h2>
 
-          {/* === BOTÕES GLOBAIS DE INTERLIGAÇÃO (DEPENDENDO DO TIPO) === */}
           {type === 'class' && (
             <button
               className={styles.aeroLinkButton}
@@ -156,12 +145,20 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
             </div>
           )}
 
+          {/* RITUAL ATUALIZADO */}
           {type === 'ritual' && (
-            <div className={styles.grid2}>
-              {renderField('Círculo', item.circle)}
-              {renderField('Duração', item.duration)}
-              {renderField('Elementos', item.elements, true)}
-            </div>
+            <>
+              <div className={styles.grid3}>
+                {renderField('Execução', item.execution)}
+                {renderField('Alcance', item.range)}
+                {renderField('Alvo', item.target)}
+              </div>
+              <div className={styles.grid2}>
+                {renderField('Círculo', item.circle)}
+                {renderField('Duração', item.duration)}
+                {renderField('Elementos', item.elements, true)}
+              </div>
+            </>
           )}
 
           {type === 'rule' && (
