@@ -17,6 +17,9 @@ export default function AddRitualForm({ onSuccess }) {
     description: '',
     circle: '',
     elements: '',
+    execution: '', // NOVO
+    range: '',     // NOVO
+    target: '',    // NOVO
     duration: '',
     tags: '',
     book: ''
@@ -71,6 +74,7 @@ export default function AddRitualForm({ onSuccess }) {
       // Limpar formulário após o sucesso
       setFormData({
         name: '', description: '', circle: '', elements: '',
+        execution: '', range: '', target: '', // NOVOS
         duration: '', tags: '', book: ''
       });
       
@@ -103,7 +107,7 @@ export default function AddRitualForm({ onSuccess }) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="ex: Círculo de Banimento"
+            placeholder="ex: Alterar Destino"
             required
           />
         </div>
@@ -113,7 +117,7 @@ export default function AddRitualForm({ onSuccess }) {
           name="description"
           value={formData.description}
           onChange={handleChange}
-          placeholder="Descreva os efeitos do ritual..."
+          placeholder="Descreva os efeitos do ritual e suas versões verdadeiro/discente..."
           isTextarea
           required
         />
@@ -133,7 +137,34 @@ export default function AddRitualForm({ onSuccess }) {
             name="elements"
             value={formData.elements}
             onChange={handleChange}
-            placeholder="sangue, morte, energia..."
+            placeholder="Energia, Conhecimento..."
+          />
+        </div>
+
+        {/* NOVA LINHA: EXECUÇÃO, ALCANCE E ALVO (3 COLUNAS) */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
+          <FormField
+            label="Execução"
+            name="execution"
+            value={formData.execution}
+            onChange={handleChange}
+            placeholder="ex: reação"
+          />
+
+          <FormField
+            label="Alcance"
+            name="range"
+            value={formData.range}
+            onChange={handleChange}
+            placeholder="ex: pessoal"
+          />
+
+          <FormField
+            label="Alvo"
+            name="target"
+            value={formData.target}
+            onChange={handleChange}
+            placeholder="ex: você"
           />
         </div>
 
@@ -143,7 +174,7 @@ export default function AddRitualForm({ onSuccess }) {
             name="duration"
             value={formData.duration}
             onChange={handleChange}
-            placeholder="ex: 30 minutos"
+            placeholder="ex: instantânea"
           />
 
           <FormField
