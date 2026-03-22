@@ -67,7 +67,8 @@ export default function NewCharacterPage() {
   const [powerModalSearch, setPowerModalSearch] = useState('');
   const [abilitiesList, setAbilitiesList] = useState([]);
   const [ritualsList, setRitualsList] = useState([]);
-  
+  const [originsList, setOriginsList] = useState([]);
+
   const [isSaving, setIsSaving] = useState(false);
 
   const [character, setCharacter] = useState({
@@ -91,19 +92,21 @@ export default function NewCharacterPage() {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
+        const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes, orgRes] = await Promise.all([
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/classes`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tracks`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/weapons?limit=1000`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/items?limit=1000`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/abilities?limit=1000`),
-          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rituals?limit=1000`)
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rituals?limit=1000`),
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`) // NOVO
         ]);
         setClassesList(clsRes.data.data || []);
         setTracksList(trkRes.data.data || []);
         setWeaponsList(wpnRes.data.data || []);
         setItemsList(itmRes.data.data || []);
         setAbilitiesList(ablRes.data.data || []);
+        setOriginsList(orgRes.data.data || []);
         setRitualsList(ritRes.data.data || []);
       } catch (error) {
         console.error('Erro ao carregar opções:', error);
@@ -231,7 +234,7 @@ export default function NewCharacterPage() {
         newAttacks.push({
           weapon: entity._id,
           customName: entity.name,
-          attackBonus: relevantSkillName, 
+          attackBonus: relevantSkillName,
           damageOverride: calculatedDamage,
           criticalOverride: entity.critical || ''
         });
@@ -262,13 +265,13 @@ export default function NewCharacterPage() {
 
             updatedAttack.damageOverride = calculatedDamage;
             updatedAttack.criticalOverride = selectedWeapon.critical || '';
-            updatedAttack.attackBonus = relevantSkillName; 
+            updatedAttack.attackBonus = relevantSkillName;
             updatedAttack.customName = '';
           }
         } else {
           updatedAttack.damageOverride = '';
           updatedAttack.criticalOverride = '';
-          updatedAttack.attackBonus = ''; 
+          updatedAttack.attackBonus = '';
         }
       }
 
@@ -317,7 +320,7 @@ export default function NewCharacterPage() {
           ritual: entity._id,
           customName: entity.name,
           customNotes: entity.description || '',
-          dcOverride: '', 
+          dcOverride: '',
           _element: entity.elements?.[0] || 'Outro',
           _circle: entity.circle || 1,
           _execution: entity.execution || 'Padrão',
@@ -362,6 +365,32 @@ export default function NewCharacterPage() {
     }));
   };
 
+  const handleOriginChange = (originId) => {
+    setCharacter(prev => {
+      const updated = { ...prev, origin: originId };
+
+      // Procura a origem completa na lista para extrair o poder
+      const selectedOrigin = originsList.find(o => o._id === originId);
+
+      if (selectedOrigin && selectedOrigin.powerName) {
+        // Verifica se o personagem já tem este poder para não duplicar
+        const alreadyHasPower = prev.abilities.some(a => a.customName === selectedOrigin.powerName);
+
+        if (!alreadyHasPower) {
+          updated.abilities = [
+            ...prev.abilities,
+            {
+              ability: null, // Não tem ID na coleção de habilidades gerais, vem da origem
+              customName: `[Origem] ${selectedOrigin.powerName}`,
+              customNotes: selectedOrigin.powerDescription
+            }
+          ];
+        }
+      }
+      return updated;
+    });
+  };
+
   const handleSaveCharacter = async () => {
     if (!character.name) {
       alert("O teu agente precisa de um nome antes de ser submetido aos arquivos!");
@@ -384,10 +413,10 @@ export default function NewCharacterPage() {
     if (payload.inventory.maxWeightOverride === '') {
       payload.inventory.maxWeightOverride = null;
     }
-    
+
     ['hp', 'ep', 'san'].forEach(stat => {
       if (payload.stats[stat].overrideMax === '') {
-        payload.stats[stat].overrideMax = null; 
+        payload.stats[stat].overrideMax = null;
       } else {
         payload.stats[stat].overrideMax = Number(payload.stats[stat].overrideMax);
       }
@@ -406,7 +435,7 @@ export default function NewCharacterPage() {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert('Agente registado com sucesso na Base de Dados!');
-      router.push('/characters'); 
+      router.push('/characters');
     } catch (error) {
       console.error('Erro ao guardar ficha:', error.response?.data || error.message);
       alert('Ocorreu um erro ao guardar a ficha. Verifica a consola.');
@@ -444,7 +473,7 @@ export default function NewCharacterPage() {
         </nav>
 
         <div className={styles.contentArea}>
-          
+
           {/* TAB BASICS */}
           {activeTab === 'basics' && (
             <div className={styles.tabContent}>
@@ -454,7 +483,14 @@ export default function NewCharacterPage() {
                 <FormField label="Nome do Jogador" name="playerName" value={character.playerName} onChange={handleChange} />
               </div>
               <div className={styles.grid3}>
-                <FormField label="Origem" name="origin" value={character.origin} onChange={handleChange} placeholder="Ex: Académico" />
+                <AeroSelect
+                  label="Origem"
+                  name="origin"
+                  options={originsList.map(o => ({ label: o.name, value: o._id }))}
+                  value={character.origin}
+                  onChange={(e) => handleOriginChange(e.target.value)}
+                  placeholder="-- Selecionar Origem --"
+                />
                 <AeroSelect label="Classe" name="classId" options={classesList.map(c => ({ label: c.name, value: c._id }))} value={character.classId} onChange={handleChange} placeholder="-- Selecionar --" />
                 {(() => {
                   const availableTracks = tracksList.filter(t => (t.class?._id || t.class) === character.classId);
@@ -630,7 +666,7 @@ export default function NewCharacterPage() {
                       <div className={styles.invStaticBox} title="Espaço Utilizado">
                         {character.inventory.items.reduce((acc, item) => acc + ((parseFloat(item.spaceOverride) || 0) * (parseInt(item.quantity) || 1)), 0)}
                       </div>
-                      
+
                       <input
                         type="number"
                         className={styles.invStaticInput}
@@ -745,7 +781,7 @@ export default function NewCharacterPage() {
               </div>
             </div>
           )}
-          
+
           {/* TAB PODERES E RITUAIS */}
           {activeTab === 'powers' && (
             <div className={styles.tabContent}>
@@ -811,7 +847,7 @@ export default function NewCharacterPage() {
               </div>
             </div>
           )}
-          
+
           {/* TAB BACKGROUND (LORE) */}
           {activeTab === 'lore' && (
             <div className={styles.tabContent}>
@@ -934,7 +970,7 @@ export default function NewCharacterPage() {
           </div>
         </div>
       )}
-      
+
       {/* =========================================
           MODAL DE ADICIONAR PODERES E RITUAIS
           ========================================= */}
