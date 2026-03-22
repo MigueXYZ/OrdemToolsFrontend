@@ -77,6 +77,10 @@ export default function Home() {
             <Link href="/browse?tab=tracks" className={styles.browseButton}>
               <span>🛤️ Trilhas</span>
             </Link>
+            {/* NOVO BOTÃO DE ORIGENS AQUI */}
+            <Link href="/browse?tab=origins" className={styles.browseButton}>
+              <span>🧬 Origens</span>
+            </Link>
             <Link href="/browse?tab=weapons" className={styles.browseButton}>
               <span>🗡️ Armas</span>
             </Link>

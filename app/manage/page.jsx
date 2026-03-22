@@ -11,6 +11,7 @@ import AddRuleForm from './AddRuleForm';
 import AddItemForm from './AddItemForm';
 import AddClassForm from './AddClassForm';
 import AddTrackForm from './AddTrackForm';
+import AddOriginForm from './AddOriginForm'; // NOVO FORMULÁRIO DE ORIGEM
 import AddWeaponForm from './AddWeaponForm';
 import AddThreatForm from './AddThreatForm';
 
@@ -122,6 +123,12 @@ export default function ManagePage() {
           <button className={`${styles.tab} ${activeTab === 'tracks' ? styles.active : ''}`} onClick={() => setActiveTab('tracks')}>
             <span className={styles.tabIcon}>🛤️</span> Trilhas
           </button>
+          
+          {/* NOVO BOTÃO DE ORIGENS */}
+          <button className={`${styles.tab} ${activeTab === 'origins' ? styles.active : ''}`} onClick={() => setActiveTab('origins')}>
+            <span className={styles.tabIcon}>🧬</span> Origens
+          </button>
+          
           <button className={`${styles.tab} ${activeTab === 'weapons' ? styles.active : ''}`} onClick={() => setActiveTab('weapons')}>
             <span className={styles.tabIcon}>🗡️</span> Armas
           </button>
@@ -137,6 +144,7 @@ export default function ManagePage() {
           {activeTab === 'items' && <AddItemForm />}
           {activeTab === 'classes' && <AddClassForm />}
           {activeTab === 'tracks' && <AddTrackForm />}
+          {activeTab === 'origins' && <AddOriginForm />}  {/* COMPONENTE DA ORIGEM */}
           {activeTab === 'weapons' && <AddWeaponForm />}
           {activeTab === 'threats' && <AddThreatForm />}
         </main>
