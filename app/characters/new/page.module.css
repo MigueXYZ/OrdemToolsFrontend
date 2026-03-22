@@ -53,7 +53,7 @@
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(20px);
   overflow: hidden;
 }
@@ -88,7 +88,8 @@
 .activeTab {
   color: var(--text-accent);
   border-bottom-color: var(--text-accent);
-  background: var(--bg-secondary); /* Funde-se com o conteúdo */
+  background: var(--bg-secondary);
+  /* Funde-se com o conteúdo */
   font-weight: bold;
 }
 
@@ -107,11 +108,27 @@
   letter-spacing: 1px;
 }
 
-.sectionTitle:first-child { margin-top: 0; }
+.sectionTitle:first-child {
+  margin-top: 0;
+}
 
-.grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
 
 .checkboxWrapper {
   display: flex;
@@ -148,14 +165,15 @@
 
 .attrBox {
   flex: 1;
-  background: rgba(128, 128, 128, 0.08); /* Fundo neutro e translúcido */
+  background: rgba(128, 128, 128, 0.08);
+  /* Fundo neutro e translúcido */
   border: 1px solid var(--border-color);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 1rem;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, border-color 0.2s;
 }
 
@@ -169,7 +187,7 @@
   font-size: 1.3rem;
   color: var(--text-primary);
   margin-bottom: 0.8rem;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .attrInput {
@@ -184,7 +202,8 @@
   outline: none;
   padding: 0.2rem 0;
   transition: border-color 0.3s;
-  -moz-appearance: textfield; /* Remove as setas no Firefox */
+  -moz-appearance: textfield;
+  /* Remove as setas no Firefox */
 }
 
 /* Remove as setas de número no Chrome/Safari/Edge */
@@ -194,8 +213,8 @@
   margin: 0;
 }
 
-.attrInput:focus { 
-  border-bottom-color: var(--text-accent); 
+.attrInput:focus {
+  border-bottom-color: var(--text-accent);
 }
 
 .helperText {
@@ -224,7 +243,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
 }
 
@@ -238,22 +257,22 @@
    ========================================= */
 
 /* Garante que o contentor do FormField/AeroSelect estica */
-.grid2 > div, 
-.grid3 > div, 
-.grid4 > div {
+.grid2>div,
+.grid3>div,
+.grid4>div {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
 /* Força os inputs e selects lá dentro a ocuparem 100% do contentor */
-.grid2 input:not([type="checkbox"]), 
-.grid3 input:not([type="checkbox"]), 
+.grid2 input:not([type="checkbox"]),
+.grid3 input:not([type="checkbox"]),
 .grid4 input:not([type="checkbox"]),
-.grid2 select, 
-.grid3 select, 
+.grid2 select,
+.grid3 select,
 .grid4 select {
-  width: 100% !important; 
+  width: 100% !important;
   box-sizing: border-box;
 }
 
@@ -272,7 +291,8 @@
   display: flex;
   align-items: center;
   padding: 0.6rem 1rem;
-  background: var(--bg-secondary); /* Usa o fundo do cartão em vez de preto transparente */
+  background: var(--bg-secondary);
+  /* Usa o fundo do cartão em vez de preto transparente */
   border: 1px solid var(--border-color);
   border-radius: 8px;
   transition: all 0.2s ease;
@@ -280,23 +300,44 @@
 
 .skillRow:hover {
   border-color: var(--text-accent);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
 
 /* Tamanhos das Colunas */
-.colName { flex: 2; color: var(--text-primary); }
-.colAttr { flex: 1.5; padding: 0 0.5rem; }
-.colTrain { flex: 2; padding: 0 0.5rem; }
-.colBonus { flex: 1; padding: 0 0.5rem; }
-.colTotal { flex: 1.5; display: flex; justify-content: flex-end; }
+.colName {
+  flex: 2;
+  color: var(--text-primary);
+}
+
+.colAttr {
+  flex: 1.5;
+  padding: 0 0.5rem;
+}
+
+.colTrain {
+  flex: 2;
+  padding: 0 0.5rem;
+}
+
+.colBonus {
+  flex: 1;
+  padding: 0 0.5rem;
+}
+
+.colTotal {
+  flex: 1.5;
+  display: flex;
+  justify-content: flex-end;
+}
 
 /* Inputs e Selects dentro das Perícias */
-.skillSelect, .skillInput {
+.skillSelect,
+.skillInput {
   width: 100%;
   padding: 0.5rem;
   /* Fundo neutro e translúcido (funciona em Light e Dark Mode sem puxar gradientes) */
-  background: rgba(128, 128, 128, 0.1); 
+  background: rgba(128, 128, 128, 0.1);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -306,8 +347,9 @@
   transition: all 0.2s;
 }
 
-.skillSelect:focus, .skillInput:focus { 
-  border-color: var(--text-accent); 
+.skillSelect:focus,
+.skillInput:focus {
+  border-color: var(--text-accent);
   background: rgba(128, 128, 128, 0.15);
 }
 
@@ -323,15 +365,17 @@
 
 /* Distintivo de Resultado */
 .totalBadge {
-  background: rgba(128, 128, 128, 0.1); /* Fundo neutro */
+  background: rgba(128, 128, 128, 0.1);
+  /* Fundo neutro */
   border: 1px solid var(--text-accent);
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-family: var(--font-titles) !important;
-  color: var(--text-accent); /* A cor de destaque dá o brilho necessário */
+  color: var(--text-accent);
+  /* A cor de destaque dá o brilho necessário */
   font-weight: bold;
   letter-spacing: 1px;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* =========================================
@@ -379,127 +423,441 @@
 }
 
 /* =========================================
-   COMBATE E INVENTÁRIO
+   DASHBOARD DE INVENTÁRIO (ADAPTÁVEL DARK/LIGHT)
    ========================================= */
 
-.defenseBox {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  background: rgba(128, 128, 128, 0.08);
+.inventoryDashboard {
+  background: var(--bg-secondary);
+  /* Removido o #111111 fixo */
   border: 1px solid var(--border-color);
+  border-radius: 8px;
   padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.defenseTotal {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.invStatsRow {
+  display: flex;
+  gap: 1rem;
   align-items: center;
-  justify-content: center;
-  background: var(--bg-primary);
-  border: 2px solid var(--text-accent);
-  border-radius: 12px;
-  width: 100px;
-  height: 100px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.defenseTotal span {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  font-family: var(--font-titles) !important;
+.invBox {
+  display: flex;
+  align-items: center;
+  background: transparent;
 }
 
-.defenseTotal strong {
-  font-size: 2.5rem;
-  color: var(--text-accent);
-  line-height: 1;
-}
-
-.defenseMath {
+.invBoxContainer {
   display: flex;
   align-items: center;
   gap: 1rem;
-  font-family: var(--font-titles) !important;
-  font-size: 1.2rem;
-  color: var(--text-primary);
 }
 
-.defenseMath span {
+.invLabel {
+  font-family: var(--font-titles) !important;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  margin-right: 1rem;
+  white-space: nowrap;
+}
+
+.invInputBig,
+.invInputText {
+  background: rgba(128, 128, 128, 0.15);
+  /* Fundo inteligente adaptável */
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.invInputBig {
+  width: 60px;
+  font-size: 1.2rem;
+}
+
+.invInputText {
+  width: 100px;
+}
+
+.invValueText {
+  background: rgba(128, 128, 128, 0.15);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  width: 100%;
+}
+
+.invCategoryRow {
+  display: flex;
+  background: rgba(128, 128, 128, 0.15);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.invCategoryRow input,
+.invStaticBox {
+  width: 50px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border-color);
+  color: var(--text-primary);
+  text-align: center;
+  padding: 0.5rem 0;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.invCategoryRow input:last-child,
+.invStaticBox:last-child {
+  border-right: none;
+}
+
+.invCategoryRow input:focus {
+  outline: none;
+  background: rgba(128, 128, 128, 0.25);
+}
+
+.openModalBtn {
+  background: var(--text-accent);
+  color: #fff;
+  /* Fica sempre branco para contraste com o accent */
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-family: var(--font-titles) !important;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: transform 0.2s, filter 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.openModalBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.itemsGrid,
+.attacksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.itemCard,
+.attackCard {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  /* ADICIONADO PARA CORRIGIR O VAZAMENTO */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.itemCardHeader,
+.attackCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.itemName {
+  font-weight: bold;
+  color: var(--text-accent);
+}
+
+.itemCardDetails {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
   color: var(--text-secondary);
 }
 
-.defenseMath input {
-  width: 60px;
-  text-align: center;
-  background: rgba(128, 128, 128, 0.1);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.5rem;
-  font-size: 1.1rem;
+.attackNameInput {
+  background: transparent;
+  border: none;
+  color: var(--text-accent);
   font-weight: bold;
+  font-size: 1.1rem;
+  width: 100%;
+  outline: none;
 }
 
-.defenseMath input:focus {
+.attackStatsRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.attackStat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.attackStat label {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+
+.attackStat input {
+  background: rgba(128, 128, 128, 0.1);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.4rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+
+  /* ADICIONADO PARA OS INPUTS CABEREM NO CARTÃO */
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  /* Impede que o input force o tamanho */
+}
+
+/* =========================================
+   MODAL DE ITENS (ADAPTÁVEL DARK/LIGHT)
+   ========================================= */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  /* Ligeiramente mais claro para não chocar */
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: var(--bg-secondary);
+  /* Substituído o fundo fixo */
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-family: var(--font-titles) !important;
+  color: var(--text-primary);
+}
+
+.modalCloseBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modalCloseBtn:hover {
+  color: #ff4444;
+}
+
+.modalTabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modalTabs button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-family: var(--font-titles) !important;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modalTabs button:hover {
+  color: var(--text-primary);
+}
+
+.modalTabActive {
+  color: var(--text-accent) !important;
+  border-bottom: 2px solid var(--text-accent) !important;
+}
+
+.modalSearchArea {
+  padding: 1rem;
+}
+
+.modalSearchInput {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+}
+
+.modalList {
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modalListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-primary);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.modalListItem:hover {
+  transform: translateY(-2px);
   border-color: var(--text-accent);
 }
 
-.listContainer {
+.modalItemInfo h4 {
+  margin: 0 0 0.3rem 0;
+  color: var(--text-primary);
+}
+
+.modalItemInfo p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.modalAddBtn {
+  background: rgba(153, 51, 255, 0.15);
+  color: #c68cff;
+  border: 1px solid #9933ff;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modalAddBtn:hover {
+  background: #9933ff;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* =========================================
+   EDIÇÃO DE ITENS E CARGA
+   ========================================= */
+
+.invStaticInput {
+  width: 50px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  text-align: center;
+  padding: 0.5rem 0;
+  font-weight: bold;
+  font-size: 1.1rem;
+  outline: none;
+  transition: background 0.2s;
+}
+
+.invStaticInput:focus {
+  background: rgba(128, 128, 128, 0.15);
+}
+
+.invStaticInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.itemCardEditRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.itemCardEditRow label {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.rowCard {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
-}
-
-.smallLabel {
-  display: block;
   font-size: 0.75rem;
   color: var(--text-secondary);
-  text-transform: uppercase;
-  margin-bottom: 0.3rem;
   font-weight: bold;
-  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-.inventoryHeader {
+.itemCardEditRow input {
+  background: rgba(128, 128, 128, 0.1);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.4rem;
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0.2rem;
+  outline: none;
+}
+
+.itemCardEditRow input:focus {
+  border-color: var(--text-accent);
+}
+
+.itemCardDesc {
+  width: 100%;
   background: rgba(128, 128, 128, 0.05);
   border: 1px solid var(--border-color);
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-}
-
-.weightBox {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-  padding-right: 1rem;
-}
-
-.weightLabel {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  font-weight: bold;
-}
-
-.weightValue {
-  font-size: 1.8rem;
-  font-family: var(--font-titles) !important;
   color: var(--text-primary);
+  border-radius: 4px;
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+  font-family: inherit;
+}
+
+.itemCardDesc:focus {
+  border-color: var(--text-accent);
 }
