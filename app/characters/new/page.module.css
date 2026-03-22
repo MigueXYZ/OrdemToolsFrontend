@@ -203,6 +203,7 @@
   padding: 0.2rem 0;
   transition: border-color 0.3s;
   -moz-appearance: textfield;
+  appearance: textfield;
   /* Remove as setas no Firefox */
 }
 
@@ -638,7 +639,7 @@
 }
 
 /* =========================================
-   MODAL DE ITENS (ADAPTÁVEL DARK/LIGHT)
+   MODAL DE ITENS E PODERES (ALTO CONTRASTE)
    ========================================= */
 .modalOverlay {
   position: fixed;
@@ -646,9 +647,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  /* Ligeiramente mais claro para não chocar */
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -656,8 +656,8 @@
 }
 
 .modalContent {
-  background: var(--bg-secondary);
-  /* Substituído o fundo fixo */
+  background: var(--bg-primary);
+  /* A CHAVE É ISTO: Fundo perfeitamente limpo! */
   border: 1px solid var(--border-color);
   border-radius: 12px;
   width: 90%;
@@ -665,7 +665,7 @@
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .modalHeader {
@@ -707,11 +707,12 @@
   color: var(--text-secondary);
   font-family: var(--font-titles) !important;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
 
 .modalTabs button:hover {
   color: var(--text-primary);
+  background: rgba(128, 128, 128, 0.05);
 }
 
 .modalTabActive {
@@ -726,10 +727,16 @@
 .modalSearchInput {
   width: 100%;
   padding: 0.8rem;
-  background: var(--bg-primary);
+  background: rgba(128, 128, 128, 0.08);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   color: var(--text-primary);
+  outline: none;
+}
+
+.modalSearchInput:focus {
+  border-color: var(--text-accent);
+  background: transparent;
 }
 
 .modalList {
@@ -745,119 +752,66 @@
   justify-content: space-between;
   align-items: center;
   background: var(--bg-primary);
+  /* Garante que o cartão salta à vista! */
   padding: 1rem;
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .modalListItem:hover {
   transform: translateY(-2px);
   border-color: var(--text-accent);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .modalItemInfo h4 {
   margin: 0 0 0.3rem 0;
   color: var(--text-primary);
+  font-size: 1.1rem;
 }
 
 .modalItemInfo p {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
 }
 
 .modalAddBtn {
-  background: rgba(153, 51, 255, 0.15);
-  color: #c68cff;
-  border: 1px solid #9933ff;
+  background: rgba(128, 128, 128, 0.1);
+  color: var(--text-accent);
+  border: 1px solid var(--text-accent);
   width: 40px;
   height: 40px;
   border-radius: 8px;
   font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .modalAddBtn:hover {
-  background: #9933ff;
-  color: white;
+  background: var(--text-accent);
+  color: #fff;
   transform: scale(1.1);
 }
 
-/* =========================================
-   EDIÇÃO DE ITENS E CARGA
-   ========================================= */
-
-.invStaticInput {
-  width: 50px;
-  background: transparent;
-  border: none;
+/* ESTILOS DOS LABELS NO MODAL (Dano, Cat, etc) */
+.modalStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
   color: var(--text-primary);
-  text-align: center;
-  padding: 0.5rem 0;
-  font-weight: bold;
-  font-size: 1.1rem;
-  outline: none;
-  transition: background 0.2s;
+  margin: 0;
+  margin-top: 0.3rem;
 }
 
-.invStaticInput:focus {
-  background: rgba(128, 128, 128, 0.15);
-}
-
-.invStaticInput::placeholder {
-  color: var(--text-secondary);
-}
-
-.itemCardEditRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.8rem;
-}
-
-.itemCardEditRow label {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+.modalStats span {
+  color: var(--text-accent);
   font-weight: bold;
   text-transform: uppercase;
-}
-
-.itemCardEditRow input {
-  background: rgba(128, 128, 128, 0.1);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 0.4rem;
-  border-radius: 4px;
-  width: 100%;
-  text-align: center;
-  font-weight: bold;
-  margin-top: 0.2rem;
-  outline: none;
-}
-
-.itemCardEditRow input:focus {
-  border-color: var(--text-accent);
-}
-
-.itemCardDesc {
-  width: 100%;
-  background: rgba(128, 128, 128, 0.05);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  border-radius: 4px;
-  padding: 0.6rem;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  resize: vertical;
-  min-height: 60px;
-  outline: none;
-  font-family: inherit;
-}
-
-.itemCardDesc:focus {
-  border-color: var(--text-accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
 }

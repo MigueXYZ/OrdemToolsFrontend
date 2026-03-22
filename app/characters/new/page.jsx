@@ -64,6 +64,13 @@ export default function NewCharacterPage() {
   const [modalTab, setModalTab] = useState('weapons'); // 'weapons' ou 'items'
   const [modalSearch, setModalSearch] = useState('');
 
+  // Estados do Modal de Poderes/Rituais
+  const [showPowerModal, setShowPowerModal] = useState(false);
+  const [powerModalTab, setPowerModalTab] = useState('abilities'); // 'abilities' ou 'rituals'
+  const [powerModalSearch, setPowerModalSearch] = useState('');
+  const [abilitiesList, setAbilitiesList] = useState([]);
+  const [ritualsList, setRitualsList] = useState([]);
+
   // Estado Central da Ficha
   const [character, setCharacter] = useState({
     name: '', playerName: '', nex: 5, level: 1, useLevel: false,
@@ -80,6 +87,8 @@ export default function NewCharacterPage() {
       categoryLimits: { I: 1, II: 0, III: 0, IV: 0 },
       description: { type: String }
     },
+    abilities: [],
+    rituals: []
   });
 
   useEffect(() => {
@@ -89,16 +98,20 @@ export default function NewCharacterPage() {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const [clsRes, trkRes, wpnRes, itmRes] = await Promise.all([
+const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/classes`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tracks`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/weapons?limit=1000`),
-          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/items?limit=1000`)
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/items?limit=1000`),
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/abilities?limit=1000`),
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rituals?limit=1000`)
         ]);
         setClassesList(clsRes.data.data || []);
         setTracksList(trkRes.data.data || []);
         setWeaponsList(wpnRes.data.data || []);
         setItemsList(itmRes.data.data || []);
+        setAbilitiesList(ablRes.data.data || []);
+        setRitualsList(ritRes.data.data || []);
       } catch (error) {
         console.error('Erro ao carregar opções:', error);
       }
@@ -291,10 +304,84 @@ export default function NewCharacterPage() {
     setCharacter(prev => ({ ...prev, attacks: prev.attacks.filter((_, i) => i !== index) }));
   };
 
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+  const getRitualColor = (element) => {
+    const el = element?.toLowerCase() || '';
+    if (el.includes('sangue')) return '#cc0000';
+    if (el.includes('morte')) return '#1a1a1a';
+    if (el.includes('energia')) return '#9933ff';
+    if (el.includes('conhecimento')) return '#cc9900';
+    if (el.includes('medo')) return '#ffffff';
+    return 'var(--border-color)';
+  };
+
+  // --- LÓGICA DE PODERES E RITUAIS ---
+  const handleAddPowerFromModal = (entity, type) => {
+    setCharacter(prev => {
+      if (type === 'ability') {
+        const newAbility = {
+          ability: entity._id,
+          customName: entity.name,
+          customNotes: entity.description || '' 
+        };
+        return { ...prev, abilities: [...prev.abilities, newAbility] };
+      } 
+      else if (type === 'ritual') {
+        const newRitual = {
+          ritual: entity._id,
+          customName: entity.name,
+          customNotes: entity.description || '',
+          dcOverride: '', // Para o jogador poder escrever a DT manualmente
+          _element: entity.elements?.[0] || 'Outro',
+          _circle: entity.circle || 1,
+          _execution: entity.execution || 'Padrão',
+          _range: entity.range || 'Curto',
+          _target: entity.target || '1 Ser',
+          _duration: entity.duration || 'Instantânea'
+        };
+        return { ...prev, rituals: [...prev.rituals, newRitual] };
+      }
+      return prev;
+    });
+  };
+
+  const handleRemoveAbility = (index) => {
+    setCharacter(prev => ({ ...prev, abilities: prev.abilities.filter((_, i) => i !== index) }));
+  };
+
+  const handleRemoveRitual = (index) => {
+    setCharacter(prev => ({ ...prev, rituals: prev.rituals.filter((_, i) => i !== index) }));
+  };
+
+  const handleAbilityChange = (index, value) => {
+    setCharacter(prev => {
+      const newAbilities = [...prev.abilities];
+      newAbilities[index].customNotes = value;
+      return { ...prev, abilities: newAbilities };
+    });
+  };
+
+  const handleRitualChange = (index, field, value) => {
+    setCharacter(prev => {
+      const newRituals = [...prev.rituals];
+      newRituals[index][field] = value;
+      return { ...prev, rituals: newRituals };
+    });
+  };
+
+
+
   if (loading || !user) return null;
 
   const filteredWeapons = weaponsList.filter(w => w.name.toLowerCase().includes(modalSearch.toLowerCase()));
   const filteredItems = itemsList.filter(i => i.name.toLowerCase().includes(modalSearch.toLowerCase()));
+  const filteredAbilities = abilitiesList.filter(a => a.name.toLowerCase().includes(powerModalSearch.toLowerCase()));
+  const filteredRituals = ritualsList.filter(r => r.name.toLowerCase().includes(powerModalSearch.toLowerCase()));
 
   // Conta itens por categoria para o display
   const getCategoryCount = (cat) => character.inventory.items.filter(i => i.categoryOverride === cat).length;
@@ -630,7 +717,73 @@ export default function NewCharacterPage() {
               </div>
             </div>
           )}
-          {activeTab === 'powers' && <div className={styles.tabContent}>Em construção: Habilidades e Rituais...</div>}
+          {/* TAB PODERES E RITUAIS */}
+          {activeTab === 'powers' && (
+            <div className={styles.tabContent}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '1rem 0' }}>
+                <button type="button" onClick={() => setShowPowerModal(true)} className={styles.openModalBtn}>
+                  + Procurar Poder / Ritual
+                </button>
+              </div>
+
+              {/* RITUAIS CONHECIDOS */}
+              <h2 className={styles.sectionTitle}>Rituais Conhecidos</h2>
+              <div className={styles.attacksGrid}>
+                {character.rituals.length === 0 && <p className={styles.emptyText}>Nenhum ritual aprendido.</p>}
+                {character.rituals.map((rit, index) => (
+                  <div key={index} className={styles.itemCard} style={{ borderTop: `4px solid ${getRitualColor(rit._element)}` }}>
+                    <div className={styles.itemCardHeader}>
+                      <span className={styles.itemName} style={{ fontSize: '1.2rem' }}>{rit.customName}</span>
+                      <button onClick={() => handleRemoveRitual(index)} className={styles.removeSkillBtn}>X</button>
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.8rem', alignItems: 'center' }}>
+                      <span style={{ background: getRitualColor(rit._element), color: '#fff', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                        {rit._element} {rit._circle}
+                      </span>
+                      <div className={styles.attackStat} style={{ flex: 'none', width: '80px', marginLeft: 'auto' }}>
+                        <input type="text" value={rit.dcOverride} onChange={(e) => handleRitualChange(index, 'dcOverride', e.target.value)} placeholder="Ex: DT 20" title="DT do Ritual" />
+                      </div>
+                    </div>
+
+                    <div className={styles.itemCardDetails} style={{ flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
+                      <span><strong>Execução:</strong> {rit._execution} | <strong>Alcance:</strong> {rit._range}</span>
+                      <span><strong>Alvo:</strong> {rit._target} | <strong>Duração:</strong> {rit._duration}</span>
+                    </div>
+                    
+                    <textarea 
+                      className={styles.itemCardDesc}
+                      placeholder="Descrição e Formas do Ritual (Verdadeiro, Discente)..."
+                      value={rit.customNotes}
+                      onChange={(e) => handleRitualChange(index, 'customNotes', e.target.value)}
+                      style={{ minHeight: '120px' }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* PODERES E HABILIDADES */}
+              <h2 className={styles.sectionTitle} style={{ marginTop: '3rem' }}>Poderes e Habilidades</h2>
+              <div className={styles.attacksGrid}>
+                {character.abilities.length === 0 && <p className={styles.emptyText}>Nenhum poder registado.</p>}
+                {character.abilities.map((abl, index) => (
+                  <div key={index} className={styles.itemCard}>
+                    <div className={styles.itemCardHeader}>
+                      <span className={styles.itemName}>{abl.customName}</span>
+                      <button onClick={() => handleRemoveAbility(index)} className={styles.removeSkillBtn}>X</button>
+                    </div>
+                    <textarea 
+                      className={styles.itemCardDesc}
+                      placeholder="Descrição e notas mecânicas..."
+                      value={abl.customNotes}
+                      onChange={(e) => handleAbilityChange(index, e.target.value)}
+                      style={{ minHeight: '100px' }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {activeTab === 'lore' && <div className={styles.tabContent}>Em construção: História e Notas...</div>}
         </div>
 
@@ -670,7 +823,12 @@ export default function NewCharacterPage() {
                 <div key={w._id} className={styles.modalListItem}>
                   <div className={styles.modalItemInfo}>
                     <h4>{w.name}</h4>
-                    <p>Dano: {w.damage} | Crítico: {w.critical} | Cat: {w.category}</p>
+                    <div className={styles.modalStats}>
+                      <div><span>Dano:</span> {w.damage}</div>
+                      <div><span>Crítico:</span> {w.critical}</div>
+                      <div><span>Cat:</span> {w.category}</div>
+                      <div><span>Espaço:</span> {w.space}</div>
+                    </div>
                   </div>
                   <button onClick={() => handleAddItemFromModal(w, 'weapon')} className={styles.modalAddBtn}>+</button>
                 </div>
@@ -680,9 +838,62 @@ export default function NewCharacterPage() {
                 <div key={i._id} className={styles.modalListItem}>
                   <div className={styles.modalItemInfo}>
                     <h4>{i.name}</h4>
-                    <p>Cat: {i.category} | Espaço: {i.space}</p>
+                    <div className={styles.modalStats}>
+                      <div><span>Cat:</span> {i.category}</div>
+                      <div><span>Espaço:</span> {i.space}</div>
+                    </div>
                   </div>
                   <button onClick={() => handleAddItemFromModal(i, 'item')} className={styles.modalAddBtn}>+</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* =========================================
+          MODAL DE ADICIONAR PODERES E RITUAIS
+          ========================================= */}
+      {showPowerModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowPowerModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>Arquivo Paranormal</h2>
+              <button onClick={() => setShowPowerModal(false)} className={styles.modalCloseBtn}>X</button>
+            </div>
+
+            <div className={styles.modalTabs}>
+              <button className={powerModalTab === 'abilities' ? styles.modalTabActive : ''} onClick={() => setPowerModalTab('abilities')}>Poderes</button>
+              <button className={powerModalTab === 'rituals' ? styles.modalTabActive : ''} onClick={() => setPowerModalTab('rituals')}>Rituais</button>
+            </div>
+
+            <div className={styles.modalSearchArea}>
+              <input
+                type="text"
+                placeholder="Pesquisar arquivo..."
+                value={powerModalSearch}
+                onChange={e => setPowerModalSearch(e.target.value)}
+                className={styles.modalSearchInput}
+              />
+            </div>
+
+            <div className={styles.modalList}>
+              {powerModalTab === 'abilities' && filteredAbilities.map(a => (
+                <div key={a._id} className={styles.modalListItem}>
+                  <div className={styles.modalItemInfo}>
+                    <h4>{a.name}</h4>
+                    <p>{a.category}</p>
+                  </div>
+                  <button onClick={() => handleAddPowerFromModal(a, 'ability')} className={styles.modalAddBtn}>+</button>
+                </div>
+              ))}
+
+              {powerModalTab === 'rituals' && filteredRituals.map(r => (
+                <div key={r._id} className={styles.modalListItem} style={{ borderLeft: `4px solid ${getRitualColor(r.elements?.[0])}` }}>
+                  <div className={styles.modalItemInfo}>
+                    <h4>{r.name}</h4>
+                    <p>{r.elements?.join(', ')} | Círculo: {r.circle}</p>
+                  </div>
+                  <button onClick={() => handleAddPowerFromModal(r, 'ritual')} className={styles.modalAddBtn}>+</button>
                 </div>
               ))}
             </div>
