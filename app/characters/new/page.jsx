@@ -70,6 +70,7 @@ export default function NewCharacterPage() {
   const [powerModalSearch, setPowerModalSearch] = useState('');
   const [abilitiesList, setAbilitiesList] = useState([]);
   const [ritualsList, setRitualsList] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Estado Central da Ficha
   const [character, setCharacter] = useState({
@@ -80,15 +81,10 @@ export default function NewCharacterPage() {
     skills: DEFAULT_SKILLS,
     combat: { defenseEquipment: 0, defenseOther: 0, protections: '', resistances: '', movement: '9m' },
     attacks: [],
-    inventory: {
-      items: [],
-      creditLimit: 'Baixo',
-      maxWeightOverride: '',
-      categoryLimits: { I: 1, II: 0, III: 0, IV: 0 },
-      description: { type: String }
-    },
+    inventory: { items: [], creditLimit: 'Baixo', maxWeightOverride: '', categoryLimits: { I: 1, II: 0, III: 0, IV: 0 } },
     abilities: [],
-    rituals: []
+    rituals: [],
+    lore: { appearance: '', backstory: '', personality: '', notes: '' }
   });
 
   useEffect(() => {
@@ -98,7 +94,7 @@ export default function NewCharacterPage() {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
+        const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/classes`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tracks`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/weapons?limit=1000`),
@@ -304,12 +300,6 @@ const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
     setCharacter(prev => ({ ...prev, attacks: prev.attacks.filter((_, i) => i !== index) }));
   };
 
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
   const getRitualColor = (element) => {
     const el = element?.toLowerCase() || '';
     if (el.includes('sangue')) return '#cc0000';
@@ -327,10 +317,10 @@ const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
         const newAbility = {
           ability: entity._id,
           customName: entity.name,
-          customNotes: entity.description || '' 
+          customNotes: entity.description || ''
         };
         return { ...prev, abilities: [...prev.abilities, newAbility] };
-      } 
+      }
       else if (type === 'ritual') {
         const newRitual = {
           ritual: entity._id,
@@ -372,6 +362,63 @@ const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
       newRituals[index][field] = value;
       return { ...prev, rituals: newRituals };
     });
+  };
+
+
+
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+  const handleLoreChange = (field, value) => {
+    setCharacter(prev => ({
+      ...prev,
+      lore: { ...(prev.lore || {}), [field]: value }
+    }));
+  };
+
+  const handleSaveCharacter = async () => {
+    if (!character.name) {
+      alert("O teu agente precisa de um nome antes de ser submetido aos arquivos!");
+      return;
+    }
+
+    // 1. Criamos uma cópia do personagem para não alterar a UI do jogador
+    const payload = JSON.parse(JSON.stringify(character));
+
+    // 2. Limpar ObjectIds vazios (Isto evita o Erro 400 do Mongoose de "Cast to ObjectId failed")
+    if (!payload.classId) delete payload.classId;
+    if (!payload.trackId) delete payload.trackId;
+
+    // 3. Limpar overrides numéricos que estejam vazios
+    if (payload.inventory.maxWeightOverride === '') {
+      payload.inventory.maxWeightOverride = null;
+    }
+
+    ['hp', 'ep', 'san'].forEach(stat => {
+      if (payload.stats[stat].overrideMax === '') {
+        payload.stats[stat].overrideMax = null; // O backend prefere null a strings vazias para Números
+      } else {
+        payload.stats[stat].overrideMax = Number(payload.stats[stat].overrideMax);
+      }
+    });
+
+    setIsSaving(true);
+    try {
+      // 4. Enviar o Payload Limpo!
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/characters`, payload, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      alert('Agente registado com sucesso na Base de Dados!');
+      router.push('/characters');
+    } catch (error) {
+      console.error('Erro ao guardar ficha:', error.response?.data || error.message);
+      alert('Ocorreu um erro ao guardar a ficha. Verifica a consola para os detalhes do erro de validação.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
 
@@ -736,7 +783,7 @@ const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
                       <span className={styles.itemName} style={{ fontSize: '1.2rem' }}>{rit.customName}</span>
                       <button onClick={() => handleRemoveRitual(index)} className={styles.removeSkillBtn}>X</button>
                     </div>
-                    
+
                     <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.8rem', alignItems: 'center' }}>
                       <span style={{ background: getRitualColor(rit._element), color: '#fff', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
                         {rit._element} {rit._circle}
@@ -750,8 +797,8 @@ const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
                       <span><strong>Execução:</strong> {rit._execution} | <strong>Alcance:</strong> {rit._range}</span>
                       <span><strong>Alvo:</strong> {rit._target} | <strong>Duração:</strong> {rit._duration}</span>
                     </div>
-                    
-                    <textarea 
+
+                    <textarea
                       className={styles.itemCardDesc}
                       placeholder="Descrição e Formas do Ritual (Verdadeiro, Discente)..."
                       value={rit.customNotes}
@@ -772,7 +819,7 @@ const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
                       <span className={styles.itemName}>{abl.customName}</span>
                       <button onClick={() => handleRemoveAbility(index)} className={styles.removeSkillBtn}>X</button>
                     </div>
-                    <textarea 
+                    <textarea
                       className={styles.itemCardDesc}
                       placeholder="Descrição e notas mecânicas..."
                       value={abl.customNotes}
@@ -784,11 +831,67 @@ const [clsRes, trkRes, wpnRes, itmRes, ablRes, ritRes] = await Promise.all([
               </div>
             </div>
           )}
-          {activeTab === 'lore' && <div className={styles.tabContent}>Em construção: História e Notas...</div>}
+          {/* TAB BACKGROUND (LORE) */}
+          {activeTab === 'lore' && (
+            <div className={styles.tabContent}>
+              <h2 className={styles.sectionTitle}>Perfil e História</h2>
+
+              <div className={styles.grid2}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label className={styles.smallLabel}>Aparência Física</label>
+                  <textarea
+                    className={styles.itemCardDesc}
+                    style={{ minHeight: '150px' }}
+                    value={character.lore?.appearance}
+                    onChange={(e) => handleLoreChange('appearance', e.target.value)}
+                    placeholder="Descreve o teu agente. Altura, porte, cicatrizes, estilo de roupa preferido..."
+                  />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label className={styles.smallLabel}>Personalidade</label>
+                  <textarea
+                    className={styles.itemCardDesc}
+                    style={{ minHeight: '150px' }}
+                    value={character.lore?.personality}
+                    onChange={(e) => handleLoreChange('personality', e.target.value)}
+                    placeholder="Traços marcantes, medos, manias, a forma como reage ao paranormal..."
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.5rem' }}>
+                <label className={styles.smallLabel}>História (Background)</label>
+                <textarea
+                  className={styles.itemCardDesc}
+                  style={{ minHeight: '200px' }}
+                  value={character.lore?.backstory}
+                  onChange={(e) => handleLoreChange('backstory', e.target.value)}
+                  placeholder="O que levou o teu agente a juntar-se à Ordem? Quem era ele antes de descobrir a verdade?"
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.5rem' }}>
+                <label className={styles.smallLabel}>Anotações Gerais da Campanha</label>
+                <textarea
+                  className={styles.itemCardDesc}
+                  style={{ minHeight: '150px' }}
+                  value={character.lore?.notes}
+                  onChange={(e) => handleLoreChange('notes', e.target.value)}
+                  placeholder="Aponta aqui pistas, nomes de NPCs, e teorias durante as sessões..."
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.footer}>
-          <button className={styles.saveBtn}>Guardar Ficha</button>
+          <button
+            className={styles.saveBtn}
+            onClick={handleSaveCharacter}
+            disabled={isSaving}
+          >
+            {isSaving ? 'A Sincronizar Arquivos...' : 'Guardar Ficha'}
+          </button>
         </div>
       </div>
 
