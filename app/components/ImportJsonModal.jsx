@@ -11,7 +11,9 @@ const JSON_TEMPLATES = {
   abilities: `[\n  {\n    "name": "Poder Exemplo",\n    "description": "Texto do poder.",\n    "category": "Poderes Paranormais",\n    "tags": ["sangue", "combate"]\n  }\n]`,
   rituals: `[\n  {\n    "name": "Ritual Exemplo",\n    "description": "Efeitos do ritual.",\n    "circle": 1,\n    "elements": ["energia"],\n    "execution": "padrão",\n    "range": "curto",\n    "target": "1 ser",\n    "duration": "instantânea",\n    "tags": ["dano"]\n  }\n]`,
   weapons: `[\n  {\n    "name": "Arma Exemplo",\n    "category": "1",\n    "proficiency": "Tática",\n    "type": "Fogo",\n    "grip": "Duas Mãos",\n    "damage": "2d10",\n    "critical": "19/x3",\n    "damageType": "Balístico",\n    "space": 2\n  }\n]`,
-  threats: `[\n  {\n    "name": "Zumbi de Sangue",\n    "vd": 20,\n    "description": "Criatura de sangue.",\n    "type": "Criatura",\n    "size": "Médio",\n    "elements": ["Sangue"],\n    "defense": 15,\n    "hp": { "total": 40, "bloodied": 20 },\n    "attributes": { "agi": 1, "for": 3, "int": 0, "pre": 1, "vig": 3 }\n  }\n]`
+  threats: `[\n  {\n    "name": "Zumbi de Sangue",\n    "vd": 20,\n    "description": "Criatura de sangue.",\n    "type": "Criatura",\n    "size": "Médio",\n    "elements": ["Sangue"],\n    "defense": 15,\n    "hp": { "total": 40, "bloodied": 20 },\n    "attributes": { "agi": 1, "for": 3, "int": 0, "pre": 1, "vig": 3 }\n  }\n]`,
+  // NOVO TEMPLATE: Origens
+  origins: `[\n  {\n    "name": "Acadêmico",\n    "description": "Você era um pesquisador ou professor universitário. De forma proposital ou não, seus estudos tocaram em assuntos misteriosos e chamaram a atenção da Ordo Realitas.",\n    "powerName": "Saber é Poder",\n    "powerDescription": "Quando faz um teste usando Intelecto, você pode gastar 2 PE para receber +5 nesse teste.",\n    "trainedSkills": ["Ciências", "Investigação"],\n    "book": "OPRPG"\n  }\n]`
 };
 
 const CATEGORY_OPTIONS = [
@@ -22,7 +24,8 @@ const CATEGORY_OPTIONS = [
   { label: 'Itens', value: 'items' },
   { label: 'Regras', value: 'rules' },
   { label: 'Classes', value: 'classes' },
-  { label: 'Trilhas', value: 'tracks' }
+  { label: 'Trilhas', value: 'tracks' },
+  { label: 'Origens', value: 'origins' } // NOVA OPÇÃO AQUI
 ];
 
 export default function ImportJsonModal({ onClose, onSuccess }) {
