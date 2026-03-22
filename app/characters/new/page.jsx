@@ -53,26 +53,23 @@ export default function NewCharacterPage() {
   const { user, loading } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('basics');
 
-  // Listas vindas da Base de Dados
   const [classesList, setClassesList] = useState([]);
   const [tracksList, setTracksList] = useState([]);
   const [weaponsList, setWeaponsList] = useState([]);
   const [itemsList, setItemsList] = useState([]);
 
-  // Estados do Modal de Itens
   const [showItemModal, setShowItemModal] = useState(false);
-  const [modalTab, setModalTab] = useState('weapons'); // 'weapons' ou 'items'
+  const [modalTab, setModalTab] = useState('weapons');
   const [modalSearch, setModalSearch] = useState('');
 
-  // Estados do Modal de Poderes/Rituais
   const [showPowerModal, setShowPowerModal] = useState(false);
-  const [powerModalTab, setPowerModalTab] = useState('abilities'); // 'abilities' ou 'rituals'
+  const [powerModalTab, setPowerModalTab] = useState('abilities');
   const [powerModalSearch, setPowerModalSearch] = useState('');
   const [abilitiesList, setAbilitiesList] = useState([]);
   const [ritualsList, setRitualsList] = useState([]);
+  
   const [isSaving, setIsSaving] = useState(false);
 
-  // Estado Central da Ficha
   const [character, setCharacter] = useState({
     name: '', playerName: '', nex: 5, level: 1, useLevel: false,
     classId: '', trackId: '', origin: '', patente: 'Recruta', prestigio: 0,
@@ -178,14 +175,12 @@ export default function NewCharacterPage() {
       const newItems = [...prev.inventory.items];
       let updatedItem = { ...newItems[index] };
 
-      // Garante que a quantidade nunca é inferior a 1
       if (field === 'quantity') {
         updatedItem[field] = Math.max(1, parseInt(value) || 1);
       } else {
         updatedItem[field] = value;
       }
 
-      // Se o utilizador escolheu um Item (ou Arma) da Base de Dados
       if (field === 'item') {
         if (value) {
           const selectedEntity = itemsList.find(i => i._id === value) || weaponsList.find(w => w._id === value);
@@ -226,7 +221,6 @@ export default function NewCharacterPage() {
         const weaponData = JSON.stringify(entity).toLowerCase();
         const isMelee = weaponData.includes('corpo a corpo') || weaponData.includes('corpo-a-corpo');
 
-        // Define a string da perícia em vez do cálculo matemático
         const relevantSkillName = isMelee ? 'Luta' : 'Pontaria';
 
         let calculatedDamage = entity.damage || '';
@@ -237,7 +231,7 @@ export default function NewCharacterPage() {
         newAttacks.push({
           weapon: entity._id,
           customName: entity.name,
-          attackBonus: relevantSkillName, // Guarda a string "Luta" ou "Pontaria"
+          attackBonus: relevantSkillName, 
           damageOverride: calculatedDamage,
           criticalOverride: entity.critical || ''
         });
@@ -259,7 +253,6 @@ export default function NewCharacterPage() {
             const weaponData = JSON.stringify(selectedWeapon).toLowerCase();
             const isMelee = weaponData.includes('corpo a corpo') || weaponData.includes('corpo-a-corpo');
 
-            // Define a string da perícia
             const relevantSkillName = isMelee ? 'Luta' : 'Pontaria';
 
             let calculatedDamage = selectedWeapon.damage || '';
@@ -269,13 +262,13 @@ export default function NewCharacterPage() {
 
             updatedAttack.damageOverride = calculatedDamage;
             updatedAttack.criticalOverride = selectedWeapon.critical || '';
-            updatedAttack.attackBonus = relevantSkillName; // Guarda a string
+            updatedAttack.attackBonus = relevantSkillName; 
             updatedAttack.customName = '';
           }
         } else {
           updatedAttack.damageOverride = '';
           updatedAttack.criticalOverride = '';
-          updatedAttack.attackBonus = ''; // Fica vazio
+          updatedAttack.attackBonus = ''; 
         }
       }
 
@@ -287,7 +280,6 @@ export default function NewCharacterPage() {
   const handleAddAttack = () => {
     setCharacter(prev => ({
       ...prev,
-      // attackBonus agora inicia como string em vez de 0
       attacks: [...prev.attacks, { weapon: '', customName: '', attackBonus: '', damageOverride: '', criticalOverride: '' }]
     }));
   };
@@ -310,7 +302,6 @@ export default function NewCharacterPage() {
     return 'var(--border-color)';
   };
 
-  // --- LÓGICA DE PODERES E RITUAIS ---
   const handleAddPowerFromModal = (entity, type) => {
     setCharacter(prev => {
       if (type === 'ability') {
@@ -326,7 +317,7 @@ export default function NewCharacterPage() {
           ritual: entity._id,
           customName: entity.name,
           customNotes: entity.description || '',
-          dcOverride: '', // Para o jogador poder escrever a DT manualmente
+          dcOverride: '', 
           _element: entity.elements?.[0] || 'Outro',
           _circle: entity.circle || 1,
           _execution: entity.execution || 'Padrão',
@@ -364,14 +355,6 @@ export default function NewCharacterPage() {
     });
   };
 
-
-
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
   const handleLoreChange = (field, value) => {
     setCharacter(prev => ({
       ...prev,
@@ -385,43 +368,52 @@ export default function NewCharacterPage() {
       return;
     }
 
-    // 1. Criamos uma cópia do personagem para não alterar a UI do jogador
     const payload = JSON.parse(JSON.stringify(character));
 
-    // 2. Limpar ObjectIds vazios (Isto evita o Erro 400 do Mongoose de "Cast to ObjectId failed")
-    if (!payload.classId) delete payload.classId;
-    if (!payload.trackId) delete payload.trackId;
+    if (payload.classId) payload.class = payload.classId;
+    delete payload.classId;
 
-    // 3. Limpar overrides numéricos que estejam vazios
+    if (payload.trackId) payload.track = payload.trackId;
+    delete payload.trackId;
+
+    if (payload.lore) {
+      payload.lore.history = payload.lore.backstory || '';
+      delete payload.lore.backstory;
+    }
+
     if (payload.inventory.maxWeightOverride === '') {
       payload.inventory.maxWeightOverride = null;
     }
-
+    
     ['hp', 'ep', 'san'].forEach(stat => {
       if (payload.stats[stat].overrideMax === '') {
-        payload.stats[stat].overrideMax = null; // O backend prefere null a strings vazias para Números
+        payload.stats[stat].overrideMax = null; 
       } else {
         payload.stats[stat].overrideMax = Number(payload.stats[stat].overrideMax);
       }
     });
 
+    if (payload.rituals) {
+      payload.rituals = payload.rituals.map(r => ({
+        ...r,
+        dcOverride: r.dcOverride ? Number(r.dcOverride.toString().replace(/\D/g, '')) || null : null
+      }));
+    }
+
     setIsSaving(true);
     try {
-      // 4. Enviar o Payload Limpo!
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/characters`, payload, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       alert('Agente registado com sucesso na Base de Dados!');
-      router.push('/characters');
+      router.push('/characters'); 
     } catch (error) {
       console.error('Erro ao guardar ficha:', error.response?.data || error.message);
-      alert('Ocorreu um erro ao guardar a ficha. Verifica a consola para os detalhes do erro de validação.');
+      alert('Ocorreu um erro ao guardar a ficha. Verifica a consola.');
     } finally {
       setIsSaving(false);
     }
   };
-
-
 
   if (loading || !user) return null;
 
@@ -430,7 +422,6 @@ export default function NewCharacterPage() {
   const filteredAbilities = abilitiesList.filter(a => a.name.toLowerCase().includes(powerModalSearch.toLowerCase()));
   const filteredRituals = ritualsList.filter(r => r.name.toLowerCase().includes(powerModalSearch.toLowerCase()));
 
-  // Conta itens por categoria para o display
   const getCategoryCount = (cat) => character.inventory.items.filter(i => i.categoryOverride === cat).length;
 
   return (
@@ -453,7 +444,8 @@ export default function NewCharacterPage() {
         </nav>
 
         <div className={styles.contentArea}>
-          {/* TAB BASICS (Mantém-se igual, omitido por brevidade no snippet, assume que está aqui) */}
+          
+          {/* TAB BASICS */}
           {activeTab === 'basics' && (
             <div className={styles.tabContent}>
               <h2 className={styles.sectionTitle}>Dados Pessoais</h2>
@@ -500,12 +492,11 @@ export default function NewCharacterPage() {
             </div>
           )}
 
-          {/* TAB SKILLS (Mantém-se igual) */}
+          {/* TAB SKILLS */}
           {activeTab === 'skills' && (
             <div className={styles.tabContent}>
               <h2 className={styles.sectionTitle}>Perícias do Agente</h2>
               <div className={styles.skillsTable}>
-                {/* ... Código das perícias permanece inalterado ... */}
                 <div className={styles.skillsHeaderRow}>
                   <div className={styles.colName}>Perícia</div>
                   <div className={styles.colAttr}>Atributo (Dados)</div>
@@ -559,12 +550,11 @@ export default function NewCharacterPage() {
             </div>
           )}
 
-          {/* NOVO TAB COMBATE & INVENTÁRIO */}
+          {/* TAB COMBATE E INVENTÁRIO */}
           {activeTab === 'combat' && (
             <div className={styles.tabContent}>
               <h2 className={styles.sectionTitle}>Inventário e Carga</h2>
 
-              {/* PAINEL DE STATUS DE INVENTÁRIO (Estilo Cris) */}
               <div className={styles.inventoryDashboard}>
                 <div className={styles.invStatsRow}>
                   <div className={styles.invBox}>
@@ -573,7 +563,6 @@ export default function NewCharacterPage() {
                   </div>
                   <div className={styles.invBox} style={{ flex: 2 }}>
                     <span className={styles.invLabel}>Patente</span>
-                    {/* SUBSTITUÍDO PELO AEROSELECT */}
                     <div style={{ width: '100%', minWidth: '200px' }}>
                       <AeroSelect
                         name="patente"
@@ -619,7 +608,6 @@ export default function NewCharacterPage() {
                 <div className={styles.invStatsRow}>
                   <div className={styles.invBox}>
                     <span className={styles.invLabel}>Limite de Crédito</span>
-                    {/* SUBSTITUÍDO PELO AEROSELECT */}
                     <div style={{ width: '150px' }}>
                       <AeroSelect
                         name="creditLimit"
@@ -642,8 +630,7 @@ export default function NewCharacterPage() {
                       <div className={styles.invStaticBox} title="Espaço Utilizado">
                         {character.inventory.items.reduce((acc, item) => acc + ((parseFloat(item.spaceOverride) || 0) * (parseInt(item.quantity) || 1)), 0)}
                       </div>
-
-                      {/* AGORA A CARGA MÁXIMA É UM INPUT EDITÁVEL */}
+                      
                       <input
                         type="number"
                         className={styles.invStaticInput}
@@ -658,14 +645,12 @@ export default function NewCharacterPage() {
                 </div>
               </div>
 
-              {/* BOTÃO ABRIR MODAL */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '1rem 0 2rem 0' }}>
                 <button type="button" onClick={() => setShowItemModal(true)} className={styles.openModalBtn}>
                   + Adicionar Item / Arma
                 </button>
               </div>
 
-              {/* LISTA DE ITENS DO INVENTÁRIO (AGORA COM INPUTS E DESCRIÇÃO) */}
               <div className={styles.itemsGrid}>
                 {character.inventory.items.length === 0 && <p className={styles.emptyText}>O inventário está vazio.</p>}
                 {character.inventory.items.map((item, index) => (
@@ -676,7 +661,6 @@ export default function NewCharacterPage() {
                     </div>
 
                     <div className={styles.itemCardEditRow}>
-                      {/* Categoria com AeroSelect */}
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 'bold', textTransform: 'uppercase' }}>
                         Cat:
                         <div style={{ marginTop: '0.2rem' }}>
@@ -694,7 +678,6 @@ export default function NewCharacterPage() {
                         </div>
                       </div>
 
-                      {/* Outros Inputs */}
                       <label style={{ flex: 1 }}>Espaço:
                         <input type="number" value={item.spaceOverride} onChange={(e) => handleItemChange(index, 'spaceOverride', e.target.value)} />
                       </label>
@@ -714,7 +697,6 @@ export default function NewCharacterPage() {
                 ))}
               </div>
 
-              {/* --- DEFESA --- */}
               <h2 className={styles.sectionTitle} style={{ marginTop: '3rem' }}>Defesa e Combate</h2>
               <div className={styles.defenseBox}>
                 <div className={styles.defenseTotal}>
@@ -730,7 +712,6 @@ export default function NewCharacterPage() {
                 </div>
               </div>
 
-              {/* --- ATAQUES (AGORA CARTÕES EDITÁVEIS) --- */}
               <h2 className={styles.sectionTitle} style={{ marginTop: '3rem' }}>Ataques</h2>
               <div className={styles.attacksGrid}>
                 {character.attacks.length === 0 && <p className={styles.emptyText}>Nenhum ataque registado.</p>}
@@ -764,6 +745,7 @@ export default function NewCharacterPage() {
               </div>
             </div>
           )}
+          
           {/* TAB PODERES E RITUAIS */}
           {activeTab === 'powers' && (
             <div className={styles.tabContent}>
@@ -773,7 +755,6 @@ export default function NewCharacterPage() {
                 </button>
               </div>
 
-              {/* RITUAIS CONHECIDOS */}
               <h2 className={styles.sectionTitle}>Rituais Conhecidos</h2>
               <div className={styles.attacksGrid}>
                 {character.rituals.length === 0 && <p className={styles.emptyText}>Nenhum ritual aprendido.</p>}
@@ -809,7 +790,6 @@ export default function NewCharacterPage() {
                 ))}
               </div>
 
-              {/* PODERES E HABILIDADES */}
               <h2 className={styles.sectionTitle} style={{ marginTop: '3rem' }}>Poderes e Habilidades</h2>
               <div className={styles.attacksGrid}>
                 {character.abilities.length === 0 && <p className={styles.emptyText}>Nenhum poder registado.</p>}
@@ -831,6 +811,7 @@ export default function NewCharacterPage() {
               </div>
             </div>
           )}
+          
           {/* TAB BACKGROUND (LORE) */}
           {activeTab === 'lore' && (
             <div className={styles.tabContent}>
@@ -953,6 +934,7 @@ export default function NewCharacterPage() {
           </div>
         </div>
       )}
+      
       {/* =========================================
           MODAL DE ADICIONAR PODERES E RITUAIS
           ========================================= */}
