@@ -24,15 +24,12 @@ export default function ProfilePage() {
     }
   }, [user, isClient, router]);
 
-  // A função deve estar AQUI FORA do useEffect, para poder ser usada no return lá em baixo
   const handleUpdateSuccess = (updatedUser) => {
     setShowEditModal(false);
 
-    // Se o teu AuthContext tiver uma função updateUser, usa-a aqui:
     if (updateUser) {
       updateUser(updatedUser);
     } else {
-      // Se não tiver, a solução mais rápida é recarregar a página para o contexto ir buscar os novos dados
       window.location.reload();
     }
   };
@@ -89,6 +86,27 @@ export default function ProfilePage() {
           </div>
 
           <div className={styles.actionsContainer}>
+            
+            {/* SECÇÃO PRINCIPAL: ACESSO ÀS FICHAS DE PERSONAGEM */}
+            <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
+              <Link 
+                href="/characters" 
+                className={styles.editButton} 
+                style={{ 
+                  display: 'block', 
+                  width: '100%', 
+                  textAlign: 'center', 
+                  padding: '1.2rem', 
+                  fontSize: '1.1rem',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  border: '2px solid var(--text-accent)'
+                }}
+              >
+                Aceder aos Meus Agentes (Fichas RPG)
+              </Link>
+            </div>
+
             <div className={styles.actionsRow}>
               <button className={styles.editButton} onClick={() => setShowEditModal(true)}>
                 Editar Perfil
@@ -107,7 +125,7 @@ export default function ProfilePage() {
           {hasPermission('admin') && (
             <div className={styles.adminSection}>
               <Link href="/admin/users" className={styles.adminButton}>
-                🛡️ Gestão de Agentes
+                Gestão de Agentes
               </Link>
             </div>
           )}

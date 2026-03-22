@@ -1,0 +1,505 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  padding-bottom: 3rem;
+}
+
+.header {
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(20px);
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto 1rem auto;
+}
+
+.backBtn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-titles) !important;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-3px);
+}
+
+.title {
+  text-align: center;
+  font-family: var(--font-titles) !important;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: 2px;
+}
+
+.container {
+  max-width: 1050px;
+  width: 100%;
+  margin: 2rem auto;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.tabNav {
+  display: flex;
+  background: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+
+.tabBtn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 1.2rem 1rem;
+  color: var(--text-secondary);
+  font-family: var(--font-titles) !important;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tabBtn:hover:not(.activeTab) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.activeTab {
+  color: var(--text-accent);
+  border-bottom-color: var(--text-accent);
+  background: var(--bg-secondary); /* Funde-se com o conteúdo */
+  font-weight: bold;
+}
+
+.contentArea {
+  padding: 2.5rem;
+}
+
+.sectionTitle {
+  font-family: var(--font-titles) !important;
+  font-size: 1.2rem;
+  color: var(--text-accent);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  margin: 2.5rem 0 1.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sectionTitle:first-child { margin-top: 0; }
+
+.grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-top: 1.5rem;
+}
+
+.checkLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: var(--font-titles) !important;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.checkLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--text-accent);
+  cursor: pointer;
+}
+
+/* CAIXAS DE ATRIBUTOS REDESENHADAS */
+.attributesGrid {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.attrBox {
+  flex: 1;
+  background: rgba(128, 128, 128, 0.08); /* Fundo neutro e translúcido */
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.attrBox:hover {
+  transform: translateY(-3px);
+  border-color: var(--text-accent);
+}
+
+.attrBox label {
+  font-family: var(--font-titles) !important;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 0.8rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.attrInput {
+  width: 70px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid var(--text-secondary);
+  color: var(--text-accent);
+  outline: none;
+  padding: 0.2rem 0;
+  transition: border-color 0.3s;
+  -moz-appearance: textfield; /* Remove as setas no Firefox */
+}
+
+/* Remove as setas de número no Chrome/Safari/Edge */
+.attrInput::-webkit-outer-spin-button,
+.attrInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.attrInput:focus { 
+  border-bottom-color: var(--text-accent); 
+}
+
+.helperText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.footer {
+  padding: 1.5rem 2.5rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.saveBtn {
+  background: linear-gradient(180deg, rgba(51, 153, 255, 0.9) 0%, rgba(0, 102, 204, 0.9) 100%);
+  color: white;
+  border: 1px solid #003366;
+  padding: 0.8rem 2.5rem;
+  border-radius: 8px;
+  font-family: var(--font-titles) !important;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.saveBtn:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   CORREÇÃO: FORÇAR CAMPOS A FULL WIDTH
+   ========================================= */
+
+/* Garante que o contentor do FormField/AeroSelect estica */
+.grid2 > div, 
+.grid3 > div, 
+.grid4 > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Força os inputs e selects lá dentro a ocuparem 100% do contentor */
+.grid2 input:not([type="checkbox"]), 
+.grid3 input:not([type="checkbox"]), 
+.grid4 input:not([type="checkbox"]),
+.grid2 select, 
+.grid3 select, 
+.grid4 select {
+  width: 100% !important; 
+  box-sizing: border-box;
+}
+
+/* Garante que o wrapper da checkbox não fica deformado */
+.checkboxWrapper {
+  width: 100%;
+  justify-content: center;
+}
+
+/* =========================================
+   ESTILOS DAS PERÍCIAS (TABELA)
+   ========================================= */
+
+
+.skillRow {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: var(--bg-secondary); /* Usa o fundo do cartão em vez de preto transparente */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.skillRow:hover {
+  border-color: var(--text-accent);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+/* Tamanhos das Colunas */
+.colName { flex: 2; color: var(--text-primary); }
+.colAttr { flex: 1.5; padding: 0 0.5rem; }
+.colTrain { flex: 2; padding: 0 0.5rem; }
+.colBonus { flex: 1; padding: 0 0.5rem; }
+.colTotal { flex: 1.5; display: flex; justify-content: flex-end; }
+
+/* Inputs e Selects dentro das Perícias */
+.skillSelect, .skillInput {
+  width: 100%;
+  padding: 0.5rem;
+  /* Fundo neutro e translúcido (funciona em Light e Dark Mode sem puxar gradientes) */
+  background: rgba(128, 128, 128, 0.1); 
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  outline: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.skillSelect:focus, .skillInput:focus { 
+  border-color: var(--text-accent); 
+  background: rgba(128, 128, 128, 0.15);
+}
+
+/* Força a lista do dropdown a ter uma cor sólida legível */
+.skillSelect option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.skillInput {
+  text-align: center;
+}
+
+/* Distintivo de Resultado */
+.totalBadge {
+  background: rgba(128, 128, 128, 0.1); /* Fundo neutro */
+  border: 1px solid var(--text-accent);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-family: var(--font-titles) !important;
+  color: var(--text-accent); /* A cor de destaque dá o brilho necessário */
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* =========================================
+   BOTÕES DE PERÍCIAS EXTRA
+   ========================================= */
+
+.removeSkillBtn {
+  background: rgba(204, 0, 0, 0.1);
+  color: #ff4444;
+  border: 1px solid rgba(204, 0, 0, 0.3);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.removeSkillBtn:hover {
+  background: #ff4444;
+  color: white;
+}
+
+.addSkillBtn {
+  margin-top: 1rem;
+  background: transparent;
+  color: var(--text-accent);
+  border: 2px dashed var(--text-accent);
+  border-radius: 8px;
+  padding: 0.8rem;
+  font-family: var(--font-titles) !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addSkillBtn:hover {
+  background: rgba(128, 128, 128, 0.1);
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   COMBATE E INVENTÁRIO
+   ========================================= */
+
+.defenseBox {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: rgba(128, 128, 128, 0.08);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.defenseTotal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  border: 2px solid var(--text-accent);
+  border-radius: 12px;
+  width: 100px;
+  height: 100px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.defenseTotal span {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-family: var(--font-titles) !important;
+}
+
+.defenseTotal strong {
+  font-size: 2.5rem;
+  color: var(--text-accent);
+  line-height: 1;
+}
+
+.defenseMath {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-titles) !important;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.defenseMath span {
+  color: var(--text-secondary);
+}
+
+.defenseMath input {
+  width: 60px;
+  text-align: center;
+  background: rgba(128, 128, 128, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.defenseMath input:focus {
+  border-color: var(--text-accent);
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.rowCard {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+.smallLabel {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.inventoryHeader {
+  background: rgba(128, 128, 128, 0.05);
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.weightBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  padding-right: 1rem;
+}
+
+.weightLabel {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.weightValue {
+  font-size: 1.8rem;
+  font-family: var(--font-titles) !important;
+  color: var(--text-primary);
+}
