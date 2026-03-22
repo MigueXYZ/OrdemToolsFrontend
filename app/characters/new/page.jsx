@@ -99,15 +99,15 @@ export default function NewCharacterPage() {
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/items?limit=1000`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/abilities?limit=1000`),
           axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rituals?limit=1000`),
-          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`) // NOVO
+          axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`)
         ]);
         setClassesList(clsRes.data.data || []);
         setTracksList(trkRes.data.data || []);
         setWeaponsList(wpnRes.data.data || []);
         setItemsList(itmRes.data.data || []);
         setAbilitiesList(ablRes.data.data || []);
-        setOriginsList(orgRes.data.data || []);
         setRitualsList(ritRes.data.data || []);
+        setOriginsList(orgRes.data.data || []);
       } catch (error) {
         console.error('Erro ao carregar opções:', error);
       }
@@ -368,23 +368,42 @@ export default function NewCharacterPage() {
   const handleOriginChange = (originId) => {
     setCharacter(prev => {
       const updated = { ...prev, origin: originId };
-
-      // Procura a origem completa na lista para extrair o poder
       const selectedOrigin = originsList.find(o => o._id === originId);
 
-      if (selectedOrigin && selectedOrigin.powerName) {
-        // Verifica se o personagem já tem este poder para não duplicar
-        const alreadyHasPower = prev.abilities.some(a => a.customName === selectedOrigin.powerName);
+      if (selectedOrigin) {
+        // 1. Injetar o Poder de Origem
+        if (selectedOrigin.powerName) {
+          const powerFullName = `[Origem] ${selectedOrigin.powerName}`;
+          const alreadyHasPower = prev.abilities.some(a => a.customName === powerFullName);
 
-        if (!alreadyHasPower) {
-          updated.abilities = [
-            ...prev.abilities,
-            {
-              ability: null, // Não tem ID na coleção de habilidades gerais, vem da origem
-              customName: `[Origem] ${selectedOrigin.powerName}`,
-              customNotes: selectedOrigin.powerDescription
+          if (!alreadyHasPower) {
+            updated.abilities = [
+              ...prev.abilities,
+              {
+                ability: null,
+                customName: powerFullName,
+                customNotes: `${selectedOrigin.powerDescription}\n\nFonte: ${selectedOrigin.book || 'Desconhecida'}`
+              }
+            ];
+          }
+        }
+
+        // 2. Automatizar as Perícias Treinadas (+5)
+        if (selectedOrigin.trainedSkills && selectedOrigin.trainedSkills.length > 0) {
+          const newSkills = [...prev.skills];
+
+          selectedOrigin.trainedSkills.forEach(skillName => {
+            const skillIndex = newSkills.findIndex(s => s.name === skillName);
+
+            if (skillIndex !== -1) {
+              // Só altera se o jogador ainda for Destreinado (0) nessa perícia
+              if (newSkills[skillIndex].trainingDegree === 0) {
+                newSkills[skillIndex].trainingDegree = 5;
+              }
             }
-          ];
+          });
+
+          updated.skills = newSkills;
         }
       }
       return updated;
@@ -489,7 +508,7 @@ export default function NewCharacterPage() {
                   options={originsList.map(o => ({ label: o.name, value: o._id }))}
                   value={character.origin}
                   onChange={(e) => handleOriginChange(e.target.value)}
-                  placeholder="-- Selecionar Origem --"
+                  placeholder="-- Selecionar --"
                 />
                 <AeroSelect label="Classe" name="classId" options={classesList.map(c => ({ label: c.name, value: c._id }))} value={character.classId} onChange={handleChange} placeholder="-- Selecionar --" />
                 {(() => {
