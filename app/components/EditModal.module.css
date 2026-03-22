@@ -1,18 +1,16 @@
-/* EditModal.module.css - Aero Edit Interface (Light/Dark Ready) */
-
+/* =========================================
+   OVERLAY E ESTRUTURA PRINCIPAL
+   ========================================= */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 15, 30, 0.65); /* Mantém-se escuro nos dois temas para dar destaque ao modal */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.8); /* Fundo bem escuro para focar no modal */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1050; /* Acima do DetailModal */
+  z-index: 2050;
   padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
@@ -22,35 +20,38 @@
   to { opacity: 1; }
 }
 
+/* =========================================
+   O MODAL (FUNDO LIMPO E SÓLIDO)
+   ========================================= */
 .modal {
-  background: var(--bg-secondary);
-  backdrop-filter: blur(25px) saturate(200%);
-  -webkit-backdrop-filter: blur(25px) saturate(200%);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  max-width: 850px;
+  border-radius: 12px;
   width: 100%;
+  max-width: 750px; /* Tamanho ideal para leitura de formulários */
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-main);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Fundo quase sólido para garantir a legibilidade do formulário */
-:global([data-theme='light']) .modal { background: rgba(245, 250, 255, 0.95); }
-:global([data-theme='dark']) .modal { background: rgba(13, 18, 33, 0.95); }
+/* Força um fundo sólido e limpo nos dois temas (Chega de gradientes estranhos!) */
+:global([data-theme='light']) .modal { background: #f4f6f8; }
+:global([data-theme='dark']) .modal { background: #121826; }
 
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(-20px) scale(0.95); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+/* =========================================
+   CABEÇALHO
+   ========================================= */
 .header {
-  padding: 1.2rem 2rem;
-  background: var(--button-bg); /* Usa o teu gradiente global para o cabeçalho de edição */
-  border-bottom: 2px solid var(--border-color);
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -60,359 +61,205 @@
 .title {
   font-family: var(--font-titles) !important;
   font-size: 1.5rem;
-  color: #ffffff;
+  color: var(--text-accent);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+  letter-spacing: 1px;
   margin: 0;
 }
 
 .closeButton {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   font-size: 1.2rem;
   cursor: pointer;
-  width: 32px;
-  height: 32px;
+  width: 36px; height: 36px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   transition: all 0.2s;
 }
 
 .closeButton:hover {
-  background: #cc0000;
-  border-color: #ffcccc;
-  transform: scale(1.1);
+  background: #e74c3c;
+  color: white;
+  border-color: #e74c3c;
+  transform: rotate(90deg);
 }
 
+/* =========================================
+   CORPO DO FORMULÁRIO E DITADURA DE LARGURA
+   ========================================= */
 .formContent {
   padding: 2rem;
   overflow-y: auto;
-  color: var(--text-primary);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.2rem;
-}
-
-.grid3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.2rem;
-}
-
-/* Checkbox Paranormal Styling */
-.tripleGrid {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 1.5rem;
-  margin-bottom: 1.2rem;
-  align-items: flex-start;
-}
-
-.checkboxWrapper {
-  padding-top: 1.5rem;
   display: flex;
   flex-direction: column;
-}
-
-.paranormalToggle {
-  display: flex;
-  flex-direction: row !important;
-  align-items: center;
-  gap: 0.8rem;
-  height: 42px;
-  cursor: pointer;
-}
-
-.paranormalText {
-  color: #d946d9; /* Ajustado para um tom paranormal que contraste em ambos */
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  white-space: nowrap;
-}
-
-.checkboxWrapper :global(.fieldGroup) {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.message {
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-weight: 500;
-}
-
-.message.success { background: rgba(168, 230, 207, 0.2); color: #00a850; border: 1px solid #00a850; }
-.message.error { background: rgba(255, 204, 204, 0.2); color: #ff4444; border: 1px solid #cc0000; }
-
-.actions {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px dashed var(--border-color);
-}
-
-.cancelButton, .submitButton {
-  flex: 1;
-  padding: 1rem;
-  border-radius: 50px;
-  font-family: var(--font-titles) !important;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.cancelButton {
-  background: var(--input-bg);
-  color: var(--text-accent);
-  border: 1px solid var(--border-color);
-}
-
-.cancelButton:hover {
-  background: rgba(204, 0, 0, 0.1);
-  color: #ff4444;
-  border-color: #ff4444;
-}
-
-.submitButton {
-  background: var(--button-bg);
-  color: white;
-  border: 1px solid var(--text-accent);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.submitButton:hover:not(:disabled) {
-  filter: brightness(1.1);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-main);
-}
-
-/* Scrollbar Aero */
-.formContent::-webkit-scrollbar { width: 8px; }
-.formContent::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 4px; }
-.formContent::-webkit-scrollbar-thumb { background: var(--button-bg); border-radius: 4px; }
-
-@media (max-width: 768px) {
-  .grid, .grid3, .tripleGrid { grid-template-columns: 1fr; }
-  .checkboxWrapper { padding-top: 0; }
-  .actions { flex-direction: column-reverse; }
-}
-
-.fieldLabel {
-  display: block;
-  color: var(--text-accent);
-  font-family: var(--font-titles) !important;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
-  margin-bottom: 0.8rem;
-}
-
-.abilitiesSection {
-  margin: 1.5rem 0;
-  padding: 1.2rem;
-  background: var(--input-bg);
-  border-radius: 15px;
-  border: 1px solid var(--border-color);
-}
-
-.aeroSearch {
+  gap: 1.5rem; /* Espaçamento vertical perfeito entre os campos */
   width: 100%;
-  padding: 0.7rem 1.2rem;
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  margin-bottom: 1rem;
-  font-family: var(--font-body);
-  outline: none;
-  transition: all 0.2s;
+  box-sizing: border-box;
 }
 
-.aeroSearch:focus {
-  border-color: var(--text-accent);
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px var(--border-color);
-}
-
-.abilitiesContainer {
-  max-height: 250px;
-  overflow-y: auto;
-  padding-right: 5px;
-}
-
-.abilitiesList {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-}
-
-.abilityCard {
-  padding: 0.8rem 1rem;
-  background: var(--input-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  cursor: pointer;
+/* A MÁGICA ACONTECE AQUI: 
+   Isto força qualquer componente FormField a ocupar 100% da largura
+*/
+.formContent > div,
+.formContent label,
+.grid > div,
+.grid3 > div {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Estilização e expansão forçada de todos os inputs do formulário */
+.formContent input[type="text"],
+.formContent input[type="number"],
+.formContent textarea,
+.formContent select {
+  width: 100% !important;
+  box-sizing: border-box;
+  padding: 0.8rem 1rem;
+  margin-top: 0.4rem;
+  background: rgba(128, 128, 128, 0.05);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.95rem;
   transition: all 0.2s;
 }
 
-.abilityCard:hover {
-  background: var(--bg-secondary);
+/* Foco nos campos */
+.formContent input:focus,
+.formContent textarea:focus,
+.formContent select:focus {
+  background: rgba(128, 128, 128, 0.1);
   border-color: var(--text-accent);
+  box-shadow: 0 0 0 2px rgba(128, 128, 128, 0.2);
+  outline: none;
 }
 
-.abilityCard.selected {
-  background: var(--button-bg);
-  border-color: var(--text-accent);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+/* Textareas devem ter uma altura decente para não parecerem inputs normais */
+.formContent textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.5;
 }
 
-.abilityName {
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  font-weight: 500;
+/* =========================================
+   GRELHAS PERFEITAS E RESPONSIVAS
+   ========================================= */
+.grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adapta-se ao ecrã */
+  gap: 1.5rem; 
+  width: 100%;
 }
 
-.abilityCard.selected .abilityName {
-  color: white; /* Contraste quando selecionado */
+.grid3 { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+  gap: 1.5rem; 
+  width: 100%;
 }
 
-.checkIcon {
-  color: #00ff00; /* Verde néon para dar pop no tema escuro */
-  font-weight: bold;
-}
-
-/* Scrollbar Aero para os Poderes */
-.abilitiesContainer::-webkit-scrollbar { width: 6px; }
-.abilitiesContainer::-webkit-scrollbar-thumb {
-  background: var(--button-bg);
-  border-radius: 10px;
-}
-
-.grid5 {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+.grid5 { 
+  display: grid; 
+  grid-template-columns: repeat(5, 1fr); 
+  gap: 1rem; 
+  width: 100%;
 }
 
 .sectionTitle {
   font-family: var(--font-titles) !important;
   color: var(--text-accent);
   font-size: 1.2rem;
-  margin: 2rem 0 1rem;
+  margin: 1.5rem 0 0.5rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid var(--border-color);
   text-transform: uppercase;
+  width: 100%;
 }
 
-/* Blocos Dinâmicos */
+/* =========================================
+   BLOCOS DINÂMICOS (EX: PERÍCIAS DE AMEAÇAS)
+   ========================================= */
 .dynamicBlock {
-  background: var(--input-bg);
+  background: rgba(128, 128, 128, 0.03);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1rem;
   position: relative;
-  transition: all 0.2s;
-}
-
-.dynamicBlock:hover {
-  background: var(--bg-secondary);
-  border-color: var(--text-accent);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .removeBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(204, 0, 0, 0.1);
-  color: #ff4444;
-  border: 1px solid #cc0000;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  transition: all 0.2s;
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(231, 76, 60, 0.1); color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.3); border-radius: 4px;
+  width: 32px; height: 32px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; transition: all 0.2s;
 }
-
-.removeBtn:hover {
-  background: #cc0000;
-  color: white;
-}
+.removeBtn:hover { background: #e74c3c; color: white; }
 
 .addBtn {
-  width: 100%;
-  padding: 0.8rem;
-  background: var(--input-bg);
-  border: 2px dashed var(--text-accent);
-  color: var(--text-accent);
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  transition: all 0.2s;
-}
-
-.addBtn:hover {
-  background: var(--bg-secondary);
-  border-style: solid;
-}
-
-.enigmaBox {
-  padding: 1.5rem;
-  border: 2px solid #d946d9;
-  border-radius: 15px;
-  background: rgba(217, 70, 217, 0.05);
-  margin-top: 1rem;
-  box-shadow: 0 0 15px rgba(217, 70, 217, 0.1);
-}
-
-@media (max-width: 768px) {
-  .grid5 { grid-template-columns: 1fr; }
-}
-
-/* Estilos para a Categoria dos Poderes na Trilha */
-.abilityHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.abilityInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.abilityCategory {
-  font-size: 0.7rem;
+  width: 100%; padding: 1rem;
+  background: transparent;
+  border: 2px dashed var(--border-color);
   color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 500;
+  border-radius: 8px; cursor: pointer;
+  font-weight: 600; transition: all 0.2s;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.addBtn:hover {
+  background: rgba(128, 128, 128, 0.05);
+  border-color: var(--text-accent);
+  color: var(--text-accent);
 }
 
-/* Quando o cartão está selecionado, a categoria fica branca para legibilidade */
-.abilityCard.selected .abilityCategory {
-  color: rgba(255, 255, 255, 0.8);
+/* =========================================
+   AÇÕES DO RODAPÉ (CANCELAR / GRAVAR)
+   ========================================= */
+.actions {
+  display: flex; justify-content: flex-end; gap: 1rem;
+  margin-top: 1rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.cancelButton, .submitButton {
+  padding: 1rem 2rem; border-radius: 8px;
+  font-family: var(--font-titles) !important; font-size: 1.1rem;
+  text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+  font-weight: bold; transition: all 0.2s;
+}
+
+.cancelButton {
+  background: transparent; color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+.cancelButton:hover { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border-color: #e74c3c; }
+
+.submitButton {
+  background: var(--text-accent);
+  color: white; border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.submitButton:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); filter: brightness(1.1); }
+.submitButton:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Mensagens de Erro/Sucesso */
+.message { padding: 1rem; border-radius: 8px; font-weight: bold; text-align: center; width: 100%; box-sizing: border-box; }
+.success { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+.error { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+
+/* Ajustes Mobile */
+@media (max-width: 768px) {
+  .grid, .grid3, .grid5 { grid-template-columns: 1fr; }
+  .actions { flex-direction: column-reverse; }
+  .cancelButton, .submitButton { width: 100%; text-align: center; }
 }

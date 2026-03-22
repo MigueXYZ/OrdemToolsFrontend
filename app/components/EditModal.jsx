@@ -42,6 +42,10 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     class: item.class?._id || item.class || '',
     abilities: item.abilities?.map(a => a._id || a) || [],
     
+    // --- CAMPOS DE ORIGEM ---
+    powerName: item.powerName || '',
+    powerDescription: item.powerDescription || '',
+
     // --- CAMPOS DE CLASSE ---
     hpInitial: item.hp?.initial || '',
     hpPerLevel: item.hp?.perLevel || '',
@@ -54,7 +58,7 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     vd: item.vd || '',
     size: item.size || '',
     defense: item.defense || '',
-    hpTotal: item.hp?.total || '', // Cuidado para não conflitar com a classe; como o backend separa, está seguro
+    hpTotal: item.hp?.total || '', 
     hpBloodied: item.hp?.bloodied || '',
     movement: item.movement || '',
     resistances: item.resistances?.join(', ') || '',
@@ -172,7 +176,8 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
   const getEndpoint = () => {
     const endpoints = {
       ability: '/abilities', ritual: '/rituals', rule: '/rules', item: '/items',
-      weapon: '/weapons', class: '/classes', track: '/tracks', threat: '/threats'
+      weapon: '/weapons', class: '/classes', track: '/tracks', threat: '/threats',
+      origin: '/origins' // NOVO ENDPOINT DE ORIGEM
     };
     return endpoints[type] || '/abilities';
   };
@@ -189,11 +194,20 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     if (formData.book) payload.book = formData.book;
     if (formData.source) payload.source = formData.source;
 
+    // Se for poder que vem de uma Origem genérica
     if (type === 'ability' && formData.category === 'Poder de Origem') {
       if (formData.origin) payload.origin = formData.origin;
       payload.associatedPower = formData.name;
       payload.trainedSkills = formData.trainedSkills.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
     }
+    
+    // --- PAYLOAD DE ORIGEM ---
+    if (type === 'origin') {
+      payload.powerName = formData.powerName;
+      payload.powerDescription = formData.powerDescription;
+      payload.trainedSkills = formData.trainedSkills.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+    }
+
     if (type === 'ritual') {
       if (formData.circle) payload.circle = parseInt(formData.circle);
       if (formData.elements) payload.elements = formData.elements.split(',').map((e) => e.trim().toLowerCase()).filter((e) => e.length > 0);
@@ -290,7 +304,7 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
     }
   };
 
-  const modalTitle = type === 'ability' ? 'Poder' : type === 'ritual' ? 'Ritual' : type === 'item' ? 'Item' : type === 'class' ? 'Classe' : type === 'rule' ? 'Regra' : type === 'weapon' ? 'Arma' : type === 'track' ? 'Trilha' : type === 'threat' ? 'Ameaça' : 'Registo';
+  const modalTitle = type === 'ability' ? 'Poder' : type === 'ritual' ? 'Ritual' : type === 'item' ? 'Item' : type === 'class' ? 'Classe' : type === 'rule' ? 'Regra' : type === 'weapon' ? 'Arma' : type === 'track' ? 'Trilha' : type === 'origin' ? 'Origem' : type === 'threat' ? 'Ameaça' : 'Registo';
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -345,7 +359,20 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
             <FormField label="Requisitos" name="requirements" value={formData.requirements} onChange={handleChange} isTextarea />
           )}
 
-          {/* ... IF ORIGEM ... */}
+          {/* ... IF ORIGEM (A nova entidade) ... */}
+          {type === 'origin' && (
+            <>
+              <div className={styles.grid}>
+                <FormField label="Perícias treinadas" name="trainedSkills" value={formData.trainedSkills} onChange={handleChange} placeholder="Separadas por vírgula" />
+              </div>
+              <div className={styles.grid}>
+                <FormField label="Nome do Poder" name="powerName" value={formData.powerName} onChange={handleChange} required />
+              </div>
+              <FormField label="Descrição do Poder" name="powerDescription" value={formData.powerDescription} onChange={handleChange} isTextarea required />
+            </>
+          )}
+
+          {/* ... IF PODER DE ORIGEM GENÉRICO ... */}
           {type === 'ability' && formData.category === 'Poder de Origem' && (
             <div className={styles.grid}>
               <FormField label="Nome da Origem" name="origin" value={formData.origin} onChange={handleChange} />
@@ -429,7 +456,7 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
             </>
           )}
 
-{/* ... IF TRACK ... */}
+          {/* ... IF TRACK ... */}
           {type === 'track' && (
             <div className={styles.abilitiesSection}>
               <label className={styles.fieldLabel}>Poderes da Trilha ({formData.abilities.length}/4 selecionados)</label>
