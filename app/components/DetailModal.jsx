@@ -23,7 +23,8 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
     class: { color: '#B24C0B', label: 'Classe', icon: '⚔️', endpoint: '/classes' },
     track: { color: '#2E5C7D', label: 'Trilha', icon: '🛤️', endpoint: '/tracks' },
     weapon: { color: '#704214', label: 'Arma', icon: '🗡️', endpoint: '/weapons' },
-    threat: { color: '#8b0000', label: 'Ameaça', icon: '💀', endpoint: '/threats' }
+    threat: { color: '#8b0000', label: 'Ameaça', icon: '💀', endpoint: '/threats' },
+    origin: { color: '#0076C0', label: 'Origem', icon: '📜', endpoint: '/origins' }
   };
 
   const config = typeConfig[type] || typeConfig.ability;
@@ -34,8 +35,8 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
     if (classId) {
       url += `&classId=${classId}`;
-    }else{
-      url +=`&search=${encodeURIComponent(searchQuery)}`;
+    } else {
+      url += `&search=${encodeURIComponent(searchQuery)}`;
     }
 
     router.push(url);
@@ -238,6 +239,37 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
               {renderField('Tipo de Dano', item.damageType)}
               {renderField('Espaço', item.space?.toString())}
               {renderField('Notas', item.notes)}
+            </div>
+          )}
+
+          {/* ==========================================
+            RENDERIZAÇÃO DOS CAMPOS DE ORIGEM
+            ========================================== */}
+          {type === 'origin' && (
+            <div className={styles.detailsGroup}>
+
+              {/* REMOVIDO O BLOCO DA DESCRIÇÃO DAQUI! O MODAL JÁ O FAZ SOZINHO! */}
+
+              {/* PERÍCIAS TREINADAS */}
+              <div className={styles.detailSection} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span className={styles.detailLabel}>Perícias Treinadas:</span>
+                <span className={styles.detailValue} style={{ fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                  {Array.isArray(item.trainedSkills) && item.trainedSkills.length > 0
+                    ? item.trainedSkills.join(', ')
+                    : 'Nenhuma'}
+                </span>
+              </div>
+
+              {/* PODER DA ORIGEM (EM DESTAQUE) */}
+              <div className={styles.detailSection} style={{ background: 'rgba(128, 128, 128, 0.05)', padding: '1.5rem', borderRadius: '8px', borderLeft: '4px solid var(--text-accent)', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.02)' }}>
+                <h4 style={{ color: 'var(--text-accent)', fontSize: '1.1rem', marginBottom: '0.8rem', fontFamily: 'var(--font-titles)', textTransform: 'uppercase' }}>
+                  Poder: {item.powerName}
+                </h4>
+                <p className={styles.detailText} style={{ margin: 0, fontSize: '0.95rem', lineHeight: '1.6' }}>
+                  {item.powerDescription}
+                </p>
+              </div>
+
             </div>
           )}
 

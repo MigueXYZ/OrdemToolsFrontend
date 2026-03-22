@@ -17,6 +17,7 @@ const TABS = [
   { id: 'rules', label: 'Regras', icon: '📖', endpoint: '/rules' },
   { id: 'classes', label: 'Classes', icon: '🛡️', endpoint: '/classes' },
   { id: 'tracks', label: 'Trilhas', icon: '🛤️', endpoint: '/tracks' },
+  { id: 'origins', label: 'Origens', icon: '🧬', endpoint: '/origins' }, // NOVA ABA AQUI
   { id: 'weapons', label: 'Armas', icon: '🗡️', endpoint: '/weapons' },
   { id: 'threats', label: 'Ameaças', icon: '💀', endpoint: '/threats' }
 ];
@@ -51,7 +52,7 @@ function BrowsePageContent() {
   const [selectedWeaponType, setSelectedWeaponType] = useState('');
   const [availableThreatTypes, setAvailableThreatTypes] = useState([]);
   const [availableElements, setAvailableElements] = useState([]);
-  const [availableSizes, setAvailableSizes] = useState([]); 
+  const [availableSizes, setAvailableSizes] = useState([]);
   const [selectedThreatType, setSelectedThreatType] = useState('');
   const [selectedElement, setSelectedElement] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
@@ -137,7 +138,7 @@ function BrowsePageContent() {
         const itemClassId = getSafeId(item.class);
         return itemClassId === classIdParam;
       });
-    } 
+    }
     // Caso contrário, usamos a pesquisa normal por texto
     else if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -194,6 +195,7 @@ function BrowsePageContent() {
     const typeMapping = {
       abilities: 'ability', rituals: 'ritual', items: 'item',
       rules: 'rule', classes: 'class', tracks: 'track',
+      origins: 'origin', // ADICIONADO MAPEAMENTO DO MODAL
       weapons: 'weapon', threats: 'threat'
     };
     setSelectedItem(item);
@@ -221,6 +223,7 @@ function BrowsePageContent() {
         case 'rules': groupKey = item.section || 'Sem Secção'; break;
         case 'classes': groupKey = 'Classes'; break;
         case 'tracks': groupKey = item.class?.name || item.class || 'Sem Classe'; break;
+        case 'origins': groupKey = 'Origens'; break; // ADICIONADO GRUPO DE ORIGENS
         case 'weapons': groupKey = item.type || 'Sem Tipo'; break;
         case 'threats': groupKey = item.type || 'Sem Tipo'; break;
       }
@@ -249,6 +252,7 @@ function BrowsePageContent() {
                 {activeTab === 'rituals' && <th>Duração</th>}
                 {activeTab === 'rules' && <th>Secção</th>}
                 {activeTab === 'items' && <th>Categoria</th>}
+                {activeTab === 'origins' && <><th>Poder da Origem</th><th>Perícias</th></>}
                 {activeTab === 'weapons' && <><th>Categoria</th><th>Tipo</th></>}
                 {activeTab === 'threats' && <><th>VD</th><th>Tamanho</th><th>Elementos</th></>}
                 <th>Livro</th>
@@ -263,6 +267,10 @@ function BrowsePageContent() {
                   {activeTab === 'rituals' && <td>{item.duration || '-'}</td>}
                   {activeTab === 'rules' && <td>{item.section || '-'}</td>}
                   {activeTab === 'items' && <td>{item.category || '-'}</td>}
+                  {activeTab === 'origins' && <>
+                    <td>{item.powerName || '-'}</td>
+                    <td>{Array.isArray(item.trainedSkills) ? item.trainedSkills.join(', ') : (item.trainedSkills || '-')}</td>
+                  </>}
                   {activeTab === 'weapons' && <><td>{item.category || '-'}</td><td>{item.type || '-'}</td></>}
                   {activeTab === 'threats' && <>
                     <td><span className={styles.vdBadge}>{item.vd || '-'}</span></td>
@@ -324,7 +332,7 @@ function BrowsePageContent() {
         </div>
 
         <div className={styles.filters}>
-          {activeTab !== 'classes' && activeTab !== 'tracks' && (
+          {activeTab !== 'classes' && activeTab !== 'tracks' && activeTab !== 'origins' && (
             <div className={styles.filterSection}>
               <div className={styles.filterHeader} onClick={() => setShowTags(!showTags)}>
                 <h3>Filtrar por Tags</h3>
@@ -416,9 +424,9 @@ function BrowsePageContent() {
                 onChange={(e) => setSortBy(e.target.value)}
                 placeholder="Ordenar por..."
               />
-              <button 
-                className={styles.sortOrderButton} 
-                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} 
+              <button
+                className={styles.sortOrderButton}
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                 title="Inverter ordem"
               >
                 {sortOrder === 'asc' ? '⬇️' : '⬆️'}
