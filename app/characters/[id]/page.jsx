@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
 import ThemeToggle from '../../components/ThemeToggle';
+import AeroSelect from '../../components/AeroSelect';
 import styles from './page.module.css';
 
 const getSkillAttr = (name) => {
@@ -18,6 +19,7 @@ export default function CharacterSheetPage() {
     const { user, loading } = useContext(AuthContext);
 
     const [character, setCharacter] = useState(null);
+    const [originsList, setOriginsList] = useState([]); // <-- ADICIONADO O ESTADO
     const [activeTab, setActiveTab] = useState('combate');
     const [isSaving, setIsSaving] = useState(false);
 
@@ -27,24 +29,28 @@ export default function CharacterSheetPage() {
             return;
         }
 
-        const fetchCharacter = async () => {
+        const fetchData = async () => {
             try {
                 console.log(`A pedir dados do personagem com ID: ${params.id}...`);
 
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/characters/${params.id}`, {
-                    headers: { Authorization: `Bearer ${user.token}` }
-                });
+                // <-- ADICIONADO O FETCH DAS ORIGENS EM PARALELO
+                const [charRes, originsRes] = await Promise.all([
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/characters/${params.id}`, {
+                        headers: { Authorization: `Bearer ${user.token}` }
+                    }),
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`)
+                ]);
 
-                console.log("Resposta recebida da API:", res.data); // Vai mostrar no F12 o que a base de dados enviou
+                // Guarda as origens para o Select funcionar
+                setOriginsList(originsRes.data.data || []);
 
-                // Verifica se a API mandou dentro de { data: ... } ou enviou o objeto diretamente
-                const charData = res.data.data || res.data;
+                const charData = charRes.data.data || charRes.data;
 
                 if (!charData || !charData._id) {
                     throw new Error("A API respondeu, mas os dados da ficha vieram vazios ou num formato estranho.");
                 }
 
-                // REDE DE SEGURANÇA: Garante que os objetos principais existem para o ecrã não estoirar
+                // REDE DE SEGURANÇA
                 const safeCharacter = {
                     ...charData,
                     attributes: charData.attributes || { agi: 1, for: 1, int: 1, pre: 1, vig: 1 },
@@ -63,30 +69,28 @@ export default function CharacterSheetPage() {
 
             } catch (error) {
                 console.error('Erro detalhado ao carregar ficha:', error);
-                alert('Erro ao carregar a ficha. Verifica a consola (F12).');
-                router.push('/characters'); // Volta para trás se falhar
+                alert('Erro ao carregar a ficha ou as listas. Verifica a consola (F12).');
+                router.push('/characters'); 
             }
         };
 
-        if (user && params.id) fetchCharacter();
+        if (user && params.id) fetchData();
     }, [user, loading, params.id, router]);
 
     const handleOriginChange = (originId) => {
         setCharacter(prev => {
             const updated = { ...prev, origin: originId };
 
-            // Procura a origem completa na lista para extrair o poder
             const selectedOrigin = originsList.find(o => o._id === originId);
 
             if (selectedOrigin && selectedOrigin.powerName) {
-                // Verifica se o personagem já tem este poder para não duplicar
-                const alreadyHasPower = prev.abilities.some(a => a.customName === selectedOrigin.powerName);
+                const alreadyHasPower = prev.abilities.some(a => a.customName === `[Origem] ${selectedOrigin.powerName}`);
 
                 if (!alreadyHasPower) {
                     updated.abilities = [
                         ...prev.abilities,
                         {
-                            ability: null, // Não tem ID na coleção de habilidades gerais, vem da origem
+                            ability: null,
                             customName: `[Origem] ${selectedOrigin.powerName}`,
                             customNotes: selectedOrigin.powerDescription
                         }
@@ -124,6 +128,15 @@ export default function CharacterSheetPage() {
         } finally {
             setIsSaving(false);
         }
+    };
+
+    // <-- ADICIONADA A FUNÇÃO DAS CORES DAS PERÍCIAS
+    const getSkillTrainingClass = (degree) => {
+        const d = Number(degree);
+        if (d >= 15) return styles.skillExpert;
+        if (d >= 10) return styles.skillVeteran;
+        if (d >= 5) return styles.skillTrained;
+        return styles.skillUntrained;
     };
 
     if (loading || !character) return <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>A sincronizar com os Arquivos da Ordem...</div>;
@@ -172,7 +185,6 @@ export default function CharacterSheetPage() {
                         </div>
                         <div className={styles.identityRow}>
                             <span className={styles.identityLabel}>Classe</span>
-                            {/* Mostra o nome da classe preenchida pela BD */}
                             <input type="text" className={styles.identityInput} value={character.class?.name || ''} readOnly style={{ color: 'var(--text-accent)' }} title="A classe não pode ser editada na folha ativa." />
                         </div>
                     </div>
@@ -244,7 +256,8 @@ export default function CharacterSheetPage() {
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {character.skills.map((skill, index) => (
                             <div key={index} className={styles.skillLine}>
-                                <span className={styles.skillName}>{skill.name}</span>
+                                {/* <-- ADICIONADA A CLASSE DINÂMICA DE CORES AQUI */}
+                                <span className={`${styles.skillName} ${getSkillTrainingClass(skill.trainingDegree)}`}>{skill.name}</span>
                                 <span className={styles.skillAttr}>
                                     ({(skill.baseAttribute || getSkillAttr(skill.name)).toUpperCase()})
                                 </span>

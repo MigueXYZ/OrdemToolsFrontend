@@ -70,13 +70,13 @@ export default function CharactersPage() {
             <Link href="/" className={styles.backLink}>&larr; Voltar ao Início</Link>
             <ThemeToggle />
           </div>
-          
+
           <div className={styles.headerTitleRow}>
             <div>
               <h1 className={styles.title}>Os Meus Agentes</h1>
               <p className={styles.subtitle}>Acede, edita e gere as tuas fichas de personagem.</p>
             </div>
-            
+
             <Link href="/characters/new" className={styles.newButton}>
               + Criar Novo Agente
             </Link>
@@ -116,7 +116,9 @@ export default function CharactersPage() {
                   </div>
                   <div className={styles.stat}>
                     <span className={styles.statLabel}>Origem</span>
-                    <span className={styles.statValue}>{char.origin || 'N/A'}</span>
+                    <span className={styles.statValue}>
+                      {char.origin?.name || (typeof char.origin === 'string' ? char.origin : 'N/A')}
+                    </span>
                   </div>
                   <div className={styles.stat}>
                     <span className={styles.statLabel}>Patente</span>
