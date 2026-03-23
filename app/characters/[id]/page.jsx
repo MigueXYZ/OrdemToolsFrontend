@@ -160,7 +160,8 @@ export default function CharacterSheetPage() {
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/characters/${character._id}`, character, {
+            // A MUDANÇA ESTÁ AQUI: axios.patch em vez de axios.put
+            await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/characters/${character._id}`, character, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
             alert('Progresso guardado com sucesso!');
@@ -171,7 +172,6 @@ export default function CharacterSheetPage() {
             setIsSaving(false);
         }
     };
-
     // <-- ADICIONADA A FUNÇÃO DAS CORES DAS PERÍCIAS
     const getSkillTrainingClass = (degree) => {
         const d = Number(degree);

@@ -847,3 +847,40 @@
     transform: scale(1.1);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+/* =========================================
+   DROPDOWN DO MODAL DE PODERES
+   ========================================= */
+.modalItemHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.modalItemHeader:hover h4 {
+    color: var(--text-accent);
+}
+
+.expandIcon {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.modalItemDescription {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed rgba(128, 128, 128, 0.2);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    animation: expandDown 0.2s ease-out;
+}
+
+@keyframes expandDown {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
