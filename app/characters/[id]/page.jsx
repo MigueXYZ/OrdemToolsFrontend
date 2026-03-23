@@ -26,11 +26,14 @@ export default function CharacterSheetPage() {
     const { user, loading } = useContext(AuthContext);
 
     const [character, setCharacter] = useState(null);
-    const [originsList, setOriginsList] = useState([]); // <-- ADICIONADO O ESTADO
+    const [originsList, setOriginsList] = useState([]);
     const [abilitiesList, setAbilitiesList] = useState([]);
     const [isAbilityModalOpen, setIsAbilityModalOpen] = useState(false);
     const [abilitySearchTerm, setAbilitySearchTerm] = useState('');
     const [expandedAbilityId, setExpandedAbilityId] = useState(null);
+    const [ritualsList, setRitualsList] = useState([]);
+    const [isRitualModalOpen, setIsRitualModalOpen] = useState(false);
+    const [ritualSearchTerm, setRitualSearchTerm] = useState('');
 
 
     const [activeTab, setActiveTab] = useState('combate');
@@ -46,16 +49,26 @@ export default function CharacterSheetPage() {
             try {
                 console.log(`A pedir dados do personagem com ID: ${params.id}...`);
 
-                const [charRes, originsRes, abilitiesRes] = await Promise.all([
+                const [charRes, originsRes, abilitiesRes, ritualsRes] = await Promise.all([
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/characters/${params.id}`, {
                         headers: { Authorization: `Bearer ${user.token}` }
                     }),
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`),
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/abilities?limit=1000`),
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rituals?limit=1000`)
                 ]);
 
-                setOriginsList(originsRes.data.data || []);
-                setAbilitiesList(abilitiesRes.data.data || []);
+                const originsArray = originsRes.data.data || originsRes.data || [];
+                const abilitiesArray = abilitiesRes.data.data || abilitiesRes.data || [];
+                const ritualsArray = ritualsRes.data.data || ritualsRes.data || [];
+
+                setOriginsList(originsArray);
+                setAbilitiesList(abilitiesArray);
+                setRitualsList(ritualsArray);
+
+                console.log("Poderes carregados:", abilitiesArray.length);
+                console.log("Rituais carregados:", ritualsArray.length);
+
 
                 const charData = charRes.data.data || charRes.data;
 
@@ -220,6 +233,61 @@ export default function CharacterSheetPage() {
         const updated = character.abilities.filter((_, i) => i !== index);
         handleChange('abilities', updated);
     };
+
+    // ==========================================
+    // LÓGICA DE RITUAIS
+    // ==========================================
+    const addRitual = () => {
+        const newRitual = {
+            ritual: null,
+            customName: 'Novo Ritual',
+            customElement: 'Conhecimento',
+            customCircle: '1',
+            customCost: '1 PE',
+            customExecution: 'Padrão',
+            customRange: 'Curto',
+            customDuration: 'Instantânea',
+            customResistance: 'Vontade reduz à metade',
+            customNotes: 'Descreve aqui os efeitos do ritual.'
+        };
+
+        setCharacter(prev => ({
+            ...prev,
+            rituals: [...(prev.rituals || []), newRitual]
+        }));
+    };
+
+    const removeRitual = (index) => {
+        const updated = character.rituals.filter((_, i) => i !== index);
+        handleChange('rituals', updated);
+    };
+
+    const handleSelectRitualFromDB = (ritualDB) => {
+        const alreadyHas = character.rituals.some(r =>
+            (r.ritual && (r.ritual._id === ritualDB._id || r.ritual === ritualDB._id)) ||
+            (r.customName === ritualDB.name)
+        );
+
+        if (alreadyHas) {
+            alert('O agente já possui este ritual no seu grimório!');
+            return;
+        }
+
+        setCharacter(prev => ({
+            ...prev,
+            rituals: [
+                ...prev.rituals || [],
+                { ritual: ritualDB, customName: '', customNotes: '' }
+            ]
+        }));
+
+        setIsRitualModalOpen(false);
+        setRitualSearchTerm('');
+    };
+
+    // Calcula a DT de Rituais (10 + Limite de PE + Presença)
+    const limitPE = Math.max(1, Math.floor((character?.nex || 5) / 5));
+    const ritualDT = 10 + limitPE + (character?.attributes?.pre || 0);
 
     if (loading || !character) return <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>A sincronizar com os Arquivos da Ordem...</div>;
 
@@ -537,7 +605,99 @@ export default function CharacterSheetPage() {
                             </div>
                         )}
                         {activeTab === 'rituais' && (
-                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Lista de Rituais (Em breve)</p>
+                            <div className={styles.tabPane}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <h3 className={styles.sectionTitle} style={{ margin: 0, border: 'none' }}>Grimório Ocultista</h3>
+                                        <div className={styles.dtBadge}>
+                                            DT RITUAL: {ritualDT}
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.8rem' }}>
+                                        <button
+                                            className={styles.openModalBtn}
+                                            style={{ width: 'auto', margin: 0, background: 'rgba(128, 128, 128, 0.1)', color: 'var(--text-primary)', border: '1px solid var(--text-accent)' }}
+                                            onClick={() => setIsRitualModalOpen(true)}
+                                        >
+                                            🔍 BUSCAR RITUAL
+                                        </button>
+                                        <button className={styles.openModalBtn} style={{ width: 'auto', margin: 0 }} onClick={() => addRitual()}>
+                                            + CRIAR MANUAL
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className={styles.abilitiesGrid}>
+                                    {character.rituals && character.rituals.length > 0 ? (
+                                        character.rituals.map((r, index) => {
+                                            const name = r.customName || (r.ritual && r.ritual.name) || 'Ritual Desconhecido';
+                                            const element = r.customElement || (r.ritual && r.ritual.elements?.join(', ')) || 'Nenhum';
+                                            const circle = r.customCircle || (r.ritual && r.ritual.circle) || '1';
+                                            const execution = r.customExecution || (r.ritual && r.ritual.execution) || 'Padrão';
+                                            const range = r.customRange || (r.ritual && r.ritual.range) || 'Curto';
+                                            const duration = r.customDuration || (r.ritual && r.ritual.duration) || 'Instantânea';
+                                            const resistance = r.customResistance || (r.ritual && r.ritual.resistance) || '-';
+                                            const desc = r.customNotes || (r.ritual && r.ritual.description) || '';
+
+                                            return (
+                                                <div key={index} className={styles.abilityCard}>
+                                                    <div className={styles.attackCardHeader}>
+                                                        <input
+                                                            className={styles.attackNameInput}
+                                                            value={name}
+                                                            onChange={(e) => {
+                                                                const updated = [...character.rituals];
+                                                                updated[index].customName = e.target.value;
+                                                                handleChange('rituals', updated);
+                                                            }}
+                                                            placeholder="Nome do Ritual"
+                                                        />
+                                                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                                                            {element.toUpperCase()} | {circle}º CÍRCULO
+                                                        </span>
+                                                        <button className={styles.removeBtn} onClick={() => removeRitual(index)} title="Apagar Ritual">✕</button>
+                                                    </div>
+
+                                                    <div className={styles.attackStatsRow} style={{ gridTemplateColumns: '1fr 1fr 1fr 1fr', marginBottom: '0.5rem' }}>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Execução</label>
+                                                            <input value={execution} onChange={(e) => { const upd = [...character.rituals]; upd[index].customExecution = e.target.value; handleChange('rituals', upd); }} />
+                                                        </div>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Alcance</label>
+                                                            <input value={range} onChange={(e) => { const upd = [...character.rituals]; upd[index].customRange = e.target.value; handleChange('rituals', upd); }} />
+                                                        </div>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Duração</label>
+                                                            <input value={duration} onChange={(e) => { const upd = [...character.rituals]; upd[index].customDuration = e.target.value; handleChange('rituals', upd); }} />
+                                                        </div>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Resistência</label>
+                                                            <input value={resistance} onChange={(e) => { const upd = [...character.rituals]; upd[index].customResistance = e.target.value; handleChange('rituals', upd); }} />
+                                                        </div>
+                                                    </div>
+
+                                                    <textarea
+                                                        className={styles.attackNotes}
+                                                        rows={3}
+                                                        value={desc}
+                                                        onChange={(e) => {
+                                                            const updated = [...character.rituals];
+                                                            updated[index].customNotes = e.target.value;
+                                                            handleChange('rituals', updated);
+                                                        }}
+                                                        placeholder="Efeitos do ritual..."
+                                                    />
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '2rem' }}>
+                                            O grimório está vazio. Aprende rituais pesquisando na base de dados.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
                         )}
                         {activeTab === 'inventário' && (
                             <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Inventário e Equipamentos (Em breve)</p>
@@ -613,6 +773,61 @@ export default function CharacterSheetPage() {
                                         }
                                         {abilitiesList.length === 0 && (
                                             <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>A carregar base de dados...</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {/* =========================================
+                MODAL DE PESQUISA DE RITUAIS
+                ========================================= */}
+                        {isRitualModalOpen && (
+                            <div className={styles.modalOverlay} onClick={() => setIsRitualModalOpen(false)}>
+                                <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                                    <div className={styles.modalHeader}>
+                                        <h2>Arquivo Ocultista</h2>
+                                        <button className={styles.modalCloseBtn} onClick={() => setIsRitualModalOpen(false)}>✕</button>
+                                    </div>
+
+                                    <div className={styles.modalSearchArea}>
+                                        <input
+                                            type="text"
+                                            placeholder="Pesquisar por nome ou elemento..."
+                                            className={styles.modalSearchInput}
+                                            value={ritualSearchTerm}
+                                            onChange={e => setRitualSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className={styles.modalList}>
+                                        {ritualsList
+                                            .filter(r => r.name.toLowerCase().includes(ritualSearchTerm.toLowerCase()) || (r.elements && r.elements.join(' ').toLowerCase().includes(ritualSearchTerm.toLowerCase())))
+                                            .map(ritual => (
+                                                <div key={ritual._id} className={styles.modalListItem}>
+                                                    <div className={styles.modalItemInfo} style={{ width: '100%' }}>
+
+                                                        <div className={styles.modalItemHeader}>
+                                                            <h4>{ritual.name}</h4>
+                                                        </div>
+
+                                                        <div className={styles.modalStats}>
+                                                            <span>{ritual.elements?.join(', ') || 'Sem Elemento'}</span>
+                                                            <span style={{ color: 'var(--text-secondary)' }}>{ritual.circle}º Círculo</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <button
+                                                        className={styles.modalAddBtn}
+                                                        onClick={() => handleSelectRitualFromDB(ritual)}
+                                                        title="Transcrever para o Grimório"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            ))
+                                        }
+                                        {ritualsList.length === 0 && (
+                                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>A decifrar documentos ocultistas...</p>
                                         )}
                                     </div>
                                 </div>
