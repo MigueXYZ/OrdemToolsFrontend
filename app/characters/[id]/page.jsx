@@ -13,6 +13,13 @@ const getSkillAttr = (name) => {
     return map[name] || 'int'; // 'int' como fallback seguro para perícias customizadas
 };
 
+const TRAINING_OPTIONS = [
+    { label: 'Destreinado', value: 0 },
+    { label: 'Treinado', value: 5 },
+    { label: 'Veterano', value: 10 },
+    { label: 'Expert', value: 15 }
+];
+
 export default function CharacterSheetPage() {
     const params = useParams();
     const router = useRouter();
@@ -20,6 +27,12 @@ export default function CharacterSheetPage() {
 
     const [character, setCharacter] = useState(null);
     const [originsList, setOriginsList] = useState([]); // <-- ADICIONADO O ESTADO
+    const [abilitiesList, setAbilitiesList] = useState([]);
+    const [isAbilityModalOpen, setIsAbilityModalOpen] = useState(false);
+    const [abilitySearchTerm, setAbilitySearchTerm] = useState('');
+    const [expandedAbilityId, setExpandedAbilityId] = useState(null);
+
+
     const [activeTab, setActiveTab] = useState('combate');
     const [isSaving, setIsSaving] = useState(false);
 
@@ -33,16 +46,16 @@ export default function CharacterSheetPage() {
             try {
                 console.log(`A pedir dados do personagem com ID: ${params.id}...`);
 
-                // <-- ADICIONADO O FETCH DAS ORIGENS EM PARALELO
-                const [charRes, originsRes] = await Promise.all([
+                const [charRes, originsRes, abilitiesRes] = await Promise.all([
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/characters/${params.id}`, {
                         headers: { Authorization: `Bearer ${user.token}` }
                     }),
-                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`)
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`),
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/abilities?limit=1000`),
                 ]);
 
-                // Guarda as origens para o Select funcionar
                 setOriginsList(originsRes.data.data || []);
+                setAbilitiesList(abilitiesRes.data.data || []);
 
                 const charData = charRes.data.data || charRes.data;
 
@@ -70,7 +83,7 @@ export default function CharacterSheetPage() {
             } catch (error) {
                 console.error('Erro detalhado ao carregar ficha:', error);
                 alert('Erro ao carregar a ficha ou as listas. Verifica a consola (F12).');
-                router.push('/characters'); 
+                router.push('/characters');
             }
         };
 
@@ -115,6 +128,35 @@ export default function CharacterSheetPage() {
         });
     };
 
+    const handleSelectAbilityFromDB = (abilityDB) => {
+        // Verifica se o jogador já tem este poder para não duplicar
+        const alreadyHas = character.abilities.some(a =>
+            (a.ability && (a.ability._id === abilityDB._id || a.ability === abilityDB._id)) ||
+            (a.customName === abilityDB.name)
+        );
+
+        if (alreadyHas) {
+            alert('O agente já possui este poder registado!');
+            return;
+        }
+
+        setCharacter(prev => ({
+            ...prev,
+            abilities: [
+                ...prev.abilities,
+                {
+                    // Guardamos o objeto completo para renderizar imediatamente na tela
+                    ability: abilityDB,
+                    customName: '',
+                    customNotes: ''
+                }
+            ]
+        }));
+
+        setIsAbilityModalOpen(false); // Fecha o modal após adicionar
+        setAbilitySearchTerm(''); // Limpa a pesquisa
+    };
+
     const handleSave = async () => {
         setIsSaving(true);
         try {
@@ -139,6 +181,46 @@ export default function CharacterSheetPage() {
         return styles.skillUntrained;
     };
 
+    const addAttack = (weapon = null) => {
+        const newAttack = {
+            name: weapon ? weapon.name : 'Novo Ataque',
+            test: weapon ? `+${character.attributes.agi + (character.skills.find(s => s.name === 'Pontaria')?.trainingDegree || 0)}` : '+0',
+            damage: weapon ? weapon.damage : '1d6',
+            critical: weapon ? weapon.critical : '20/x2',
+            damageType: weapon ? weapon.damageType : 'Físico',
+            range: weapon ? weapon.range : 'Curto',
+            notes: weapon ? weapon.notes : ''
+        };
+
+        setCharacter(prev => ({
+            ...prev,
+            attacks: [...(prev.attacks || []), newAttack]
+        }));
+    };
+
+    const removeAttack = (index) => {
+        const updated = character.attacks.filter((_, i) => i !== index);
+        handleChange('attacks', updated);
+    };
+
+    const addAbility = () => {
+        const newAbility = {
+            ability: null, // Fica nulo porque é um poder manual/customizado
+            customName: 'Novo Poder',
+            customNotes: 'Descreve aqui os efeitos mecânicos e narrativos deste poder.'
+        };
+
+        setCharacter(prev => ({
+            ...prev,
+            abilities: [...(prev.abilities || []), newAbility]
+        }));
+    };
+
+    const removeAbility = (index) => {
+        const updated = character.abilities.filter((_, i) => i !== index);
+        handleChange('abilities', updated);
+    };
+
     if (loading || !character) return <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>A sincronizar com os Arquivos da Ordem...</div>;
 
     return (
@@ -146,11 +228,11 @@ export default function CharacterSheetPage() {
             {/* BARRA SUPERIOR */}
             <header className={styles.headerBar}>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <button onClick={() => router.push('/characters')} style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.5rem', borderRadius: '4px', cursor: 'pointer' }}>&larr; Voltar</button>
+                    <button onClick={() => router.push('/characters')} className={styles.saveButton}>&larr; Voltar</button>
                     <h2 style={{ margin: 0, fontFamily: 'var(--font-titles)', color: 'var(--text-accent)' }}>C.R.I.S. TERMINAL</h2>
                 </div>
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <button onClick={handleSave} disabled={isSaving} style={{ background: 'var(--text-accent)', color: '#000', border: 'none', padding: '0.5rem 1.5rem', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer' }}>
+                    <button onClick={handleSave} disabled={isSaving} className={styles.saveButton}>
                         {isSaving ? 'A GRAVAR...' : 'GUARDAR PROGRESSO'}
                     </button>
                     <ThemeToggle />
@@ -246,47 +328,68 @@ export default function CharacterSheetPage() {
 
                 {/* COLUNA 2: PERÍCIAS */}
                 <div className={styles.colMiddle}>
-                    <div className={styles.skillsHeader}>
-                        <span style={{ flex: 2 }}>Perícia</span>
-                        <span style={{ flex: 1, textAlign: 'center' }}>Dados</span>
-                        <span style={{ flex: 1, textAlign: 'center' }}>Treino</span>
-                        <span style={{ flex: 1, textAlign: 'center' }}>Outros</span>
-                    </div>
-
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        {character.skills.map((skill, index) => (
-                            <div key={index} className={styles.skillLine}>
-                                {/* <-- ADICIONADA A CLASSE DINÂMICA DE CORES AQUI */}
-                                <span className={`${styles.skillName} ${getSkillTrainingClass(skill.trainingDegree)}`}>{skill.name}</span>
-                                <span className={styles.skillAttr}>
-                                    ({(skill.baseAttribute || getSkillAttr(skill.name)).toUpperCase()})
-                                </span>
-                                <div style={{ flex: 1, textAlign: 'center' }}>
-                                    <input
-                                        type="number"
-                                        className={styles.skillInputSmall}
-                                        value={skill.trainingDegree}
-                                        onChange={(e) => {
-                                            const newSkills = [...character.skills];
-                                            newSkills[index].trainingDegree = Number(e.target.value);
-                                            handleChange('skills', newSkills);
-                                        }}
-                                    />
+                        {/* CABEÇALHO ATUALIZADO */}
+                        <div className={styles.skillsHeader}>
+                            <span style={{ flex: 2 }}>Perícia</span>
+                            <span style={{ flex: 1, textAlign: 'center' }}>Teste Final</span>
+                            <span style={{ flex: 1, textAlign: 'center' }}>Treino</span>
+                            <span style={{ flex: 1, textAlign: 'center' }}>Outros</span>
+                        </div>
+
+                        {character.skills.map((skill, index) => {
+                            // LÓGICA DE CÁLCULO
+                            const attrKey = skill.baseAttribute || getSkillAttr(skill.name);
+                            const attrValue = character.attributes[attrKey] || 0;
+                            const training = Number(skill.trainingDegree) || 0;
+                            const bonus = Number(skill.otherBonus) || 0;
+                            const totalBonus = training + bonus;
+
+                            return (
+                                <div key={index} className={styles.skillLine}>
+                                    {/* NOME DA PERÍCIA COM COR DINÂMICA */}
+                                    <span className={`${styles.skillName} ${getSkillTrainingClass(skill.trainingDegree)}`} style={{ flex: 2 }}>
+                                        {skill.name}
+                                        <small className={styles.skillAttrText}> ({attrKey.toUpperCase()})</small>
+                                    </span>
+
+                                    {/* COLUNA DO TESTE FINAL (EX: 3d20 + 5) */}
+                                    <div className={styles.finalTestColumn}>
+                                        <span className={styles.diceText}>{attrValue}d20</span>
+                                        <span className={styles.bonusText}>{totalBonus >= 0 ? `+${totalBonus}` : totalBonus}</span>
+                                    </div>
+
+                                    {/* SELECT DE TREINO */}
+                                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                                        <AeroSelect
+                                            name={`skill-training-${index}`}
+                                            options={TRAINING_OPTIONS}
+                                            value={skill.trainingDegree}
+                                            onChange={(e) => {
+                                                const newSkills = [...character.skills];
+                                                newSkills[index].trainingDegree = Number(e.target.value);
+                                                handleChange('skills', newSkills);
+                                            }}
+                                            style={{ minWidth: '100px', fontSize: '0.7rem', height: '28px' }}
+                                        />
+                                    </div>
+
+                                    {/* CAMPO OUTROS */}
+                                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                                        <input
+                                            type="number"
+                                            className={styles.skillInputSmall}
+                                            value={skill.otherBonus}
+                                            onChange={(e) => {
+                                                const newSkills = [...character.skills];
+                                                newSkills[index].otherBonus = Number(e.target.value);
+                                                handleChange('skills', newSkills);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
-                                <div style={{ flex: 1, textAlign: 'center' }}>
-                                    <input
-                                        type="number"
-                                        className={styles.skillInputSmall}
-                                        value={skill.otherBonus}
-                                        onChange={(e) => {
-                                            const newSkills = [...character.skills];
-                                            newSkills[index].otherBonus = Number(e.target.value);
-                                            handleChange('skills', newSkills);
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -305,11 +408,216 @@ export default function CharacterSheetPage() {
                     </div>
 
                     <div className={styles.rightContent}>
-                        <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginTop: '2rem' }}>
-                            Selecionaste a aba: <strong style={{ color: 'var(--text-accent)', textTransform: 'uppercase' }}>{activeTab}</strong>
-                            <br /><br />
-                            Nesta área, vamos injetar os painéis de armas, invocar os modais de pesquisa e os cartões de itens, reciclando a mesma lógica inteligente da página de criação!
-                        </p>
+                        {activeTab === 'combate' && (
+                            <div className={styles.tabPane}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <h3 className={styles.sectionTitle} style={{ margin: 0, border: 'none' }}>Ações de Agressão</h3>
+                                    <button className={styles.openModalBtn} style={{ width: 'auto', margin: 0 }} onClick={() => addAttack()}>
+                                        + NOVO ATAQUE
+                                    </button>
+                                </div>
+
+                                <div className={styles.attacksGrid}>
+                                    {character.attacks && character.attacks.length > 0 ? (
+                                        character.attacks.map((attack, index) => (
+                                            <div key={index} className={styles.attackCard}>
+                                                <div className={styles.attackCardHeader}>
+                                                    <input
+                                                        className={styles.attackNameInput}
+                                                        value={attack.name}
+                                                        onChange={(e) => {
+                                                            const updated = [...character.attacks];
+                                                            updated[index].name = e.target.value;
+                                                            handleChange('attacks', updated);
+                                                        }}
+                                                    />
+                                                    <button className={styles.removeBtn} onClick={() => removeAttack(index)}>✕</button>
+                                                </div>
+
+                                                <div className={styles.attackStatsRow}>
+                                                    <div className={styles.attackStat}>
+                                                        <label>Teste</label>
+                                                        <input value={attack.test} onChange={(e) => {
+                                                            const updated = [...character.attacks];
+                                                            updated[index].test = e.target.value;
+                                                            handleChange('attacks', updated);
+                                                        }} />
+                                                    </div>
+                                                    <div className={styles.attackStat}>
+                                                        <label>Dano</label>
+                                                        <input value={attack.damage} onChange={(e) => {
+                                                            const updated = [...character.attacks];
+                                                            updated[index].damage = e.target.value;
+                                                            handleChange('attacks', updated);
+                                                        }} />
+                                                    </div>
+                                                    <div className={styles.attackStat}>
+                                                        <label>Crítico</label>
+                                                        <input value={attack.critical} onChange={(e) => {
+                                                            const updated = [...character.attacks];
+                                                            updated[index].critical = e.target.value;
+                                                            handleChange('attacks', updated);
+                                                        }} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '2rem' }}>
+                                            Nenhum ataque registado. Adicione um ataque manual ou equipe uma arma.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'habilidades' && (
+                            <div className={styles.tabPane}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                        <h3 className={styles.sectionTitle} style={{ margin: 0, border: 'none' }}>Poderes e Habilidades</h3>
+                                        <div style={{ display: 'flex', gap: '0.8rem' }}>
+                                            <button
+                                                className={styles.openModalBtn}
+                                                style={{ width: 'auto', margin: 0, background: 'rgba(128, 128, 128, 0.1)', color: 'var(--text-primary)', border: '1px solid var(--text-accent)' }}
+                                                onClick={() => setIsAbilityModalOpen(true)}
+                                            >
+                                                🔍 BUSCAR BASE DE DADOS
+                                            </button>
+                                            <button className={styles.openModalBtn} style={{ width: 'auto', margin: 0 }} onClick={() => addAbility()}>
+                                                + CRIAR MANUAL
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className={styles.abilitiesGrid}>
+                                    {character.abilities && character.abilities.length > 0 ? (
+                                        character.abilities.map((ab, index) => {
+                                            // A lógica tenta mostrar o nome customizado, ou o nome do poder original da BD
+                                            const name = ab.customName || (ab.ability && ab.ability.name) || 'Poder Desconhecido';
+                                            const desc = ab.customNotes || (ab.ability && ab.ability.description) || '';
+
+                                            return (
+                                                <div key={index} className={styles.abilityCard}>
+                                                    <div className={styles.attackCardHeader}>
+                                                        <input
+                                                            className={styles.attackNameInput}
+                                                            value={name}
+                                                            onChange={(e) => {
+                                                                const updated = [...character.abilities];
+                                                                updated[index].customName = e.target.value;
+                                                                handleChange('abilities', updated);
+                                                            }}
+                                                            placeholder="Nome do Poder"
+                                                        />
+                                                        <button className={styles.removeBtn} onClick={() => removeAbility(index)} title="Remover Habilidade">✕</button>
+                                                    </div>
+
+                                                    <textarea
+                                                        className={styles.attackNotes}
+                                                        rows={4}
+                                                        value={desc}
+                                                        onChange={(e) => {
+                                                            const updated = [...character.abilities];
+                                                            updated[index].customNotes = e.target.value;
+                                                            handleChange('abilities', updated);
+                                                        }}
+                                                        placeholder="Descreve o poder ou adiciona anotações..."
+                                                    />
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '2rem' }}>
+                                            Nenhuma habilidade registada. Adiciona um poder manualmente ou seleciona da base de dados.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === 'rituais' && (
+                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Lista de Rituais (Em breve)</p>
+                        )}
+                        {activeTab === 'inventário' && (
+                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Inventário e Equipamentos (Em breve)</p>
+                        )}
+                        {activeTab === 'lore' && (
+                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Notas de Lore e Background (Em breve)</p>
+                        )}
+                        {/* =========================================
+                MODAL DE PESQUISA DE PODERES
+                ========================================= */}
+                        {isAbilityModalOpen && (
+                            <div className={styles.modalOverlay} onClick={() => setIsAbilityModalOpen(false)}>
+                                <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                                    <div className={styles.modalHeader}>
+                                        <h2>Arquivo de Poderes</h2>
+                                        <button className={styles.modalCloseBtn} onClick={() => setIsAbilityModalOpen(false)}>✕</button>
+                                    </div>
+
+                                    <div className={styles.modalSearchArea}>
+                                        <input
+                                            type="text"
+                                            placeholder="Pesquisar por nome ou requisitos..."
+                                            className={styles.modalSearchInput}
+                                            value={abilitySearchTerm}
+                                            onChange={e => setAbilitySearchTerm(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className={styles.modalList}>
+                                        {abilitiesList
+                                            .filter(a => a.name.toLowerCase().includes(abilitySearchTerm.toLowerCase()) || (a.requirements && a.requirements.toLowerCase().includes(abilitySearchTerm.toLowerCase())))
+                                            .map(ability => {
+                                                const isExpanded = expandedAbilityId === ability._id;
+
+                                                return (
+                                                    <div key={ability._id} className={styles.modalListItem} style={{ alignItems: isExpanded ? 'flex-start' : 'center' }}>
+                                                        <div className={styles.modalItemInfo} style={{ width: '100%' }}>
+
+                                                            {/* CABEÇALHO CLICÁVEL */}
+                                                            <div
+                                                                className={styles.modalItemHeader}
+                                                                onClick={() => setExpandedAbilityId(isExpanded ? null : ability._id)}
+                                                            >
+                                                                <h4>{ability.name}</h4>
+                                                                <span className={styles.expandIcon}>{isExpanded ? '▲' : '▼'}</span>
+                                                            </div>
+
+                                                            <div className={styles.modalStats}>
+                                                                <span>{ability.category || 'Sem Categoria'}</span>
+                                                                {ability.requirements && <span style={{ color: 'var(--text-secondary)' }}>Req: {ability.requirements}</span>}
+                                                            </div>
+
+                                                            {/* DESCRIÇÃO EXPANSÍVEL */}
+                                                            {isExpanded && (
+                                                                <div className={styles.modalItemDescription}>
+                                                                    {ability.description}
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* BOTÃO ADICIONAR (Alinhado à direita) */}
+                                                        <button
+                                                            className={styles.modalAddBtn}
+                                                            onClick={() => handleSelectAbilityFromDB(ability)}
+                                                            title="Transferir para a Ficha"
+                                                            style={{ marginTop: isExpanded ? '0' : '0' }}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })
+                                        }
+                                        {abilitiesList.length === 0 && (
+                                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>A carregar base de dados...</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

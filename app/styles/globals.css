@@ -16,6 +16,8 @@
   --bg-secondary: rgba(255, 255, 255, 0.4);
   --text-primary: #003366;
   --text-secondary: #445566;
+  --text-primary-dark: #e0f4ff;
+  --text-secondary-dark: #a0c0d0;
   --text-accent: #0052a3;
   --border-color: rgba(255, 255, 255, 0.6);
   --button-bg: linear-gradient(180deg, #82caff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
@@ -31,6 +33,8 @@
   --bg-secondary: rgba(13, 2, 33, 0.6);
   --text-primary: #e0f4ff;
   --text-secondary: #a0c0d0;
+  --text-primary-dark: #003366;
+  --text-secondary-dark: #445566;
   --text-accent: #00d4ff;
   --border-color: rgba(0, 212, 255, 0.2);
   --button-bg: linear-gradient(180deg, #00d4ff 0%, #0088ff 49%, #0055ff 50%, #003399 100%);

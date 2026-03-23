@@ -25,7 +25,8 @@
 
 .crisGrid {
     display: grid;
-    grid-template-columns: 380px 400px 1fr;
+    grid-template-columns: 380px 420px 1fr;
+    /* Coluna do meio um pouco maior para o AeroSelect caber perfeito */
     gap: 1.5rem;
     padding: 1.5rem;
     height: calc(100vh - 70px);
@@ -33,7 +34,9 @@
 }
 
 /* COLUNAS COM SCROLL INDEPENDENTE */
-.colLeft, .colMiddle, .colRight {
+.colLeft,
+.colMiddle,
+.colRight {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -41,8 +44,15 @@
     padding-right: 0.5rem;
 }
 
-.colLeft::-webkit-scrollbar, .colMiddle::-webkit-scrollbar, .colRight::-webkit-scrollbar { width: 6px; }
-.colLeft::-webkit-scrollbar-thumb, .colMiddle::-webkit-scrollbar-thumb, .colRight::-webkit-scrollbar-thumb {
+.colLeft::-webkit-scrollbar,
+.colMiddle::-webkit-scrollbar,
+.colRight::-webkit-scrollbar {
+    width: 6px;
+}
+
+.colLeft::-webkit-scrollbar-thumb,
+.colMiddle::-webkit-scrollbar-thumb,
+.colRight::-webkit-scrollbar-thumb {
     background: rgba(128, 128, 128, 0.3);
     border-radius: 4px;
 }
@@ -50,36 +60,65 @@
 /* =========================================
    COLUNA 1: IDENTIFICAÇÃO E PENTAGRAMA
    ========================================= */
-.identityBox { display: flex; flex-direction: column; gap: 0.5rem; }
-.identityRow { display: flex; align-items: center; gap: 0.5rem; }
-.identityLabel { font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; width: 80px; font-weight: bold; }
+.identityBox {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.identityRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.identityLabel {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    width: 80px;
+    font-weight: bold;
+}
 
 .identityInput {
-    flex: 1; background: transparent; border: none;
+    flex: 1;
+    background: transparent;
+    border: none;
     border-bottom: 1px solid rgba(128, 128, 128, 0.3);
-    color: var(--text-primary); font-size: 1rem; font-weight: bold;
-    outline: none; padding: 0.2rem; transition: border-color 0.3s;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: bold;
+    outline: none;
+    padding: 0.2rem;
+    transition: border-color 0.3s;
 }
-.identityInput:focus { border-color: var(--text-accent); }
 
-/* GEOMETRIA SAGRADA: PENTAGRAMA AFINADO */
+.identityInput:focus {
+    border-color: var(--text-accent);
+}
+
+/* PENTAGRAMA DE ATRIBUTOS */
 .attributesStarContainer {
     position: relative;
-    width: 320px; 
+    width: 320px;
     height: 300px;
     margin: 2rem auto;
 }
 
 .attrCircle {
     position: absolute;
-    width: 70px; height: 70px;
+    width: 70px;
+    height: 70px;
     background: rgba(128, 128, 128, 0.08);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(128, 128, 128, 0.2);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), inset 0 2px 6px rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     z-index: 2;
@@ -92,124 +131,719 @@
 }
 
 .attrCircle input {
-    background: transparent; border: none;
-    color: var(--text-primary); text-shadow: 0 1px 2px rgba(128, 128, 128, 0.2);
-    font-size: 2rem; font-family: var(--font-titles) !important;
-    text-align: center; width: 100%; outline: none;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    text-shadow: 0 1px 2px rgba(128, 128, 128, 0.2);
+    font-size: 2rem;
+    font-family: var(--font-titles) !important;
+    text-align: center;
+    width: 100%;
+    outline: none;
+    margin-bottom: -5px;
 }
 
-.attrCircle label { font-size: 0.6rem; text-transform: uppercase; color: var(--text-secondary); font-weight: bold; letter-spacing: 1px; }
+.attrCircle label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
 
 /* COORDENADAS DO PENTAGRAMA */
-.attrAgi { top: 0; left: 50%; transform: translateX(-50%); }
-.attrAgi:hover { transform: translateX(-50%) scale(1.05); }
-.attrInt { top: 30%; right: 5%; }
-.attrPre { top: 75%; right: 22%; }
-.attrVig { top: 75%; left: 22%; }
-.attrFor { top: 30%; left: 5%; }
+.attrAgi {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.attrAgi:hover {
+    transform: translateX(-50%) scale(1.05);
+}
+
+.attrInt {
+    top: 30%;
+    right: 5%;
+}
+
+.attrPre {
+    top: 75%;
+    right: 22%;
+}
+
+.attrVig {
+    top: 75%;
+    left: 22%;
+}
+
+.attrFor {
+    top: 30%;
+    left: 5%;
+}
 
 .attrCenterLogo {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 130px; height: 130px; border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
     border: 1px dashed rgba(128, 128, 128, 0.3);
-    background: rgba(128, 128, 128, 0.03); backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-titles) !important; color: var(--text-secondary);
-    font-size: 0.8rem; letter-spacing: 2px; opacity: 0.6; z-index: 1;
+    background: rgba(128, 128, 128, 0.03);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-titles) !important;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    z-index: 1;
 }
 
 /* REMOVER SPINNERS */
 .attrCircle input::-webkit-outer-spin-button,
-.attrCircle input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.attrCircle input[type=number] { -moz-appearance: textfield; }
+.attrCircle input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.attrCircle input[type=number] {
+    -moz-appearance: textfield;
+}
 
 /* BARRAS DE STATUS */
-.statusBars { display: flex; flex-direction: column; gap: 1rem; }
-.statusBarWrapper { display: flex; flex-direction: column; gap: 0.2rem; }
-.statusLabel { font-family: var(--font-titles) !important; font-size: 0.8rem; text-align: center; letter-spacing: 2px; }
+.statusBars {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.statusBarWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.statusLabel {
+    font-family: var(--font-titles) !important;
+    font-size: 0.8rem;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
 .statusTrack {
-    display: flex; align-items: center; justify-content: space-between;
-    border-radius: 8px; padding: 0.4rem 0.6rem; font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font-weight: bold;
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 -2px 5px rgba(0, 0, 0, 0.2);
 }
-.statusHp { background: linear-gradient(180deg, #cc0000 0%, #800000 100%); color: white; }
-.statusSan { background: linear-gradient(180deg, #8a2be2 0%, #4b0082 100%); color: white; }
-.statusEp { background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); color: white; }
+
+.statusHp {
+    background: linear-gradient(180deg, #cc0000 0%, #800000 100%);
+    color: white;
+}
+
+.statusSan {
+    background: linear-gradient(180deg, #8a2be2 0%, #4b0082 100%);
+    color: white;
+}
+
+.statusEp {
+    background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%);
+    color: white;
+}
+
 .statusInput {
-    background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 0, 0, 0.3);
-    color: white; width: 55px; text-align: center; font-size: 1.1rem;
-    font-weight: bold; border-radius: 4px; outline: none;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    color: white;
+    width: 55px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    outline: none;
+    transition: background 0.2s;
+}
+
+.statusInput:focus {
+    background: rgba(0, 0, 0, 0.5);
 }
 
 /* =========================================
-   COLUNA 2: PERÍCIAS
+   COLUNA 2: PERÍCIAS (COM CÁLCULO FINAL E CORES)
    ========================================= */
 .skillsHeader {
-    display: flex; justify-content: space-between;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.2); padding-bottom: 0.5rem;
-    font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    padding-bottom: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: bold;
 }
+
 .skillLine {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.4rem 0.5rem; border-bottom: 1px solid rgba(128,128,128,0.1); 
-    transition: all 0.2s ease; border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.5rem;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    position: relative;
+    z-index: 1;
 }
-.skillLine:hover { background: rgba(128, 128, 128, 0.08); transform: translateX(4px); }
-.skillName { flex: 2; font-weight: bold; font-size: 0.85rem; }
 
-/* GRAUS DE TREINO */
-.skillUntrained { color: var(--text-primary); opacity: 0.7; }
-.skillTrained { color: #4ade80; text-shadow: 0 0 8px rgba(74, 222, 128, 0.3); }
-.skillVeteran { color: #38bdf8; text-shadow: 0 0 8px rgba(56, 189, 248, 0.4); }
-.skillExpert { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.5); }
+.skillLine:focus-within {
+    z-index: 100;
+}
 
-.skillAttr { flex: 1; color: var(--text-accent); font-size: 0.75rem; text-align: center; font-weight: bold;}
+.skillLine:hover {
+    background: rgba(128, 128, 128, 0.08);
+}
+
+.skillName {
+    flex: 1.5;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.skillAttrText {
+    font-size: 0.65rem;
+    opacity: 0.6;
+    font-weight: normal;
+    margin-left: 4px;
+}
+
+/* GRAUS DE TREINO E CORES */
+.skillUntrained {
+    color: var(--text-primary);
+    opacity: 0.7;
+}
+
+.skillTrained {
+    color: #4ade80;
+    text-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+}
+
+.skillVeteran {
+    color: #38bdf8;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+.skillExpert {
+    color: #fbbf24;
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+}
+
+/* CAIXA DE TESTE FINAL (EX: 3d20 + 5) */
+.finalTestColumn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(128, 128, 128, 0.05);
+    border-radius: 4px;
+    padding: 2px 0;
+    border: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+.diceText {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: var(--font-titles);
+    letter-spacing: 1px;
+}
+
+.bonusText {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--text-accent);
+    margin-top: -2px;
+}
+
+/* INPUTS E SPINNERS PERÍCIAS */
 .skillInputSmall {
-    width: 45px; background: rgba(128, 128, 128, 0.05); border: 1px solid rgba(128, 128, 128, 0.2);
-    color: var(--text-primary); text-align: center; font-size: 0.85rem; border-radius: 4px; outline: none;
+    width: 45px;
+    background: rgba(128, 128, 128, 0.05);
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    outline: none;
+    padding: 0.2rem;
+    height: 32px;
+}
+
+.skillInputSmall::-webkit-outer-spin-button,
+.skillInputSmall::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.skillInputSmall[type='number'] {
+    -moz-appearance: textfield;
+    appearance: none;
 }
 
 /* =========================================
-   COLUNA 3: PAINEL DIREITO (AERO ESTÁVEL)
+   COLUNA 3: PAINEL DIREITO (AERO ESTÁVEL) E BOTÕES
    ========================================= */
-.rightTabs { display: flex; border-bottom: 1px solid rgba(128, 128, 128, 0.3); gap: 0.5rem; }
-.rightTabBtn {
-    background: transparent; border: 1px solid transparent; border-bottom: none;
-    border-radius: 8px 8px 0 0; color: var(--text-secondary);
-    font-family: var(--font-titles) !important; text-transform: uppercase;
-    padding: 0.8rem 1.2rem; cursor: pointer; transition: all 0.2s;
+.rightTabs {
+    display: flex;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    gap: 0.5rem;
+    padding-left: 0.5rem;
 }
+
+.rightTabBtn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: var(--text-secondary);
+    font-family: var(--font-titles) !important;
+    text-transform: uppercase;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rightTabBtn:hover {
+    background: rgba(128, 128, 128, 0.05);
+    color: var(--text-primary);
+}
+
 .rightTabBtnActive {
-    color: var(--text-accent); background: rgba(128, 128, 128, 0.08);
-    border: 1px solid rgba(128, 128, 128, 0.3); border-bottom: none;
+    color: var(--text-accent);
+    background: rgba(128, 128, 128, 0.08);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    border-bottom: none;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
 .rightContent {
-    flex: 1; background: rgba(128, 128, 128, 0.04);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    flex: 1;
+    background: rgba(128, 128, 128, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(128, 128, 128, 0.2);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 12px; padding: 1.5rem; overflow-y: auto;
+    box-shadow: inset 0 2px 20px rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-y: auto;
 }
 
-/* INVENTÁRIO E MODAIS */
-.inventoryDashboard { background: rgba(128, 128, 128, 0.05); border: 1px solid rgba(128, 128, 128, 0.15); border-radius: 10px; padding: 1rem; margin-bottom: 2rem; }
-.invLabel { font-family: var(--font-titles) !important; color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; }
-.invInputBig { background: rgba(128, 128, 128, 0.08); border: 1px solid rgba(128, 128, 128, 0.2); color: var(--text-primary); padding: 0.5rem; border-radius: 6px; width: 60px; font-size: 1.2rem; text-align: center; }
-
-.openModalBtn {
-    background-color: var(--text-accent); color: #fff; border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 0.8rem 1.2rem; font-family: var(--font-titles) !important; font-weight: bold;
-    border-radius: 8px; cursor: pointer; text-transform: uppercase; width: 100%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+/* BOTÕES AERO GLASS (NOVO ATAQUE / GUARDAR) */
+.openModalBtn,
+.saveButton {
+    background-color: var(--text-accent);
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(0, 0, 0, 0.05) 51%, rgba(0, 0, 0, 0.1) 100%);
+    color: var(--text-primary-dark);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-top-color: rgba(255, 255, 255, 0.5);
+    padding: 0.6rem 1.2rem;
+    font-family: var(--font-titles) !important;
+    font-weight: bold;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
-.itemCard, .attackCard {
-    background: rgba(128, 128, 128, 0.05); backdrop-filter: blur(12px);
-    border: 1px solid rgba(128, 128, 128, 0.2); border-top: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem;
+.openModalBtn:hover,
+.saveButton:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 6px 15px rgba(var(--text-accent-rgb), 0.3);
 }
 
-.modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-.modalContent { background: var(--bg-secondary); border: 1px solid rgba(128, 128, 128, 0.3); border-radius: 16px; width: 90%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; }
+.openModalBtn:active,
+.saveButton:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+    filter: brightness(0.9);
+}
+
+.headerBar button:last-child {
+    background-color: var(--text-accent);
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+}
+
+.tabPane .openModalBtn {
+    width: auto;
+    min-width: 140px;
+}
+
+/* CARTÕES DE ATAQUE E HABILIDADES */
+.attacksGrid,
+.abilitiesGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.attackCard,
+.abilityCard {
+    background: rgba(128, 128, 128, 0.05);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 1rem;
+    position: relative;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.attackCard:hover {
+    background: rgba(128, 128, 128, 0.08);
+    border-color: var(--text-accent);
+}
+
+.attackCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    gap: 1rem;
+}
+
+.attackNameInput {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    color: var(--text-accent);
+    font-family: var(--font-titles) !important;
+    font-size: 1.1rem;
+    font-weight: bold;
+    outline: none;
+    padding: 0.2rem 0;
+    text-transform: uppercase;
+}
+
+.attackNameInput:focus {
+    border-bottom-color: var(--text-accent);
+}
+
+/* BOTÃO DE REMOVER (X) */
+.removeBtn {
+    background: rgba(231, 76, 60, 0.15);
+    backdrop-filter: blur(4px);
+    color: #ff4d4d;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.removeBtn:hover {
+    background: #cc0000;
+    color: white;
+    box-shadow: 0 0 10px rgba(204, 0, 0, 0.4);
+}
+
+/* FILA DE ESTATÍSTICAS DOS ATAQUES */
+.attackStatsRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.attackStat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.attackStat label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.attackStat input {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 4px;
+    color: var(--text-primary);
+    padding: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.attackStat input:focus {
+    border-color: var(--text-accent);
+}
+
+.attackNotes {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(128, 128, 128, 0.1);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    padding: 0.5rem;
+    margin-top: 0.8rem;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+}
+
+/* MODAIS */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modalContent {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================
+   MODAL DE PESQUISA (AERO GLASS)
+   ========================================= */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modalContent {
+    background: var(--bg-primary);
+    /* Fundo sólido para tapar a ficha atrás */
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-family: var(--font-titles) !important;
+    color: var(--text-accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modalCloseBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.modalCloseBtn:hover {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.modalSearchArea {
+    padding: 1.5rem 2rem;
+    background: rgba(128, 128, 128, 0.02);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+.modalSearchInput {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: rgba(128, 128, 128, 0.05);
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.modalSearchInput:focus {
+    border-color: var(--text-accent);
+    background: rgba(128, 128, 128, 0.08);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modalList {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 2rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.modalListItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(128, 128, 128, 0.03);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(128, 128, 128, 0.15);
+    transition: all 0.2s;
+}
+
+.modalListItem:hover {
+    background: rgba(128, 128, 128, 0.08);
+    border-color: var(--text-accent);
+    transform: translateX(4px);
+}
+
+.modalItemInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.modalItemInfo h4 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-family: var(--font-titles) !important;
+}
+
+.modalStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.75rem;
+}
+
+.modalStats span {
+    color: var(--text-accent);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.modalAddBtn {
+    background: transparent;
+    color: var(--text-accent);
+    border: 2px solid var(--text-accent);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.modalAddBtn:hover {
+    background: var(--text-accent);
+    color: #000;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
