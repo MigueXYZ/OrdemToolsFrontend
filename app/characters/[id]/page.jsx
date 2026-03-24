@@ -34,6 +34,14 @@ export default function CharacterSheetPage() {
     const [ritualsList, setRitualsList] = useState([]);
     const [isRitualModalOpen, setIsRitualModalOpen] = useState(false);
     const [ritualSearchTerm, setRitualSearchTerm] = useState('');
+    const [itemsList, setItemsList] = useState([]);
+    const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+    const [itemSearchTerm, setItemSearchTerm] = useState('');
+    const [expandedItemId, setExpandedItemId] = useState(null);
+    const [weaponsList, setWeaponsList] = useState([]);
+    const [isWeaponModalOpen, setIsWeaponModalOpen] = useState(false);
+    const [weaponSearchTerm, setWeaponSearchTerm] = useState('');
+    const [expandedWeaponId, setExpandedWeaponId] = useState(null);
 
 
     const [activeTab, setActiveTab] = useState('combate');
@@ -49,22 +57,28 @@ export default function CharacterSheetPage() {
             try {
                 console.log(`A pedir dados do personagem com ID: ${params.id}...`);
 
-                const [charRes, originsRes, abilitiesRes, ritualsRes] = await Promise.all([
+                const [charRes, originsRes, abilitiesRes, ritualsRes, itemsRes, weaponsRes] = await Promise.all([
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/characters/${params.id}`, {
                         headers: { Authorization: `Bearer ${user.token}` }
                     }),
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/origins?limit=1000`),
                     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/abilities?limit=1000`),
-                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rituals?limit=1000`)
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rituals?limit=1000`),
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/items?limit=1000`),
+                    axios.get(`${process.env.NEXT_PUBLIC_API_URL}/weapons?limit=1000`)
                 ]);
 
                 const originsArray = originsRes.data.data || originsRes.data || [];
                 const abilitiesArray = abilitiesRes.data.data || abilitiesRes.data || [];
                 const ritualsArray = ritualsRes.data.data || ritualsRes.data || [];
+                const itemsArray = itemsRes.data.data || itemsRes.data || [];
+                const weaponsArray = weaponsRes.data.data || weaponsRes.data || [];
 
                 setOriginsList(originsArray);
                 setAbilitiesList(abilitiesArray);
                 setRitualsList(ritualsArray);
+                setItemsList(itemsArray);
+                setWeaponsList(weaponsArray);
 
                 console.log("Poderes carregados:", abilitiesArray.length);
                 console.log("Rituais carregados:", ritualsArray.length);
@@ -289,6 +303,77 @@ export default function CharacterSheetPage() {
     const limitPE = Math.max(1, Math.floor((character?.nex || 5) / 5));
     const ritualDT = 10 + limitPE + (character?.attributes?.pre || 0);
 
+    // ==========================================
+    // LÓGICA DE INVENTÁRIO
+    // ==========================================
+    // Capacidade de carga = Força * 5 (mínimo 2)
+    const maxSpaces = Math.max(2, (character?.attributes?.for || 1) * 5);
+    const totalSpaces = character?.inventory?.items?.reduce((acc, item) => acc + (Number(item.spaces) || 0), 0) || 0;
+
+    const addItem = () => {
+        const newItem = {
+            name: 'Novo Equipamento',
+            category: 'I',
+            spaces: 1,
+            description: ''
+        };
+        setCharacter(prev => ({
+            ...prev,
+            inventory: {
+                ...prev.inventory,
+                items: [...(prev.inventory?.items || []), newItem]
+            }
+        }));
+    };
+
+    const removeItem = (index) => {
+        const updatedItems = character.inventory.items.filter((_, i) => i !== index);
+        handleChange('items', updatedItems, 'inventory');
+    };
+
+    const handleSelectItemFromDB = (itemDB) => {
+        const newItem = {
+            item: itemDB._id, // Referência à BD
+            name: itemDB.name,
+            category: itemDB.category || 'I',
+            spaces: itemDB.spaces || 1,
+            description: itemDB.description || ''
+        };
+
+        setCharacter(prev => ({
+            ...prev,
+            inventory: {
+                ...prev.inventory,
+                items: [...(prev.inventory?.items || []), newItem]
+            }
+        }));
+
+        setIsItemModalOpen(false);
+        setItemSearchTerm('');
+    };
+
+    const handleSelectWeaponFromDB = (weaponDB) => {
+        const bonusTest = character.attributes.agi + (character.skills.find(s => s.name === 'Pontaria')?.trainingDegree || 0);
+
+        const newAttack = {
+            name: weaponDB.name,
+            test: `+${bonusTest}`, // Calcula o teste automaticamente!
+            damage: weaponDB.damage || '1d6',
+            critical: weaponDB.critical || '20',
+            damageType: weaponDB.damageType || 'Físico',
+            range: weaponDB.range || 'Curto',
+            notes: weaponDB.description || ''
+        };
+
+        setCharacter(prev => ({
+            ...prev,
+            attacks: [...(prev.attacks || []), newAttack]
+        }));
+
+        setIsWeaponModalOpen(false);
+        setWeaponSearchTerm('');
+    };
+
     if (loading || !character) return <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>A sincronizar com os Arquivos da Ordem...</div>;
 
     return (
@@ -480,9 +565,18 @@ export default function CharacterSheetPage() {
                             <div className={styles.tabPane}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                     <h3 className={styles.sectionTitle} style={{ margin: 0, border: 'none' }}>Ações de Agressão</h3>
-                                    <button className={styles.openModalBtn} style={{ width: 'auto', margin: 0 }} onClick={() => addAttack()}>
-                                        + NOVO ATAQUE
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '0.8rem' }}>
+                                        <button
+                                            className={styles.openModalBtn}
+                                            style={{ width: 'auto', margin: 0, background: 'rgba(128, 128, 128, 0.1)', color: 'var(--text-primary)', border: '1px solid var(--text-accent)' }}
+                                            onClick={() => setIsWeaponModalOpen(true)}
+                                        >
+                                            🔍 ARSENAL
+                                        </button>
+                                        <button className={styles.openModalBtn} style={{ width: 'auto', margin: 0 }} onClick={() => addAttack()}>
+                                            + ATAQUE MANUAL
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className={styles.attacksGrid}>
@@ -498,11 +592,13 @@ export default function CharacterSheetPage() {
                                                             updated[index].name = e.target.value;
                                                             handleChange('attacks', updated);
                                                         }}
+                                                        placeholder="Nome da Arma / Ataque"
                                                     />
-                                                    <button className={styles.removeBtn} onClick={() => removeAttack(index)}>✕</button>
+                                                    <button className={styles.removeBtn} onClick={() => removeAttack(index)} title="Remover Ataque">✕</button>
                                                 </div>
 
-                                                <div className={styles.attackStatsRow}>
+                                                {/* Adicionado gridTemplateColumns para caberem 4 campos */}
+                                                <div className={styles.attackStatsRow} style={{ gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
                                                     <div className={styles.attackStat}>
                                                         <label>Teste</label>
                                                         <input value={attack.test} onChange={(e) => {
@@ -527,7 +623,28 @@ export default function CharacterSheetPage() {
                                                             handleChange('attacks', updated);
                                                         }} />
                                                     </div>
+                                                    <div className={styles.attackStat}>
+                                                        <label>Alcance</label>
+                                                        <input value={attack.range || 'Curto'} onChange={(e) => {
+                                                            const updated = [...character.attacks];
+                                                            updated[index].range = e.target.value;
+                                                            handleChange('attacks', updated);
+                                                        }} />
+                                                    </div>
                                                 </div>
+
+                                                {/* Nova área de notas onde a descrição da base de dados vai aterrar */}
+                                                <textarea
+                                                    className={styles.attackNotes}
+                                                    rows={2}
+                                                    value={attack.notes || ''}
+                                                    onChange={(e) => {
+                                                        const updated = [...character.attacks];
+                                                        updated[index].notes = e.target.value;
+                                                        handleChange('attacks', updated);
+                                                    }}
+                                                    placeholder="Notas, munição, efeitos da arma..."
+                                                />
                                             </div>
                                         ))
                                     ) : (
@@ -700,10 +817,204 @@ export default function CharacterSheetPage() {
                             </div>
                         )}
                         {activeTab === 'inventário' && (
-                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Inventário e Equipamentos (Em breve)</p>
+                            <div className={styles.tabPane}>
+
+                                {/* DASHBOARD: ESPAÇOS E CRÉDITOS */}
+                                <div className={styles.inventoryDashboard}>
+                                    <div className={styles.invStatsRow}>
+
+                                        {/* PESO / ESPAÇOS */}
+                                        <div className={styles.invBoxContainer} style={{ flex: 1 }}>
+                                            <span className={styles.invLabel}>Espaços (FOR×5)</span>
+                                            <div className={styles.invBox}>
+                                                <div
+                                                    className={styles.invInputBig}
+                                                    style={{ background: 'transparent', border: 'none', color: totalSpaces > maxSpaces ? '#ff4d4d' : 'var(--text-primary)' }}
+                                                    title="Espaços Ocupados"
+                                                >
+                                                    {totalSpaces}
+                                                </div>
+                                                <span style={{ margin: '0 0.2rem', color: 'var(--text-secondary)' }}>/</span>
+                                                <div className={styles.invInputBig} style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)' }} title="Limite Base">
+                                                    {maxSpaces}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* LIMITE DE CRÉDITO */}
+                                        <div className={styles.invBoxContainer} style={{ flex: 1 }}>
+                                            <span className={styles.invLabel}>Crédito</span>
+                                            <select
+                                                className={styles.invSelect}
+                                                value={character.inventory?.creditLimit || 'Baixo'}
+                                                onChange={(e) => handleChange('creditLimit', e.target.value, 'inventory')}
+                                            >
+                                                <option value="Baixo">Baixo</option>
+                                                <option value="Médio">Médio</option>
+                                                <option value="Alto">Alto</option>
+                                                <option value="Ilimitado">Ilimitado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* LIMITES DE CATEGORIA POR MISSÃO */}
+                                    <div style={{ marginTop: '0.5rem' }}>
+                                        <span className={styles.invLabel} style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.7rem' }}>LIMITES DE CATEGORIA POR MISSÃO</span>
+                                        <div className={styles.invCategoryRow}>
+                                            <div className={styles.invStaticBox} title="Categoria I">I</div>
+                                            <input type="number" value={character.inventory?.categoryLimits?.I || 0} onChange={(e) => handleChange('categoryLimits', Number(e.target.value), 'inventory', 'I')} />
+                                            <div className={styles.invStaticBox} title="Categoria II">II</div>
+                                            <input type="number" value={character.inventory?.categoryLimits?.II || 0} onChange={(e) => handleChange('categoryLimits', Number(e.target.value), 'inventory', 'II')} />
+                                            <div className={styles.invStaticBox} title="Categoria III">III</div>
+                                            <input type="number" value={character.inventory?.categoryLimits?.III || 0} onChange={(e) => handleChange('categoryLimits', Number(e.target.value), 'inventory', 'III')} />
+                                            <div className={styles.invStaticBox} title="Categoria IV">IV</div>
+                                            <input type="number" value={character.inventory?.categoryLimits?.IV || 0} onChange={(e) => handleChange('categoryLimits', Number(e.target.value), 'inventory', 'IV')} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* LISTA DE ITENS */}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <h3 className={styles.sectionTitle} style={{ margin: 0, border: 'none' }}>Equipamentos</h3>
+                                    <div style={{ display: 'flex', gap: '0.8rem' }}>
+                                        <button
+                                            className={styles.openModalBtn}
+                                            style={{ width: 'auto', margin: 0, background: 'rgba(128, 128, 128, 0.1)', color: 'var(--text-primary)', border: '1px solid var(--text-accent)' }}
+                                            onClick={() => setIsItemModalOpen(true)}
+                                        >
+                                            🔍 BUSCAR EQUIPAMENTO
+                                        </button>
+                                        <button className={styles.openModalBtn} style={{ width: 'auto', margin: 0 }} onClick={addItem}>
+                                            + CRIAR MANUAL
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className={styles.itemsGrid}>
+                                    {character.inventory?.items?.length > 0 ? (
+                                        character.inventory.items.map((item, index) => {
+
+                                            // A NOSSA REDE DE SEGURANÇA MÁGICA
+                                            // Vai procurar a edição manual primeiro. Se não existir, vai procurar aos dados vindos da BD.
+                                            const itemName = item.name || (item.item && item.item.name) || '';
+                                            const itemCategory = item.category || (item.item && item.item.category) || '0';
+                                            // A BD usa "space" (sem S), o nosso frontend usa "spaces" (com S)
+                                            const itemSpaces = item.spaces !== undefined ? item.spaces : (item.item && item.item.space) || 1;
+                                            const itemDesc = item.description || (item.item && item.item.description) || '';
+
+                                            return (
+                                                <div key={index} className={styles.itemCard}>
+                                                    <div className={styles.itemCardHeader}>
+                                                        <input
+                                                            className={styles.attackNameInput}
+                                                            value={itemName} // Usar a variável segura
+                                                            onChange={(e) => {
+                                                                const updated = [...character.inventory.items];
+                                                                updated[index].name = e.target.value;
+                                                                handleChange('items', updated, 'inventory');
+                                                            }}
+                                                            placeholder="Nome do Item"
+                                                        />
+                                                        <button className={styles.removeBtn} onClick={() => removeItem(index)}>✕</button>
+                                                    </div>
+
+                                                    <div className={styles.itemCardEditRow}>
+                                                        <label style={{ flex: 1 }}>Categoria
+                                                            <select value={itemCategory} onChange={(e) => {
+                                                                const updated = [...character.inventory.items];
+                                                                updated[index].category = e.target.value;
+                                                                handleChange('items', updated, 'inventory');
+                                                            }}>
+                                                                <option value="0">0</option>
+                                                                <option value="I">I</option>
+                                                                <option value="II">II</option>
+                                                                <option value="III">III</option>
+                                                                <option value="IV">IV</option>
+                                                            </select>
+                                                        </label>
+                                                        <label style={{ flex: 1 }}>Espaços
+                                                            <input type="number" value={itemSpaces} onChange={(e) => {
+                                                                const updated = [...character.inventory.items];
+                                                                updated[index].spaces = Number(e.target.value);
+                                                                handleChange('items', updated, 'inventory');
+                                                            }} />
+                                                        </label>
+                                                    </div>
+
+                                                    <textarea
+                                                        className={styles.itemCardDesc}
+                                                        rows={2}
+                                                        value={itemDesc} // Usar a variável segura
+                                                        onChange={(e) => {
+                                                            const updated = [...character.inventory.items];
+                                                            updated[index].description = e.target.value;
+                                                            handleChange('items', updated, 'inventory');
+                                                        }}
+                                                        placeholder="Detalhes do item, munições, peso extra..."
+                                                    />
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>A mochila está vazia. Adicione equipamentos.</p>
+                                    )}
+                                </div>
+                            </div>
                         )}
                         {activeTab === 'lore' && (
-                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Notas de Lore e Background (Em breve)</p>
+                            <div className={styles.tabPane}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <h3 className={styles.sectionTitle} style={{ margin: 0, border: 'none' }}>Arquivos Confidenciais</h3>
+                                </div>
+
+                                <div className={styles.loreGrid}>
+                                    {/* Aparência */}
+                                    <div className={styles.loreSection}>
+                                        <label className={styles.loreLabel}>Aparência & Traços Físicos</label>
+                                        <textarea
+                                            className={styles.loreTextarea}
+                                            rows={3}
+                                            value={character.lore?.appearance || ''}
+                                            onChange={(e) => setCharacter(prev => ({
+                                                ...prev,
+                                                lore: { ...(prev.lore || {}), appearance: e.target.value }
+                                            }))}
+                                            placeholder="Descreve o estilo de roupa, cicatrizes, idade, ou detalhes visuais marcantes..."
+                                        />
+                                    </div>
+
+                                    {/* História / Background */}
+                                    <div className={styles.loreSection}>
+                                        <label className={styles.loreLabel}>Histórico (Background)</label>
+                                        <textarea
+                                            className={styles.loreTextarea}
+                                            rows={5}
+                                            // MUDOU AQUI (history)
+                                            value={character.lore?.history || ''}
+                                            onChange={(e) => setCharacter(prev => ({
+                                                ...prev,
+                                                lore: { ...(prev.lore || {}), history: e.target.value }
+                                            }))}
+                                            placeholder="A história do agente. O que fazia antes da Ordem?"
+                                        />
+                                    </div>
+
+                                    {/* Diário de Missão / Notas */}
+                                    <div className={styles.loreSection}>
+                                        <label className={styles.loreLabel}>Diário de Missão & Anotações</label>
+                                        <textarea
+                                            className={styles.loreTextarea}
+                                            rows={8}
+                                            value={character.lore?.notes || ''}
+                                            onChange={(e) => setCharacter(prev => ({
+                                                ...prev,
+                                                lore: { ...(prev.lore || {}), notes: e.target.value }
+                                            }))}
+                                            placeholder="Espaço livre para anotações durante a sessão..."
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         )}
                         {/* =========================================
                 MODAL DE PESQUISA DE PODERES
@@ -828,6 +1139,167 @@ export default function CharacterSheetPage() {
                                         }
                                         {ritualsList.length === 0 && (
                                             <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>A decifrar documentos ocultistas...</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {/* =========================================
+                MODAL DE PESQUISA DE ITENS
+                ========================================= */}
+                        {isItemModalOpen && (
+                            <div className={styles.modalOverlay} onClick={() => setIsItemModalOpen(false)}>
+                                <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                                    <div className={styles.modalHeader}>
+                                        <h2>Arquivo da Ordem (Itens)</h2>
+                                        <button className={styles.modalCloseBtn} onClick={() => setIsItemModalOpen(false)}>✕</button>
+                                    </div>
+
+                                    <div className={styles.modalSearchArea}>
+                                        <input
+                                            type="text"
+                                            placeholder="Pesquisar por nome, tipo..."
+                                            className={styles.modalSearchInput}
+                                            value={itemSearchTerm}
+                                            onChange={e => setItemSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className={styles.modalList}>
+                                        {itemsList
+                                            .filter(i => i.name.toLowerCase().includes(itemSearchTerm.toLowerCase()) || (i.type && i.type.toLowerCase().includes(itemSearchTerm.toLowerCase())))
+                                            .map(item => {
+                                                const isExpanded = expandedItemId === item._id;
+
+                                                return (
+                                                    <div key={item._id} className={styles.modalListItem} style={{ alignItems: isExpanded ? 'flex-start' : 'center' }}>
+                                                        <div className={styles.modalItemInfo} style={{ width: '100%' }}>
+
+                                                            <div
+                                                                className={styles.modalItemHeader}
+                                                                onClick={() => setExpandedItemId(isExpanded ? null : item._id)}
+                                                            >
+                                                                <h4>{item.name}</h4>
+                                                                <span className={styles.expandIcon}>{isExpanded ? '▲' : '▼'}</span>
+                                                            </div>
+
+                                                            <div className={styles.modalStats}>
+                                                                <span>CAT: {item.category || 'I'}</span>
+                                                                <span style={{ color: 'var(--text-secondary)' }}>Espaços: {item.spaces || 1}</span>
+                                                                {item.damage && <span style={{ color: '#e74c3c' }}>Dano: {item.damage}</span>}
+                                                            </div>
+
+                                                            {isExpanded && (
+                                                                <div className={styles.modalItemDescription}>
+                                                                    {item.description || 'Sem descrição disponível.'}
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        <button
+                                                            className={styles.modalAddBtn}
+                                                            onClick={() => handleSelectItemFromDB(item)}
+                                                            title="Adicionar à Mochila"
+                                                            style={{ marginTop: isExpanded ? '0' : '0' }}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })
+                                        }
+                                        {itemsList.length === 0 && (
+                                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>A verificar arsenal...</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {/* =========================================
+                MODAL DE PESQUISA DE ARMAS
+                ========================================= */}
+                        {isWeaponModalOpen && (
+                            <div className={styles.modalOverlay} onClick={() => setIsWeaponModalOpen(false)}>
+                                <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                                    <div className={styles.modalHeader}>
+                                        <h2>Arsenal da Ordem</h2>
+                                        <button className={styles.modalCloseBtn} onClick={() => setIsWeaponModalOpen(false)}>✕</button>
+                                    </div>
+
+                                    <div className={styles.modalSearchArea}>
+                                        <input
+                                            type="text"
+                                            placeholder="Pesquisar calibre, nome..."
+                                            className={styles.modalSearchInput}
+                                            value={weaponSearchTerm}
+                                            onChange={e => setWeaponSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className={styles.modalList}>
+                                        {weaponsList
+                                            .filter(w => w.name.toLowerCase().includes(weaponSearchTerm.toLowerCase()) || (w.type && w.type.toLowerCase().includes(weaponSearchTerm.toLowerCase())))
+                                            .map(weapon => {
+                                                const isExpanded = expandedWeaponId === weapon._id;
+
+                                                return (
+                                                    <div key={weapon._id} className={styles.modalListItem} style={{ alignItems: isExpanded ? 'flex-start' : 'center' }}>
+                                                        <div className={styles.modalItemInfo} style={{ width: '100%' }}>
+
+                                                            {/* CABEÇALHO CLICÁVEL */}
+                                                            <div
+                                                                className={styles.modalItemHeader}
+                                                                onClick={() => setExpandedWeaponId(isExpanded ? null : weapon._id)}
+                                                            >
+                                                                <h4>{weapon.name}</h4>
+                                                                <span className={styles.expandIcon}>{isExpanded ? '▲' : '▼'}</span>
+                                                            </div>
+
+                                                            {/* STATS PRINCIPAIS */}
+                                                            <div className={styles.modalStats}>
+                                                                <span>Dano: {weapon.damage} {weapon.damageType}</span>
+                                                                <span style={{ color: 'var(--text-secondary)' }}>Crítico: {weapon.critical}</span>
+                                                                <span style={{ color: 'var(--text-secondary)' }}>Cat: {weapon.category || '0'}</span>
+                                                            </div>
+
+                                                            {/* DESCRIÇÃO EXPANSÍVEL (Com os dados da tua BD!) */}
+                                                            {isExpanded && (
+                                                                <div className={styles.modalItemDescription}>
+                                                                    {weapon.description && (
+                                                                        <p style={{ margin: '0 0 0.5rem 0' }}>{weapon.description}</p>
+                                                                    )}
+
+                                                                    {weapon.notes && (
+                                                                        <p style={{ margin: '0 0 0.8rem 0', fontStyle: 'italic', color: 'var(--text-accent)' }}>
+                                                                            Nota: {weapon.notes}
+                                                                        </p>
+                                                                    )}
+
+                                                                    {/* TAGS (Tático / Corpo a Corpo / Espaços) */}
+                                                                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                                                                        <span style={{ background: 'rgba(128, 128, 128, 0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', color: 'var(--text-secondary)' }}>{weapon.type}</span>
+                                                                        <span style={{ background: 'rgba(128, 128, 128, 0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', color: 'var(--text-secondary)' }}>{weapon.proficiency}</span>
+                                                                        <span style={{ background: 'rgba(128, 128, 128, 0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px', color: 'var(--text-secondary)' }}>Espaços: {weapon.space || 1}</span>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {/* BOTÃO EQUIPAR */}
+                                                        <button
+                                                            className={styles.modalAddBtn}
+                                                            onClick={() => handleSelectWeaponFromDB(weapon)}
+                                                            title="Equipar Arma"
+                                                            style={{ marginTop: isExpanded ? '0' : '0' }}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })
+                                        }
+                                        {weaponsList.length === 0 && (
+                                            <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>A verificar armamento...</p>
                                         )}
                                     </div>
                                 </div>
