@@ -374,6 +374,53 @@ export default function CharacterSheetPage() {
         setWeaponSearchTerm('');
     };
 
+    // Muda a patente e atualiza automaticamente os limites do inventário (Tabela 3.1 Oficial)
+    const handlePatenteChange = (novaPatente) => {
+        let newCredit = 'Baixo';
+        let newLimits = { I: 2, II: 0, III: 0, IV: 0 }; // Base Recruta
+
+        switch(novaPatente) {
+            case 'Recruta':
+                newCredit = 'Baixo'; newLimits = { I: 2, II: 0, III: 0, IV: 0 }; break;
+            case 'Operador':
+                newCredit = 'Médio'; newLimits = { I: 3, II: 1, III: 0, IV: 0 }; break;
+            case 'Agente Especial':
+                newCredit = 'Médio'; newLimits = { I: 3, II: 2, III: 1, IV: 0 }; break;
+            case 'Oficial de Operações':
+                newCredit = 'Alto'; newLimits = { I: 3, II: 3, III: 2, IV: 1 }; break;
+            case 'Agente de Elite':
+                newCredit = 'Ilimitado'; newLimits = { I: 3, II: 3, III: 3, IV: 2 }; break;
+            case 'Herói da Ordem': // Caso uses em campanhas épicas (homebrew comum)
+                newCredit = 'Ilimitado'; newLimits = { I: 4, II: 4, III: 3, IV: 2 }; break;
+        }
+
+        setCharacter(prev => ({
+            ...prev,
+            patente: novaPatente,
+            inventory: {
+                ...prev.inventory,
+                creditLimit: newCredit,
+                categoryLimits: newLimits
+            }
+        }));
+    };
+
+    const PATENTE_OPTIONS = [
+    { label: 'Recruta', value: 'Recruta' },
+    { label: 'Operador', value: 'Operador' },
+    { label: 'Agente Especial', value: 'Agente Especial' },
+    { label: 'Oficial de Operações', value: 'Oficial de Operações' },
+    { label: 'Agente de Elite', value: 'Agente de Elite' },
+    { label: 'Herói da Ordem', value: 'Herói da Ordem' }
+];
+
+const CREDIT_OPTIONS = [
+    { label: 'Baixo', value: 'Baixo' },
+    { label: 'Médio', value: 'Médio' },
+    { label: 'Alto', value: 'Alto' },
+    { label: 'Ilimitado', value: 'Ilimitado' }
+];
+
     if (loading || !character) return <div style={{ padding: '2rem', textAlign: 'center', color: 'white' }}>A sincronizar com os Arquivos da Ordem...</div>;
 
     return (
@@ -821,8 +868,7 @@ export default function CharacterSheetPage() {
 
                                 {/* DASHBOARD: ESPAÇOS E CRÉDITOS */}
                                 <div className={styles.inventoryDashboard}>
-                                    <div className={styles.invStatsRow}>
-
+                                        <div className={styles.invStatsRow}>
                                         {/* PESO / ESPAÇOS */}
                                         <div className={styles.invBoxContainer} style={{ flex: 1 }}>
                                             <span className={styles.invLabel}>Espaços (FOR×5)</span>
@@ -841,19 +887,32 @@ export default function CharacterSheetPage() {
                                             </div>
                                         </div>
 
+                                        {/* PATENTE */}
+                                        <div className={styles.invBoxContainer} style={{ flex: 1 }}>
+                                            <span className={styles.invLabel}>Patente</span>
+                                            <div style={{ height: '42px' }}>
+                                                <AeroSelect
+                                                    name="patente"
+                                                    options={PATENTE_OPTIONS}
+                                                    value={character.patente || 'Recruta'}
+                                                    onChange={(e) => handlePatenteChange(e.target.value)}
+                                                    placeholder="Patente"
+                                                />
+                                            </div>
+                                        </div>
+
                                         {/* LIMITE DE CRÉDITO */}
                                         <div className={styles.invBoxContainer} style={{ flex: 1 }}>
                                             <span className={styles.invLabel}>Crédito</span>
-                                            <select
-                                                className={styles.invSelect}
-                                                value={character.inventory?.creditLimit || 'Baixo'}
-                                                onChange={(e) => handleChange('creditLimit', e.target.value, 'inventory')}
-                                            >
-                                                <option value="Baixo">Baixo</option>
-                                                <option value="Médio">Médio</option>
-                                                <option value="Alto">Alto</option>
-                                                <option value="Ilimitado">Ilimitado</option>
-                                            </select>
+                                            <div style={{ height: '42px' }}>
+                                                <AeroSelect
+                                                    name="creditLimit"
+                                                    options={CREDIT_OPTIONS}
+                                                    value={character.inventory?.creditLimit || 'Baixo'}
+                                                    onChange={(e) => handleChange('creditLimit', e.target.value, 'inventory')}
+                                                    placeholder="Crédito"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
