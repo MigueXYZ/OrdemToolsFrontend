@@ -208,15 +208,13 @@ export default function CharacterSheetPage() {
         return styles.skillUntrained;
     };
 
-    const addAttack = (weapon = null) => {
+const addAttack = () => {
         const newAttack = {
-            name: weapon ? weapon.name : 'Novo Ataque',
-            test: weapon ? `+${character.attributes.agi + (character.skills.find(s => s.name === 'Pontaria')?.trainingDegree || 0)}` : '+0',
-            damage: weapon ? weapon.damage : '1d6',
-            critical: weapon ? weapon.critical : '20/x2',
-            damageType: weapon ? weapon.damageType : 'Físico',
-            range: weapon ? weapon.range : 'Curto',
-            notes: weapon ? weapon.notes : ''
+            weapon: null,
+            customName: 'Novo Ataque',
+            attackBonus: '+0',
+            damageOverride: '1d6',
+            criticalOverride: '20/x2'
         };
 
         setCharacter(prev => ({
@@ -352,17 +350,15 @@ export default function CharacterSheetPage() {
         setItemSearchTerm('');
     };
 
-    const handleSelectWeaponFromDB = (weaponDB) => {
+const handleSelectWeaponFromDB = (weaponDB) => {
         const bonusTest = character.attributes.agi + (character.skills.find(s => s.name === 'Pontaria')?.trainingDegree || 0);
 
         const newAttack = {
-            name: weaponDB.name,
-            test: `+${bonusTest}`, // Calcula o teste automaticamente!
-            damage: weaponDB.damage || '1d6',
-            critical: weaponDB.critical || '20',
-            damageType: weaponDB.damageType || 'Físico',
-            range: weaponDB.range || 'Curto',
-            notes: weaponDB.description || ''
+            weapon: weaponDB._id, // Guarda a referência para a BD
+            customName: weaponDB.name,
+            attackBonus: `+${bonusTest}`,
+            damageOverride: weaponDB.damage || '1d6',
+            criticalOverride: weaponDB.critical || '20'
         };
 
         setCharacter(prev => ({
@@ -628,72 +624,86 @@ const CREDIT_OPTIONS = [
 
                                 <div className={styles.attacksGrid}>
                                     {character.attacks && character.attacks.length > 0 ? (
-                                        character.attacks.map((attack, index) => (
-                                            <div key={index} className={styles.attackCard}>
-                                                <div className={styles.attackCardHeader}>
-                                                    <input
-                                                        className={styles.attackNameInput}
-                                                        value={attack.name}
-                                                        onChange={(e) => {
-                                                            const updated = [...character.attacks];
-                                                            updated[index].name = e.target.value;
-                                                            handleChange('attacks', updated);
-                                                        }}
-                                                        placeholder="Nome da Arma / Ataque"
+                                        character.attacks.map((attack, index) => {
+                                            
+                                            // Detetive de Armas (cruza com a BD se houver um ID)
+                                            const dbWeapon = typeof attack.weapon === 'string' || typeof attack.weapon === 'object' 
+                                                ? weaponsList.find(w => w._id === (attack.weapon?.$oid || attack.weapon)) 
+                                                : attack.weapon;
+
+                                            // Variáveis seguras baseadas no TEU backend
+                                            const atkName = attack.customName || dbWeapon?.name || '';
+                                            const atkTest = attack.attackBonus || '+0';
+                                            const atkDmg = attack.damageOverride || dbWeapon?.damage || '';
+                                            const atkCrit = attack.criticalOverride || dbWeapon?.critical || '';
+                                            
+                                            // Alcance e notas não estão no teu Schema de ataques, logo vêm sempre da BD
+                                            const atkRange = dbWeapon?.range || 'Curto';
+                                            const atkNotes = dbWeapon?.description || '';
+
+                                            return (
+                                                <div key={index} className={styles.attackCard}>
+                                                    <div className={styles.attackCardHeader}>
+                                                        <input
+                                                            className={styles.attackNameInput}
+                                                            value={atkName}
+                                                            onChange={(e) => {
+                                                                const updated = [...character.attacks];
+                                                                updated[index].customName = e.target.value;
+                                                                handleChange('attacks', updated);
+                                                            }}
+                                                            placeholder="Nome da Arma / Ataque"
+                                                        />
+                                                        <button className={styles.removeBtn} onClick={() => removeAttack(index)} title="Remover Ataque">✕</button>
+                                                    </div>
+
+                                                    <div className={styles.attackStatsRow}>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Teste</label>
+                                                            <input value={atkTest} onChange={(e) => {
+                                                                const updated = [...character.attacks];
+                                                                updated[index].attackBonus = e.target.value;
+                                                                handleChange('attacks', updated);
+                                                            }} />
+                                                        </div>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Dano</label>
+                                                            <input value={atkDmg} onChange={(e) => {
+                                                                const updated = [...character.attacks];
+                                                                updated[index].damageOverride = e.target.value;
+                                                                handleChange('attacks', updated);
+                                                            }} />
+                                                        </div>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Crítico</label>
+                                                            <input value={atkCrit} onChange={(e) => {
+                                                                const updated = [...character.attacks];
+                                                                updated[index].criticalOverride = e.target.value;
+                                                                handleChange('attacks', updated);
+                                                            }} />
+                                                        </div>
+                                                        <div className={styles.attackStat}>
+                                                            <label>Alcance</label>
+                                                            <input 
+                                                                value={atkRange} 
+                                                                readOnly 
+                                                                style={{ opacity: 0.7 }} 
+                                                                title="Armado automaticamente pela base de dados" 
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <textarea
+                                                        className={styles.attackNotes}
+                                                        rows={2}
+                                                        value={atkNotes}
+                                                        readOnly
+                                                        style={{ opacity: 0.7 }}
+                                                        placeholder={dbWeapon ? "Notas da arma..." : "Cria a arma na base de dados para ver as notas aqui."}
                                                     />
-                                                    <button className={styles.removeBtn} onClick={() => removeAttack(index)} title="Remover Ataque">✕</button>
                                                 </div>
-
-                                                {/* Adicionado gridTemplateColumns para caberem 4 campos */}
-                                                <div className={styles.attackStatsRow} style={{ gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
-                                                    <div className={styles.attackStat}>
-                                                        <label>Teste</label>
-                                                        <input value={attack.test} onChange={(e) => {
-                                                            const updated = [...character.attacks];
-                                                            updated[index].test = e.target.value;
-                                                            handleChange('attacks', updated);
-                                                        }} />
-                                                    </div>
-                                                    <div className={styles.attackStat}>
-                                                        <label>Dano</label>
-                                                        <input value={attack.damage} onChange={(e) => {
-                                                            const updated = [...character.attacks];
-                                                            updated[index].damage = e.target.value;
-                                                            handleChange('attacks', updated);
-                                                        }} />
-                                                    </div>
-                                                    <div className={styles.attackStat}>
-                                                        <label>Crítico</label>
-                                                        <input value={attack.critical} onChange={(e) => {
-                                                            const updated = [...character.attacks];
-                                                            updated[index].critical = e.target.value;
-                                                            handleChange('attacks', updated);
-                                                        }} />
-                                                    </div>
-                                                    <div className={styles.attackStat}>
-                                                        <label>Alcance</label>
-                                                        <input value={attack.range || 'Curto'} onChange={(e) => {
-                                                            const updated = [...character.attacks];
-                                                            updated[index].range = e.target.value;
-                                                            handleChange('attacks', updated);
-                                                        }} />
-                                                    </div>
-                                                </div>
-
-                                                {/* Nova área de notas onde a descrição da base de dados vai aterrar */}
-                                                <textarea
-                                                    className={styles.attackNotes}
-                                                    rows={2}
-                                                    value={attack.notes || ''}
-                                                    onChange={(e) => {
-                                                        const updated = [...character.attacks];
-                                                        updated[index].notes = e.target.value;
-                                                        handleChange('attacks', updated);
-                                                    }}
-                                                    placeholder="Notas, munição, efeitos da arma..."
-                                                />
-                                            </div>
-                                        ))
+                                            );
+                                        })
                                     ) : (
                                         <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '2rem' }}>
                                             Nenhum ataque registado. Adicione um ataque manual ou equipe uma arma.
