@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useContext, useEffect } from 'react';
-// 1. Importa o useSearchParams do next/navigation
+// 1. Importa o Suspense do React
+import { useState, useContext, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AuthContext } from '../context/AuthContext';
 
@@ -21,22 +21,20 @@ import ThemeToggle from '../components/ThemeToggle';
 import ImportJsonModal from '../components/ImportJsonModal';
 import styles from './page.module.css';
 
-export default function ManagePage() {
+// 2. O conteúdo principal passa a ser um componente interno
+function ManageContent() {
   const [activeTab, setActiveTab] = useState('abilities');
   const [showImportModal, setShowImportModal] = useState(false);
   
   const { user, loading, hasPermission } = useContext(AuthContext);
   const router = useRouter();
   
-  // 2. Inicializa o hook de parâmetros de pesquisa
   const searchParams = useSearchParams();
 
-  // 3. Efeito para ler o ?category= do URL e mudar a aba ativa
   useEffect(() => {
     const categoryFromUrl = searchParams.get('category');
     
     if (categoryFromUrl) {
-      // Lista de abas válidas como rede de segurança
       const validTabs = ['abilities', 'rituals', 'rules', 'items', 'classes', 'tracks', 'origins', 'weapons', 'threats'];
       
       if (validTabs.includes(categoryFromUrl)) {
@@ -169,5 +167,28 @@ export default function ManagePage() {
         />
       )}
     </div>
+  );
+}
+
+// 3. A exportação principal envolve o conteúdo no Suspense
+export default function ManagePage() {
+  return (
+    <Suspense fallback={
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh', 
+        fontFamily: 'var(--font-titles)', 
+        color: 'var(--text-accent)',
+        fontSize: '1.5rem',
+        textTransform: 'uppercase',
+        letterSpacing: '2px'
+      }}>
+        A aceder à base de dados da Ordem...
+      </div>
+    }>
+      <ManageContent />
+    </Suspense>
   );
 }
