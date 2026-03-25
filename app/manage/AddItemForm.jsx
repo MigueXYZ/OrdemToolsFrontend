@@ -1,7 +1,8 @@
 'use client';
 
-// 1. IMPORTAR O useContext
+// 1. IMPORTAR O useContext E useRouter
 import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
@@ -9,8 +10,9 @@ import { AuthContext } from '../context/AuthContext'; // Ajusta o caminho se nec
 import styles from './AddItemForm.module.css';
 
 export default function AddItemForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
 
   const [formData, setFormData] = useState({
     name: '',
@@ -64,17 +66,19 @@ export default function AddItemForm({ onSuccess }) {
         }
       );
 
-      setMessage({ type: 'success', text: 'Item de inventário adicionado com sucesso!' });
-      
       // Limpar formulário
       setFormData({ name: '', description: '', category: '', paranormal: 'false', space: '1', tags: '', book: '' });
       
       onSuccess?.();
+
+      // 4. O ALERTA E O REFRESH NA PÁGINA (Com a category certa)
+      alert('Item de inventário adicionado com sucesso!');
+      window.location.assign('/manage?category=items');
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Falha no Inventário: ${errorMsg}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Só retiramos o loading se houver erro
     }
   };
 
@@ -107,7 +111,7 @@ export default function AddItemForm({ onSuccess }) {
           <AeroSelect
             label="Categoria"
             name="category"
-            options={['0', '1', '2', '3', '4']}
+            options={['0', '1', '2', '3', '4'].map(val => ({ label: val, value: val }))}
             value={formData.category}
             onChange={handleChange}
             placeholder="--"

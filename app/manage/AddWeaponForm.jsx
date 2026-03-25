@@ -1,7 +1,8 @@
 'use client';
 
-// 1. IMPORTAR O useContext
+// 1. IMPORTAR O useContext E useRouter
 import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
@@ -16,8 +17,9 @@ const CATEGORIES = ['0', '1', '2', '3', '4'];
 const RANGES = ['Nenhum', 'Curto', 'Médio', 'Longo', 'Extremo'];
 
 export default function AddWeaponForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  // 2. IR BUSCAR O UTILIZADOR E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
 
   const [formData, setFormData] = useState({
     name: '',
@@ -75,18 +77,23 @@ export default function AddWeaponForm({ onSuccess }) {
         }
       );
 
-      setMessage({ type: 'success', text: 'Armamento registado no arsenal!' });
+      // Limpar formulário após o sucesso
       setFormData({
         name: '', description: '', category: '', proficiency: '',
         type: '', grip: '', damage: '', critical: '20/x2',
         range: '', damageType: '', space: '1', notes: '', book: '', tags: ''
       });
+      
       onSuccess?.();
+
+      // 4. ALERTA E REFRESH NA ABA CERTA
+      alert('Armamento registado no arsenal com sucesso!');
+      window.location.assign('/manage?category=weapons');
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Erro balístico: ${errorMsg}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Retira o loading apenas se houver erro
     }
   };
 
@@ -116,7 +123,7 @@ export default function AddWeaponForm({ onSuccess }) {
           <AeroSelect
             label="Tipo de Dano *"
             name="damageType"
-            options={DAMAGE_TYPES}
+            options={DAMAGE_TYPES.map(d => ({label: d, value: d}))}
             value={formData.damageType}
             onChange={handleChange}
             placeholder="-- Selecionar --"
@@ -137,7 +144,7 @@ export default function AddWeaponForm({ onSuccess }) {
           <AeroSelect
             label="Categoria *"
             name="category"
-            options={CATEGORIES}
+            options={CATEGORIES.map(c => ({label: c, value: c}))}
             value={formData.category}
             onChange={handleChange}
             required
@@ -145,7 +152,7 @@ export default function AddWeaponForm({ onSuccess }) {
           <AeroSelect
             label="Proficiência *"
             name="proficiency"
-            options={PROFICIENCIES}
+            options={PROFICIENCIES.map(p => ({label: p, value: p}))}
             value={formData.proficiency}
             onChange={handleChange}
             required
@@ -156,7 +163,7 @@ export default function AddWeaponForm({ onSuccess }) {
           <AeroSelect
             label="Tipo *"
             name="type"
-            options={TYPES}
+            options={TYPES.map(t => ({label: t, value: t}))}
             value={formData.type}
             onChange={handleChange}
             required
@@ -164,7 +171,7 @@ export default function AddWeaponForm({ onSuccess }) {
           <AeroSelect
             label="Empunhadura *"
             name="grip"
-            options={GRIPS}
+            options={GRIPS.map(g => ({label: g, value: g}))}
             value={formData.grip}
             onChange={handleChange}
             required
@@ -191,7 +198,7 @@ export default function AddWeaponForm({ onSuccess }) {
           <AeroSelect
             label="Alcance"
             name="range"
-            options={RANGES}
+            options={RANGES.map(r => ({label: r, value: r}))}
             value={formData.range}
             onChange={handleChange}
             placeholder="Nenhum"

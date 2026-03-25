@@ -1,7 +1,8 @@
 'use client';
 
-// 1. IMPORTAR O useContext (junto com os outros hooks)
+// 1. IMPORTAR O useContext E useRouter
 import { useState, useEffect, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
@@ -9,8 +10,9 @@ import { AuthContext } from '../context/AuthContext'; // Ajustar caminho se nece
 import styles from './AddTrackForm.module.css';
 
 export default function AddTrackForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  // 2. IR BUSCAR O UTILIZADOR E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
 
   const [formData, setFormData] = useState({
     name: '',
@@ -86,13 +88,18 @@ export default function AddTrackForm({ onSuccess }) {
         }
       );
       
-      setMessage({ type: 'success', text: 'Nova Trilha registada no arquivo!' });
+      // Limpar form
       setFormData({ name: '', class: '', abilities: [], description: '', book: '' });
+      
       onSuccess?.();
+
+      // 4. ALERTA E REFRESH NA ABA CERTA
+      alert('Nova Trilha registada no arquivo com sucesso!');
+      window.location.assign('/manage?category=tracks');
+
     } catch (error) {
       setMessage({ type: 'error', text: `Erro: ${error.response?.data?.message || error.message}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Retira o loading em caso de erro
     }
   };
 

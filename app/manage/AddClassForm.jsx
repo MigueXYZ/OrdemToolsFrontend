@@ -77,8 +77,7 @@ export default function AddClassForm({ onSuccess }) {
         }
       );
 
-      setMessage({ type: 'success', text: 'Classe de prestígio registada com sucesso!' });
-      
+      // Limpar o formulário após o sucesso
       setFormData({ 
         name: '', description: '', book: '',
         hpInitial: '', hpPerLevel: '',
@@ -88,11 +87,15 @@ export default function AddClassForm({ onSuccess }) {
       });
       
       onSuccess?.();
+
+      // 4. O ALERTA E O REFRESH NA PÁGINA (Com a category certa)
+      alert('Classe de prestígio registada com sucesso!');
+      window.location.assign('/manage?category=classes');
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Falha na Ordem: ${errorMsg}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Removemos o loading só se der erro
     }
   };
 

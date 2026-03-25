@@ -1,7 +1,8 @@
 'use client';
 
-// 1. IMPORTAR O useContext
+// 1. IMPORTAR O useContext E useRouter
 import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect'; 
@@ -9,8 +10,9 @@ import { AuthContext } from '../context/AuthContext'; // Ajustar o caminho se ne
 import styles from './AddRitualForm.module.css';
 
 export default function AddRitualForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  // 2. IR BUSCAR O UTILIZADOR E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
 
   const [formData, setFormData] = useState({
     name: '',
@@ -69,21 +71,23 @@ export default function AddRitualForm({ onSuccess }) {
         }
       );
 
-      setMessage({ type: 'success', text: 'Ritual de Ordem adicionado com sucesso!' });
-      
       // Limpar formulário após o sucesso
       setFormData({
         name: '', description: '', circle: '', elements: '',
-        execution: '', range: '', target: '', // NOVOS
+        execution: '', range: '', target: '',
         duration: '', tags: '', book: ''
       });
       
       onSuccess?.();
+
+      // 4. ALERTA E REFRESH NA ABA CERTA
+      alert('Ritual de Ordem adicionado com sucesso!');
+      window.location.assign('/manage?category=rituals');
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Falha no Sigilo: ${errorMsg}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Retira o loading em caso de erro
     }
   };
 
@@ -126,7 +130,7 @@ export default function AddRitualForm({ onSuccess }) {
           <AeroSelect
             label="Círculo"
             name="circle"
-            options={['1', '2', '3', '4']}
+            options={['1', '2', '3', '4'].map(c => ({ label: c, value: c }))}
             value={formData.circle}
             onChange={handleChange}
             placeholder="-- Escolher Círculo --"
@@ -141,7 +145,7 @@ export default function AddRitualForm({ onSuccess }) {
           />
         </div>
 
-        {/* NOVA LINHA: EXECUÇÃO, ALCANCE E ALVO (3 COLUNAS) */}
+        {/* LINHA: EXECUÇÃO, ALCANCE E ALVO (3 COLUNAS) */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
           <FormField
             label="Execução"

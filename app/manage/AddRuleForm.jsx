@@ -1,7 +1,8 @@
 'use client';
 
-// 1. IMPORTAR O useContext
+// 1. IMPORTAR O useContext E useRouter
 import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
@@ -11,8 +12,9 @@ import styles from './AddRuleForm.module.css';
 const RULE_SECTIONS = ['Personagem', 'Combate', 'Perícias', 'Sanidade', 'Investigação', 'Equipamento', 'Geral'];
 
 export default function AddRuleForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  // 2. IR BUSCAR O UTILIZADOR E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
 
   const [formData, setFormData] = useState({
     title: '',
@@ -63,8 +65,6 @@ export default function AddRuleForm({ onSuccess }) {
         }
       );
 
-      setMessage({ type: 'success', text: 'Regra de investigação adicionada com sucesso!' });
-      
       // Limpar formulário após o sucesso
       setFormData({
         title: '', section: '', content: '', subsection: '',
@@ -72,11 +72,15 @@ export default function AddRuleForm({ onSuccess }) {
       });
       
       onSuccess?.();
+
+      // 4. ALERTA E REFRESH NA ABA CERTA
+      alert('Regra de investigação adicionada com sucesso!');
+      window.location.assign('/manage?category=rules');
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Erro de Protocolo: ${errorMsg}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Retira o loading apenas se houver erro
     }
   };
 
@@ -107,7 +111,7 @@ export default function AddRuleForm({ onSuccess }) {
           <AeroSelect
             label="Seção *"
             name="section"
-            options={RULE_SECTIONS}
+            options={RULE_SECTIONS.map(s => ({ label: s, value: s }))} // Formatado para o AeroSelect
             value={formData.section}
             onChange={handleChange}
             placeholder="-- Escolher Seção --"

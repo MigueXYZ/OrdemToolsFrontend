@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import styles from './AddOriginForm.module.css';
@@ -12,8 +13,10 @@ const SKILLS_LIST = [
   'Pontaria', 'Profissão', 'Reflexos', 'Religião', 'Sobrevivência', 'Tática', 'Tecnologia', 'Vontade'
 ];
 
-export default function AddOriginForm() {
+export default function AddOriginForm({ onSuccess }) { // <-- onSuccess adicionado
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   
@@ -44,18 +47,29 @@ export default function AddOriginForm() {
     setLoading(true);
     setMessage({ type: '', text: '' });
 
+    if (!user || !user.token) {
+      setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
+      setLoading(false);
+      return;
+    }
+
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/origins`, formData, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       
-      setMessage({ type: 'success', text: 'Origem adicionada com sucesso!' });
+      // Limpar formulário
       setFormData({ name: '', book: '', description: '', powerName: '', powerDescription: '', trainedSkills: [] });
-      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+      
+      onSuccess?.();
+
+      // ALERTA E REFRESH NA ABA CERTA
+      alert('Origem adicionada com sucesso!');
+      window.location.assign('/manage?category=origins');
+
     } catch (error) {
       setMessage({ type: 'error', text: error.response?.data?.error || 'Erro ao adicionar origem.' });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Retira o loading apenas se houver erro
     }
   };
 

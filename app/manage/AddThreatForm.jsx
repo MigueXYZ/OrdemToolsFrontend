@@ -1,7 +1,8 @@
 'use client';
 
-// 1. IMPORTAR O useContext
+// 1. IMPORTAR O useContext E useRouter
 import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
@@ -11,11 +12,12 @@ import styles from './AddThreatForm.module.css';
 const TYPES = ['Criatura', 'Humano', 'Animal'];
 const SIZES = ['Minúsculo', 'Pequeno', 'Médio', 'Grande', 'Enorme', 'Colossal'];
 const ACTION_TYPES = ['Padrão', 'Movimento', 'Livre', 'Reação', 'Completa'];
-const BOOLEAN_OPTIONS = ['Não', 'Sim'];
+const BOOLEAN_OPTIONS = [{label: 'Não', value: 'Não'}, {label: 'Sim', value: 'Sim'}]; // Formato para AeroSelect
 
 export default function AddThreatForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  // 2. IR BUSCAR O UTILIZADOR E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
 
   const [formData, setFormData] = useState({
     name: '',
@@ -155,15 +157,28 @@ export default function AddThreatForm({ onSuccess }) {
         }
       );
 
-      setMessage({ type: 'success', text: 'Ameaça registada na base de dados.' });
-      
-      // Limpeza opcional do form aqui (ou podes deixar fechado pelo onSuccess)
+      // Limpar formulário (opcional, já que vamos dar reload)
+      setFormData({
+        name: '', vd: '', description: '', type: '', size: '', elements: '', defense: '',
+        hpTotal: '', hpBloodied: '', movement: '', resistances: '', vulnerabilities: '',
+        attributes: { agi: 0, for: 0, int: 0, pre: 0, vig: 0 },
+        senses: { perception: '', initiative: '', notes: '' },
+        savingThrows: { fortitude: '', reflexes: '', will: '' },
+        skills: [], passives: [], actions: [],
+        enigmaOfFear: { hasEnigma: false, description: '', mechanics: '' },
+        book: ''
+      });
+
       onSuccess?.();
+
+      // 4. ALERTA E REFRESH NA ABA CERTA
+      alert('Ameaça registada na base de dados com sucesso!');
+      window.location.assign('/manage?category=threats');
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Falha na Contenção: ${errorMsg}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Retira o loading apenas se houver erro
     }
   };
 
@@ -200,7 +215,7 @@ export default function AddThreatForm({ onSuccess }) {
           <AeroSelect 
             label="Tipo *" 
             name="type"
-            options={TYPES} 
+            options={TYPES.map(t => ({label: t, value: t}))} 
             value={formData.type} 
             onChange={handleChange} 
             required 
@@ -209,7 +224,7 @@ export default function AddThreatForm({ onSuccess }) {
           <AeroSelect 
             label="Tamanho *" 
             name="size"
-            options={SIZES} 
+            options={SIZES.map(s => ({label: s, value: s}))} 
             value={formData.size} 
             onChange={handleChange} 
             required 
@@ -252,7 +267,6 @@ export default function AddThreatForm({ onSuccess }) {
         </div>
 
         <h4 className={styles.sectionTitle}>Perícias</h4>
-        {/* CORREÇÃO AQUI: JSX das perícias fechado corretamente */}
         {formData.skills.map((skill, index) => (
           <div key={index} className={styles.dynamicBlock}>
             <button type="button" className={styles.removeBtn} onClick={() => removeSkillBlock(index)}>X</button>
@@ -305,7 +319,7 @@ export default function AddThreatForm({ onSuccess }) {
               <AeroSelect 
                 label="Tipo de Ação" 
                 name={`actionType-${index}`}
-                options={ACTION_TYPES} 
+                options={ACTION_TYPES.map(a => ({label: a, value: a}))} 
                 value={action.actionType} 
                 onChange={(e) => handleActionChange(index, 'actionType', e.target.value)} 
               />

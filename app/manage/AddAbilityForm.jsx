@@ -1,11 +1,12 @@
 'use client';
 
-// 1. IMPORTAR O useContext E O AuthContext
+// 1. IMPORTAR O useContext, AuthContext E useRouter
 import { useState, useContext } from 'react';
+import { useRouter } from 'next/navigation'; // <-- Adicionado
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
-import { AuthContext } from '../context/AuthContext'; // Ajusta o caminho se for diferente
+import { AuthContext } from '../context/AuthContext';
 import styles from './AddAbilityForm.module.css';
 
 const ABILITY_CATEGORIES = [
@@ -17,8 +18,9 @@ const ABILITY_CATEGORIES = [
 ];
 
 export default function AddAbilityForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR AO CONTEXTO
+  // 2. IR BUSCAR O UTILIZADOR E O ROUTER
   const { user } = useContext(AuthContext);
+  const router = useRouter(); // <-- Inicializado
 
   const [formData, setFormData] = useState({
     name: '',
@@ -51,7 +53,6 @@ export default function AddAbilityForm({ onSuccess }) {
     setLoading(true);
     setMessage(null);
 
-    // 3. SEGURANÇA: Verificar se há um token disponível antes sequer de tentar enviar
     if (!user || !user.token) {
       setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
       setLoading(false);
@@ -76,7 +77,6 @@ export default function AddAbilityForm({ onSuccess }) {
           .filter((s) => s.length > 0);
       }
 
-      // 4. INCLUIR O TOKEN NOS HEADERS DO AXIOS
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/abilities`,
         payload,
@@ -87,9 +87,7 @@ export default function AddAbilityForm({ onSuccess }) {
         }
       );
 
-      setMessage({ type: 'success', text: 'Poder paranormal adicionado ao banco de dados!' });
-      
-      // Limpar formulário após sucesso confirmado
+      // Limpar formulário após sucesso
       setFormData({
         name: '',
         description: '',
@@ -102,11 +100,18 @@ export default function AddAbilityForm({ onSuccess }) {
       });
       
       onSuccess?.();
+
+      // MÁGICA AQUI: O Alerta e o Refresh na Aba certa
+      alert('Poder paranormal adicionado ao banco de dados com sucesso!');
+      
+      // Usar window.location.assign garante um refresh completo da página, 
+      // o que é ótimo para recarregar as listas da base de dados caso tenhas useEffects a puxar dados no /manage.
+      window.location.assign('/manage?category=abilities');
+
     } catch (error) {
       const errorMsg = error.response?.data?.message || error.message;
       setMessage({ type: 'error', text: `Falha na conexão: ${errorMsg}` });
-    } finally {
-      setLoading(false);
+      setLoading(false); // Só tiramos o loading se der erro, no sucesso a página vai recarregar
     }
   };
 
@@ -137,7 +142,7 @@ export default function AddAbilityForm({ onSuccess }) {
           <AeroSelect
             label="Categoria *"
             name="category"
-            options={ABILITY_CATEGORIES}
+            options={ABILITY_CATEGORIES.map(cat => ({ label: cat, value: cat }))}
             value={formData.category}
             onChange={handleChange}
             placeholder="-- Selecionar categoria --"

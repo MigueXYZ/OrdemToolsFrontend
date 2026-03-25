@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useContext, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// 1. Importa o useSearchParams do next/navigation
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AuthContext } from '../context/AuthContext';
 
 // Importação dos Formulários
@@ -11,22 +12,38 @@ import AddRuleForm from './AddRuleForm';
 import AddItemForm from './AddItemForm';
 import AddClassForm from './AddClassForm';
 import AddTrackForm from './AddTrackForm';
-import AddOriginForm from './AddOriginForm'; // NOVO FORMULÁRIO DE ORIGEM
+import AddOriginForm from './AddOriginForm';
 import AddWeaponForm from './AddWeaponForm';
 import AddThreatForm from './AddThreatForm';
 
 // Componentes Globais
 import ThemeToggle from '../components/ThemeToggle';
-// 1. IMPORTAR O NOVO MODAL DE IMPORTAÇÃO
 import ImportJsonModal from '../components/ImportJsonModal';
 import styles from './page.module.css';
 
 export default function ManagePage() {
   const [activeTab, setActiveTab] = useState('abilities');
-  // 2. ADICIONAR ESTADO PARA O MODAL
   const [showImportModal, setShowImportModal] = useState(false);
+  
   const { user, loading, hasPermission } = useContext(AuthContext);
   const router = useRouter();
+  
+  // 2. Inicializa o hook de parâmetros de pesquisa
+  const searchParams = useSearchParams();
+
+  // 3. Efeito para ler o ?category= do URL e mudar a aba ativa
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category');
+    
+    if (categoryFromUrl) {
+      // Lista de abas válidas como rede de segurança
+      const validTabs = ['abilities', 'rituals', 'rules', 'items', 'classes', 'tracks', 'origins', 'weapons', 'threats'];
+      
+      if (validTabs.includes(categoryFromUrl)) {
+        setActiveTab(categoryFromUrl);
+      }
+    }
+  }, [searchParams]);
 
   // Proteção de Rota Reforçada
   useEffect(() => {
@@ -48,7 +65,6 @@ export default function ManagePage() {
     router.push('/');
   };
 
-  // Enquanto verifica o estado do login ou se não estiver autorizado, não renderiza nada
   if (loading) return null;
   if (!user || (!hasPermission('admin') && !hasPermission('editor'))) return null;
 
@@ -64,7 +80,6 @@ export default function ManagePage() {
               ← Voltar à Pesquisa
             </button>
             <ThemeToggle />
-            {/* 3. BOTÃO DE IMPORTAÇÃO APENAS PARA ADMINS */}
             {hasPermission('admin') && (
               <button
                 onClick={() => setShowImportModal(true)}
@@ -90,7 +105,6 @@ export default function ManagePage() {
             )}
           </div>
 
-          {/* Organização do Título e Botão de Importação */}
           <div className={styles.headerBottom}>
             <div>
               <h1 className={styles.title}>Gerenciador de Conteúdo</h1>
@@ -122,12 +136,9 @@ export default function ManagePage() {
           <button className={`${styles.tab} ${activeTab === 'tracks' ? styles.active : ''}`} onClick={() => setActiveTab('tracks')}>
             <span className={styles.tabIcon}>🛤️</span> Trilhas
           </button>
-
-          {/* NOVO BOTÃO DE ORIGENS */}
           <button className={`${styles.tab} ${activeTab === 'origins' ? styles.active : ''}`} onClick={() => setActiveTab('origins')}>
             <span className={styles.tabIcon}>🧬</span> Origens
           </button>
-
           <button className={`${styles.tab} ${activeTab === 'weapons' ? styles.active : ''}`} onClick={() => setActiveTab('weapons')}>
             <span className={styles.tabIcon}>🗡️</span> Armas
           </button>
@@ -143,18 +154,17 @@ export default function ManagePage() {
           {activeTab === 'items' && <AddItemForm />}
           {activeTab === 'classes' && <AddClassForm />}
           {activeTab === 'tracks' && <AddTrackForm />}
-          {activeTab === 'origins' && <AddOriginForm />}  {/* COMPONENTE DA ORIGEM */}
+          {activeTab === 'origins' && <AddOriginForm />}
           {activeTab === 'weapons' && <AddWeaponForm />}
           {activeTab === 'threats' && <AddThreatForm />}
         </main>
       </div>
 
-      {/* 4. RENDERIZAR O MODAL SE O ESTADO FOR TRUE */}
       {showImportModal && (
         <ImportJsonModal
           onClose={() => setShowImportModal(false)}
           onSuccess={() => {
-            // Se quiseres recarregar ou mudar a tab quando tem sucesso, podes fazer aqui.
+            // Callback vazio, conforme o teu original
           }}
         />
       )}
