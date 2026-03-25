@@ -284,7 +284,7 @@ export default function AddThreatForm({ onSuccess }) {
           </div>
         )}
 
-        <h4 className={styles.sectionTitle}>Habilidades Passivas</h4>
+        <h4 className={styles.sectionTitle}>Habilidades Passivas (Presença Perturbadora)</h4>
         {formData.passives.map((passive, index) => (
           <div key={index} className={styles.dynamicBlock}>
             <button type="button" className={styles.removeBtn} onClick={() => removePassiveBlock(index)}>X</button>

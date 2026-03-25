@@ -1,47 +1,50 @@
 /* =========================================
-   OVERLAY E ESTRUTURA PRINCIPAL
+   OVERLAY E ESTRUTURA PRINCIPAL (AERO GLASS)
    ========================================= */
 .overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.8); /* Fundo bem escuro para focar no modal */
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.65); /* A overlay escura funciona bem em ambos os temas */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2050;
   padding: 1rem;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.25s ease-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(12px); }
 }
 
 /* =========================================
-   O MODAL (FUNDO LIMPO E SÓLIDO)
+   O MODAL (VIDRO FOSCO TEMA DINÂMICO)
    ========================================= */
 .modal {
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
   width: 100%;
-  max-width: 750px; /* Tamanho ideal para leitura de formulários */
+  max-width: 750px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.05);
   overflow: hidden;
-  animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Força um fundo sólido e limpo nos dois temas (Chega de gradientes estranhos!) */
-:global([data-theme='light']) .modal { background: #f4f6f8; }
-:global([data-theme='dark']) .modal { background: #121826; }
+/* A Magia dos Temas: Vidro Claro vs Vidro Escuro */
+:global([data-theme='light']) .modal { background: rgba(245, 247, 250, 0.85); }
+:global([data-theme='dark']) .modal { background: rgba(20, 20, 25, 0.85); }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+  from { opacity: 0; transform: translateY(-20px) scale(0.96); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -49,59 +52,65 @@
    CABEÇALHO
    ========================================= */
 .header {
-  padding: 1.5rem 2rem;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem 2.5rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 10;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
+
+:global([data-theme='light']) .header { background: rgba(255, 255, 255, 0.4); }
+:global([data-theme='dark']) .header { background: rgba(0, 0, 0, 0.2); }
 
 .title {
   font-family: var(--font-titles) !important;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: var(--text-accent);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .closeButton {
-  background: transparent;
-  border: 1px solid var(--border-color);
+  background: rgba(128, 128, 128, 0.1);
+  border: 1px solid rgba(128, 128, 128, 0.2);
   color: var(--text-primary);
   font-size: 1.2rem;
   cursor: pointer;
   width: 36px; height: 36px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05);
 }
 
 .closeButton:hover {
-  background: #e74c3c;
+  background: rgba(231, 76, 60, 0.9);
   color: white;
   border-color: #e74c3c;
-  transform: rotate(90deg);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
 }
 
 /* =========================================
-   CORPO DO FORMULÁRIO E DITADURA DE LARGURA
+   CORPO DO FORMULÁRIO E LARGURA TOTAL
    ========================================= */
 .formContent {
-  padding: 2rem;
+  padding: 2rem 2.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* Espaçamento vertical perfeito entre os campos */
+  gap: 1.8rem;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* A MÁGICA ACONTECE AQUI: 
-   Isto força qualquer componente FormField a ocupar 100% da largura
-*/
+.formContent::-webkit-scrollbar { width: 8px; }
+.formContent::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.3); border-radius: 10px; }
+
 .formContent > div,
 .formContent label,
 .grid > div,
@@ -110,113 +119,134 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
 }
 
-/* Estilização e expansão forçada de todos os inputs do formulário */
+/* INPUTS COM SUPORTE A LIGHT/DARK MODE */
 .formContent input[type="text"],
 .formContent input[type="number"],
 .formContent textarea,
 .formContent select {
   width: 100% !important;
   box-sizing: border-box;
-  padding: 0.8rem 1rem;
-  margin-top: 0.4rem;
-  background: rgba(128, 128, 128, 0.05);
-  border: 1px solid var(--border-color);
+  padding: 0.8rem 1.2rem;
+  margin-top: 0.5rem;
+  border: 1px solid rgba(128, 128, 128, 0.2);
   border-radius: 8px;
   color: var(--text-primary);
   font-family: var(--font-body), sans-serif;
-  font-size: 0.95rem;
-  transition: all 0.2s;
+  font-size: 1rem;
+  transition: all 0.3s;
 }
 
-/* Foco nos campos */
+:global([data-theme='light']) .formContent input,
+:global([data-theme='light']) .formContent textarea,
+:global([data-theme='light']) .formContent select {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+:global([data-theme='dark']) .formContent input,
+:global([data-theme='dark']) .formContent textarea,
+:global([data-theme='dark']) .formContent select {
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
 .formContent input:focus,
 .formContent textarea:focus,
 .formContent select:focus {
-  background: rgba(128, 128, 128, 0.1);
   border-color: var(--text-accent);
-  box-shadow: 0 0 0 2px rgba(128, 128, 128, 0.2);
   outline: none;
 }
 
-/* Textareas devem ter uma altura decente para não parecerem inputs normais */
+:global([data-theme='light']) .formContent input:focus,
+:global([data-theme='light']) .formContent textarea:focus,
+:global([data-theme='light']) .formContent select:focus {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05), 0 0 10px rgba(var(--text-accent-rgb), 0.15);
+}
+
+:global([data-theme='dark']) .formContent input:focus,
+:global([data-theme='dark']) .formContent textarea:focus,
+:global([data-theme='dark']) .formContent select:focus {
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 12px rgba(var(--text-accent-rgb), 0.2);
+}
+
+.formContent select option {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
 .formContent textarea {
   min-height: 120px;
   resize: vertical;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* =========================================
    GRELHAS PERFEITAS E RESPONSIVAS
    ========================================= */
-.grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adapta-se ao ecrã */
-  gap: 1.5rem; 
-  width: 100%;
-}
-
-.grid3 { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-  gap: 1.5rem; 
-  width: 100%;
-}
-
-.grid5 { 
-  display: grid; 
-  grid-template-columns: repeat(5, 1fr); 
-  gap: 1rem; 
-  width: 100%;
-}
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; width: 100%; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; width: 100%; }
+.grid5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; width: 100%; }
 
 .sectionTitle {
   font-family: var(--font-titles) !important;
   color: var(--text-accent);
-  font-size: 1.2rem;
-  margin: 1.5rem 0 0.5rem;
+  font-size: 1.1rem;
+  margin: 1rem 0 0.5rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: 1px dashed rgba(128, 128, 128, 0.3);
   text-transform: uppercase;
   width: 100%;
+  letter-spacing: 1px;
 }
 
 /* =========================================
-   BLOCOS DINÂMICOS (EX: PERÍCIAS DE AMEAÇAS)
+   BLOCOS DINÂMICOS E BOTÕES DE AÇÃO
    ========================================= */
 .dynamicBlock {
-  background: rgba(128, 128, 128, 0.03);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  background: rgba(128, 128, 128, 0.05);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(128, 128, 128, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
   padding: 1.5rem;
   margin-bottom: 1rem;
   position: relative;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
 .removeBtn {
-  position: absolute; top: 10px; right: 10px;
-  background: rgba(231, 76, 60, 0.1); color: #e74c3c;
-  border: 1px solid rgba(231, 76, 60, 0.3); border-radius: 4px;
-  width: 32px; height: 32px; cursor: pointer;
+  position: absolute; top: -12px; right: -12px;
+  background: rgba(231, 76, 60, 0.9); color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%;
+  width: 30px; height: 30px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   font-weight: bold; transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
 }
-.removeBtn:hover { background: #e74c3c; color: white; }
+.removeBtn:hover { transform: scale(1.15) rotate(90deg); background: #c0392b; }
 
 .addBtn {
   width: 100%; padding: 1rem;
-  background: transparent;
-  border: 2px dashed var(--border-color);
+  background: rgba(128, 128, 128, 0.05);
+  border: 1px dashed rgba(128, 128, 128, 0.4);
   color: var(--text-secondary);
   border-radius: 8px; cursor: pointer;
-  font-weight: 600; transition: all 0.2s;
-  text-transform: uppercase; letter-spacing: 1px;
+  font-weight: bold; transition: all 0.2s;
+  text-transform: uppercase; letter-spacing: 2px;
 }
 .addBtn:hover {
-  background: rgba(128, 128, 128, 0.05);
+  background: rgba(128, 128, 128, 0.1);
   border-color: var(--text-accent);
   color: var(--text-accent);
 }
@@ -227,39 +257,42 @@
 .actions {
   display: flex; justify-content: flex-end; gap: 1rem;
   margin-top: 1rem; padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
   width: 100%;
 }
 
 .cancelButton, .submitButton {
-  padding: 1rem 2rem; border-radius: 8px;
-  font-family: var(--font-titles) !important; font-size: 1.1rem;
-  text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
-  font-weight: bold; transition: all 0.2s;
+  padding: 0.8rem 2rem; border-radius: 8px;
+  font-family: var(--font-titles) !important; font-size: 1rem;
+  text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer;
+  font-weight: bold; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .cancelButton {
-  background: transparent; color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  background: rgba(128, 128, 128, 0.1); color: var(--text-primary);
+  border: 1px solid rgba(128, 128, 128, 0.2);
 }
-.cancelButton:hover { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border-color: #e74c3c; }
+.cancelButton:hover { background: rgba(231, 76, 60, 0.2); color: #ff4d4d; border-color: rgba(231, 76, 60, 0.4); }
 
 .submitButton {
-  background: var(--text-accent);
-  color: white; border: none;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%), var(--text-accent);
+  color: #fff; border: 1px solid rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 2px rgba(255,255,255,0.2);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
-.submitButton:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); filter: brightness(1.1); }
-.submitButton:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.submitButton:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(var(--text-accent-rgb), 0.3); filter: brightness(1.1); }
+.submitButton:active:not(:disabled) { transform: translateY(1px); box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
+.submitButton:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(1); }
 
 /* Mensagens de Erro/Sucesso */
-.message { padding: 1rem; border-radius: 8px; font-weight: bold; text-align: center; width: 100%; box-sizing: border-box; }
-.success { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
-.error { background: rgba(231, 76, 60, 0.1); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+.message { padding: 1rem; border-radius: 8px; font-weight: bold; text-align: center; width: 100%; box-sizing: border-box; backdrop-filter: blur(4px); }
+.success { background: rgba(46, 204, 113, 0.15); color: #4ade80; border: 1px solid rgba(46, 204, 113, 0.3); }
+.error { background: rgba(231, 76, 60, 0.15); color: #ff4d4d; border: 1px solid rgba(231, 76, 60, 0.3); }
 
 /* Ajustes Mobile */
 @media (max-width: 768px) {
   .grid, .grid3, .grid5 { grid-template-columns: 1fr; }
   .actions { flex-direction: column-reverse; }
   .cancelButton, .submitButton { width: 100%; text-align: center; }
+  .modal { height: 100vh; max-height: 100vh; border-radius: 0; border: none; }
 }

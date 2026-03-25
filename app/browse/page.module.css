@@ -414,3 +414,32 @@
     flex-basis: 100%; 
   }
 }
+
+.manageLink{
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1.2rem;
+  background: var(--button-bg);
+  border: 1px solid var(--text-accent);
+  border-radius: 50px;
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: var(--font-titles) !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.manageLink:hover {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.pageNavigator {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}

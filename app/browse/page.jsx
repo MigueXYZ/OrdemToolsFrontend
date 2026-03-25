@@ -297,7 +297,10 @@ function BrowsePageContent() {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.headerTop}>
-            <Link href="/" className={styles.backLink}>&larr; Voltar à Página Principal</Link>
+            <div className="pageNavigator">
+              <Link href="/" className={styles.backLink}>&larr; Voltar à Página Principal</Link>
+              <Link href="/manage" className={styles.manageLink}> Gerir Conteúdo</Link>
+            </div>
             <ThemeToggle />
           </div>
           <h1 className={styles.title}>Arquivo Paranormal</h1>

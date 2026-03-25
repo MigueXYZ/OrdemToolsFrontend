@@ -37,7 +37,7 @@ export default function ManagePage() {
       }
 
       const isAuthorized = hasPermission('admin') || hasPermission('editor');
-      
+
       if (!isAuthorized) {
         router.push('/');
       }
@@ -57,27 +57,16 @@ export default function ManagePage() {
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.headerTop}>
-            <button 
+            <button
               onClick={handleBack}
               className={styles.homeLink}
             >
               ← Voltar à Pesquisa
             </button>
             <ThemeToggle />
-          </div>
-          
-          {/* Organização do Título e Botão de Importação */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginTop: '1rem' }}>
-            <div>
-              <h1 className={styles.title}>Gerenciador de Conteúdo</h1>
-              <p className={styles.subtitle}>
-                Olá, <strong>{user.shownName || user.username}</strong>. Adicione novos elementos ao arquivo.
-              </p>
-            </div>
-            
             {/* 3. BOTÃO DE IMPORTAÇÃO APENAS PARA ADMINS */}
             {hasPermission('admin') && (
-              <button 
+              <button
                 onClick={() => setShowImportModal(true)}
                 style={{
                   background: 'linear-gradient(180deg, rgba(75, 0, 130, 0.9) 0%, rgba(50, 0, 90, 0.95) 100%)',
@@ -99,6 +88,16 @@ export default function ManagePage() {
                 📦 Importação JSON
               </button>
             )}
+          </div>
+
+          {/* Organização do Título e Botão de Importação */}
+          <div className={styles.headerBottom}>
+            <div>
+              <h1 className={styles.title}>Gerenciador de Conteúdo</h1>
+              <p className={styles.subtitle}>
+                Olá, <strong>{user.shownName || user.username}</strong>. Adicione novos elementos ao arquivo.
+              </p>
+            </div>
           </div>
         </div>
       </header>
@@ -123,12 +122,12 @@ export default function ManagePage() {
           <button className={`${styles.tab} ${activeTab === 'tracks' ? styles.active : ''}`} onClick={() => setActiveTab('tracks')}>
             <span className={styles.tabIcon}>🛤️</span> Trilhas
           </button>
-          
+
           {/* NOVO BOTÃO DE ORIGENS */}
           <button className={`${styles.tab} ${activeTab === 'origins' ? styles.active : ''}`} onClick={() => setActiveTab('origins')}>
             <span className={styles.tabIcon}>🧬</span> Origens
           </button>
-          
+
           <button className={`${styles.tab} ${activeTab === 'weapons' ? styles.active : ''}`} onClick={() => setActiveTab('weapons')}>
             <span className={styles.tabIcon}>🗡️</span> Armas
           </button>
@@ -152,7 +151,7 @@ export default function ManagePage() {
 
       {/* 4. RENDERIZAR O MODAL SE O ESTADO FOR TRUE */}
       {showImportModal && (
-        <ImportJsonModal 
+        <ImportJsonModal
           onClose={() => setShowImportModal(false)}
           onSuccess={() => {
             // Se quiseres recarregar ou mudar a tab quando tem sucesso, podes fazer aqui.
