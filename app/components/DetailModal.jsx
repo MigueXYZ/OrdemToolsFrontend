@@ -105,7 +105,22 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
           <div className={styles.headerActions}>
             {user && (
               <>
-                <button className={styles.editButton} onClick={() => setShowEditModal(true)} title="Editar">✏️</button>
+                <button
+                  className={styles.editButton}
+                  onClick={() => {
+                    if (type === 'threat') {
+                      // Se for ameaça, redireciona para a nova página e fecha este modal
+                      router.push(`/threats/edit/${item._id}`);
+                      if (onClose) onClose();
+                    } else {
+                      // Se for outra coisa qualquer (poder, ritual, arma...), abre o modal normal
+                      setShowEditModal(true);
+                    }
+                  }}
+                  title="Editar"
+                >
+                  ✏️
+                </button>
                 <button className={styles.deleteButton} onClick={handleDelete} disabled={isDeleting} title="Eliminar">
                   {isDeleting ? '...' : '🗑️'}
                 </button>
@@ -247,9 +262,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
             ========================================== */}
           {type === 'origin' && (
             <div className={styles.detailsGroup}>
-
-              {/* REMOVIDO O BLOCO DA DESCRIÇÃO DAQUI! O MODAL JÁ O FAZ SOZINHO! */}
-
               {/* PERÍCIAS TREINADAS */}
               <div className={styles.detailSection} style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <span className={styles.detailLabel}>Perícias Treinadas:</span>
@@ -272,7 +284,6 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
 
             </div>
           )}
-
           {type === 'threat' && (
             <>
               <div className={styles.threatSection}>
@@ -339,6 +350,20 @@ export default function DetailModal({ item, type, onClose, onUpdate }) {
                   <h4>Enigma de Medo</h4>
                   {item.enigmaOfFear.description && <p>{item.enigmaOfFear.description}</p>}
                   {item.enigmaOfFear.mechanics && <p className={styles.mechanicInfo}><strong>Efeito:</strong> {item.enigmaOfFear.mechanics}</p>}
+                </div>
+              )}
+
+              {/* NOVO: BLOCO DA PRESENÇA PERTURBADORA */}
+              {item.disturbingPresence?.hasDisturbingPresence && (
+                <div className={styles.threatSection}>
+                  <h3 className={styles.sectionTitle} style={{ color: config.color }}>Presença Perturbadora</h3>
+                  <div className={styles.actionBlock} style={{ borderLeftColor: config.color }}>
+                    <div className={styles.actionStats} style={{ margin: 0, justifyContent: 'flex-start', gap: '1rem' }}>
+                      {item.disturbingPresence.dt && <span><strong>DT (Vontade):</strong> {item.disturbingPresence.dt}</span>}
+                      {item.disturbingPresence.damage && <span><strong>Dano Mental:</strong> {item.disturbingPresence.damage}</span>}
+                      {item.disturbingPresence.immunityNex ? <span><strong>NEX Imune:</strong> {item.disturbingPresence.immunityNex}%</span> : null}
+                    </div>
+                  </div>
                 </div>
               )}
 

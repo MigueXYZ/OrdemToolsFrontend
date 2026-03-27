@@ -87,6 +87,12 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
       hasEnigma: item.enigmaOfFear?.hasEnigma || false, 
       description: item.enigmaOfFear?.description || '', 
       mechanics: item.enigmaOfFear?.mechanics || '' 
+    },
+    disturbingPresence: {
+      hasDisturbingPresence: item.disturbingPresence?.hasDisturbingPresence || false,
+      dt: item.disturbingPresence?.dt || '',
+      damage: item.disturbingPresence?.damage || '',
+      immunityNex: item.disturbingPresence?.immunityNex || ''
     }
   });
   
@@ -546,15 +552,53 @@ export default function EditModal({ item, type, onClose, onSuccess }) {
               <h4 className={styles.sectionTitle}>Enigma de Medo</h4>
               <div className={styles.checkboxWrapper}>
                 <label className={styles.paranormalToggle}>
-                  <FormField type="checkbox" name="hasEnigma" checked={formData.enigmaOfFear.hasEnigma} onChange={handleEnigmaToggle} isParanormal />
+                  <FormField type="checkbox" name="hasEnigma" checked={formData.enigmaOfFear?.hasEnigma || false} onChange={handleEnigmaToggle} isParanormal />
                   <span className={styles.paranormalText}>Possui Enigma de Medo?</span>
                 </label>
               </div>
-              {formData.enigmaOfFear.hasEnigma && (
+              {formData.enigmaOfFear?.hasEnigma && (
                 <div className={styles.enigmaBox}>
                   <FormField label="Resolução" value={formData.enigmaOfFear.description} isTextarea onChange={(e) => handleNestedChange('enigmaOfFear', 'description', e.target.value)} />
                   <div style={{ marginTop: '1rem' }}>
                     <FormField label="Mecânica Pós-Enigma" value={formData.enigmaOfFear.mechanics} isTextarea onChange={(e) => handleNestedChange('enigmaOfFear', 'mechanics', e.target.value)} />
+                  </div>
+                </div>
+              )}
+
+              {/* NOVO: Presença Perturbadora */}
+              <h4 className={styles.sectionTitle}>Presença Perturbadora</h4>
+              <div className={styles.checkboxWrapper}>
+                <label className={styles.paranormalToggle}>
+                  <FormField 
+                    type="checkbox" 
+                    name="hasDisturbingPresence" 
+                    checked={formData.disturbingPresence?.hasDisturbingPresence || false} 
+                    onChange={(e) => handleNestedChange('disturbingPresence', 'hasDisturbingPresence', e.target.checked)} 
+                    isParanormal 
+                  />
+                  <span className={styles.paranormalText}>Possui Presença Perturbadora?</span>
+                </label>
+              </div>
+              {formData.disturbingPresence?.hasDisturbingPresence && (
+                <div className={styles.enigmaBox}>
+                  <div className={styles.grid3}>
+                    <FormField 
+                      label="DT (Vontade)" 
+                      type="number" 
+                      value={formData.disturbingPresence.dt || ''} 
+                      onChange={(e) => handleNestedChange('disturbingPresence', 'dt', e.target.value)} 
+                    />
+                    <FormField 
+                      label="Dano Mental" 
+                      value={formData.disturbingPresence.damage || ''} 
+                      onChange={(e) => handleNestedChange('disturbingPresence', 'damage', e.target.value)} 
+                    />
+                    <FormField 
+                      label="NEX Imune (%)" 
+                      type="number" 
+                      value={formData.disturbingPresence.immunityNex || ''} 
+                      onChange={(e) => handleNestedChange('disturbingPresence', 'immunityNex', e.target.value)} 
+                    />
                   </div>
                 </div>
               )}

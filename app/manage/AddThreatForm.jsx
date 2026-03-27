@@ -2,7 +2,7 @@
 
 // 1. IMPORTAR O useContext E useRouter
 import { useState, useContext } from 'react';
-import { useRouter } from 'next/navigation'; // <-- Adicionado
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
@@ -12,12 +12,11 @@ import styles from './AddThreatForm.module.css';
 const TYPES = ['Criatura', 'Humano', 'Animal'];
 const SIZES = ['Minúsculo', 'Pequeno', 'Médio', 'Grande', 'Enorme', 'Colossal'];
 const ACTION_TYPES = ['Padrão', 'Movimento', 'Livre', 'Reação', 'Completa'];
-const BOOLEAN_OPTIONS = [{label: 'Não', value: 'Não'}, {label: 'Sim', value: 'Sim'}]; // Formato para AeroSelect
+const BOOLEAN_OPTIONS = [{label: 'Não', value: 'Não'}, {label: 'Sim', value: 'Sim'}];
 
 export default function AddThreatForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
-  const router = useRouter(); // <-- Inicializado
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -39,6 +38,8 @@ export default function AddThreatForm({ onSuccess }) {
     passives: [],
     actions: [],
     enigmaOfFear: { hasEnigma: false, description: '', mechanics: '' },
+    // NOVO: Adicionado estado para a Presença Perturbadora
+    disturbingPresence: { hasDisturbingPresence: false, dt: '', damage: '', immunityNex: '' },
     book: '' 
   });
   
@@ -71,6 +72,16 @@ export default function AddThreatForm({ onSuccess }) {
     setFormData((prev) => ({
       ...prev,
       enigmaOfFear: { ...prev.enigmaOfFear, hasEnigma }
+    }));
+  };
+
+  // NOVO: Função para lidar com o Dropdown da Presença Perturbadora
+  const handlePresenceDropdown = (e) => {
+    const value = e.target.value;
+    const hasDisturbingPresence = value === 'Sim';
+    setFormData((prev) => ({
+      ...prev,
+      disturbingPresence: { ...prev.disturbingPresence, hasDisturbingPresence }
     }));
   };
 
@@ -143,10 +154,17 @@ export default function AddThreatForm({ onSuccess }) {
         },
         elements: formData.elements.split(',').map((e) => e.trim()).filter(Boolean),
         resistances: formData.resistances.split(',').map((r) => r.trim()).filter(Boolean),
-        vulnerabilities: formData.vulnerabilities.split(',').map((v) => v.trim()).filter(Boolean)
+        vulnerabilities: formData.vulnerabilities.split(',').map((v) => v.trim()).filter(Boolean),
+        // Mapear os valores da Presença para números caso sejam inseridos como strings
+        disturbingPresence: {
+          hasDisturbingPresence: formData.disturbingPresence.hasDisturbingPresence,
+          dt: parseInt(formData.disturbingPresence.dt) || 0,
+          damage: formData.disturbingPresence.damage,
+          immunityNex: parseInt(formData.disturbingPresence.immunityNex) || 0
+        }
       };
 
-      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO
+      // USAR O user.token DO CONTEXTO NO CABEÇALHO
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/threats`, 
         payload,
@@ -166,12 +184,12 @@ export default function AddThreatForm({ onSuccess }) {
         savingThrows: { fortitude: '', reflexes: '', will: '' },
         skills: [], passives: [], actions: [],
         enigmaOfFear: { hasEnigma: false, description: '', mechanics: '' },
+        disturbingPresence: { hasDisturbingPresence: false, dt: '', damage: '', immunityNex: '' },
         book: ''
       });
 
       onSuccess?.();
 
-      // 4. ALERTA E REFRESH NA ABA CERTA
       alert('Ameaça registada na base de dados com sucesso!');
       window.location.assign('/manage?category=threats');
 
@@ -298,7 +316,7 @@ export default function AddThreatForm({ onSuccess }) {
           </div>
         )}
 
-        <h4 className={styles.sectionTitle}>Habilidades Passivas (Presença Perturbadora)</h4>
+        <h4 className={styles.sectionTitle}>Habilidades Passivas</h4>
         {formData.passives.map((passive, index) => (
           <div key={index} className={styles.dynamicBlock}>
             <button type="button" className={styles.removeBtn} onClick={() => removePassiveBlock(index)}>X</button>
@@ -309,6 +327,45 @@ export default function AddThreatForm({ onSuccess }) {
           </div>
         ))}
         <button type="button" className={styles.addBtn} onClick={addPassiveBlock}>+ Adicionar Passiva</button>
+
+        {/* NOVO: Bloco de Presença Perturbadora */}
+        <h4 className={styles.sectionTitle}>Presença Perturbadora</h4>
+        <div className={styles.singleColumn}>
+          <AeroSelect 
+            label="Ameaça possui Presença Perturbadora?" 
+            name="hasDisturbingPresence"
+            options={BOOLEAN_OPTIONS} 
+            value={formData.disturbingPresence.hasDisturbingPresence ? 'Sim' : 'Não'} 
+            onChange={handlePresenceDropdown} 
+          />
+        </div>
+        
+        {formData.disturbingPresence.hasDisturbingPresence && (
+          <div className={styles.enigmaBox} style={{ marginTop: '1rem' }}>
+            <div className={styles.grid3}>
+              <FormField 
+                label="DT (Vontade)" 
+                type="number"
+                value={formData.disturbingPresence.dt} 
+                onChange={(e) => handleNestedChange('disturbingPresence', 'dt', e.target.value)} 
+                placeholder="ex: 20" 
+              />
+              <FormField 
+                label="Dano Mental" 
+                value={formData.disturbingPresence.damage} 
+                onChange={(e) => handleNestedChange('disturbingPresence', 'damage', e.target.value)} 
+                placeholder="ex: 4d6" 
+              />
+              <FormField 
+                label="NEX de Imunidade" 
+                type="number"
+                value={formData.disturbingPresence.immunityNex} 
+                onChange={(e) => handleNestedChange('disturbingPresence', 'immunityNex', e.target.value)} 
+                placeholder="ex: 50" 
+              />
+            </div>
+          </div>
+        )}
 
         <h4 className={styles.sectionTitle}>Ações</h4>
         {formData.actions.map((action, index) => (
