@@ -238,6 +238,10 @@ function BrowsePageContent() {
 
   const renderTable = (title, itemsToRender, isParanormal) => {
     if (itemsToRender.length === 0) return null;
+
+    // Verificamos se a tab atual deve esconder as Tags
+    const hideTags = ['classes', 'tracks', 'origins', 'threats'].includes(activeTab);
+
     return (
       <div key={title} className={`${styles.categorySection} ${isParanormal ? styles.paranormalSection : ''}`}>
         <h3 className={`${styles.categoryTitle} ${isParanormal ? styles.paranormalTitle : ''}`}>
@@ -256,7 +260,8 @@ function BrowsePageContent() {
                 {activeTab === 'weapons' && <><th>Categoria</th><th>Tipo</th></>}
                 {activeTab === 'threats' && <><th>VD</th><th>Tamanho</th><th>Elementos</th></>}
                 <th>Livro</th>
-                <th>Tags</th>
+                {/* Escondemos o header das Tags se for classe, trilha, origem ou ameaça */}
+                {!hideTags && <th>Tags</th>}
               </tr>
             </thead>
             <tbody>
@@ -278,11 +283,15 @@ function BrowsePageContent() {
                     <td>{item.elements?.join(', ') || 'Nenhum'}</td>
                   </>}
                   <td className={styles.bookCell}>{item.book || item.source || '-'}</td>
-                  <td>
-                    <div className={styles.tagsCell}>
-                      {(item.tags || []).slice(0, 2).map(tag => <span key={tag} className={styles.tag}>{tag}</span>)}
-                    </div>
-                  </td>
+
+                  {/* Escondemos a célula das Tags se aplicável */}
+                  {!hideTags && (
+                    <td>
+                      <div className={styles.tagsCell}>
+                        {(item.tags || []).slice(0, 2).map(tag => <span key={tag} className={styles.tag}>{tag}</span>)}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -335,7 +344,7 @@ function BrowsePageContent() {
         </div>
 
         <div className={styles.filters}>
-          {activeTab !== 'classes' && activeTab !== 'tracks' && activeTab !== 'origins' && (
+          {activeTab !== 'classes' && activeTab !== 'tracks' && activeTab !== 'origins' && activeTab!=='threats' && (
             <div className={styles.filterSection}>
               <div className={styles.filterHeader} onClick={() => setShowTags(!showTags)}>
                 <h3>Filtrar por Tags</h3>
