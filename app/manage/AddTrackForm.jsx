@@ -2,17 +2,16 @@
 
 // 1. IMPORTAR O useContext E useRouter
 import { useState, useEffect, useContext } from 'react';
-import { useRouter } from 'next/navigation'; // <-- Adicionado
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import FormField from './FormField';
 import AeroSelect from '../components/AeroSelect';
-import { AuthContext } from '../context/AuthContext'; // Ajustar caminho se necessário
+import { AuthContext } from '../context/AuthContext';
 import styles from './AddTrackForm.module.css';
 
 export default function AddTrackForm({ onSuccess }) {
-  // 2. IR BUSCAR O UTILIZADOR E INICIALIZAR ROUTER
   const { user } = useContext(AuthContext);
-  const router = useRouter(); // <-- Inicializado
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -61,15 +60,26 @@ export default function AddTrackForm({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("🛠️ O botão de submeter foi clicado! A iniciar validações...");
+    
     setLoading(true);
+    setMessage(null);
 
-    if (formData.abilities.length !== 4) {
-      setMessage({ type: 'error', text: 'Protocolo incompleto: selecione exatamente 4 poderes' });
+    // 1. VALIDAÇÃO MANUAL (Substitui os "required" do HTML)
+    if (!formData.name.trim() || !formData.class || !formData.description.trim()) {
+      setMessage({ type: 'error', text: 'Por favor, preencha o Nome, a Classe Base e a Descrição da Trilha.' });
       setLoading(false);
       return;
     }
 
-    // SEGURANÇA BÁSICA: Verificar se existe token
+    // 2. VALIDAÇÃO DOS PODERES
+    if (formData.abilities.length !== 4) {
+      setMessage({ type: 'error', text: `Protocolo incompleto: selecione exatamente 4 poderes (tem ${formData.abilities.length}).` });
+      setLoading(false);
+      return;
+    }
+
+    // 3. SEGURANÇA BÁSICA: Verificar se existe token
     if (!user || !user.token) {
       setMessage({ type: 'error', text: 'Não tem sessão iniciada ou o token é inválido.' });
       setLoading(false);
@@ -77,7 +87,8 @@ export default function AddTrackForm({ onSuccess }) {
     }
 
     try {
-      // 3. USAR O user.token DO CONTEXTO NO CABEÇALHO
+      console.log("🚀 A enviar dados para a API:", formData);
+      
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/tracks`, 
         formData,
@@ -93,13 +104,13 @@ export default function AddTrackForm({ onSuccess }) {
       
       onSuccess?.();
 
-      // 4. ALERTA E REFRESH NA ABA CERTA
       alert('Nova Trilha registada no arquivo com sucesso!');
       window.location.assign('/manage?category=tracks');
 
     } catch (error) {
+      console.error("❌ Erro na API:", error);
       setMessage({ type: 'error', text: `Erro: ${error.response?.data?.message || error.message}` });
-      setLoading(false); // Retira o loading em caso de erro
+      setLoading(false);
     }
   };
 
@@ -117,15 +128,16 @@ export default function AddTrackForm({ onSuccess }) {
         )}
 
         <div className={styles.grid}>
+          {/* REMOVIDO O 'required' DAQUI */}
           <FormField
             label="Nome da Trilha *"
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="ex: Trilha do Guerreiro"
-            required
           />
 
+          {/* REMOVIDO O 'required' DAQUI */}
           <AeroSelect
             label="Classe Base *"
             name="class"
@@ -133,10 +145,10 @@ export default function AddTrackForm({ onSuccess }) {
             value={formData.class}
             onChange={handleChange}
             placeholder="-- Selecionar Classe --"
-            required
           />
         </div>
 
+        {/* REMOVIDO O 'required' DAQUI */}
         <FormField
           label="Descrição da Trilha *"
           name="description"
@@ -144,7 +156,6 @@ export default function AddTrackForm({ onSuccess }) {
           onChange={handleChange}
           placeholder="Resumo das capacidades desta trilha..."
           isTextarea
-          required
         />
 
         <div className={styles.grid}>
@@ -168,6 +179,8 @@ export default function AddTrackForm({ onSuccess }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.aeroSearch}
+            /* Se pressionares Enter na barra de pesquisa, impede que o form seja submetido acidentalmente */
+            onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} 
           />
 
           <div className={styles.abilitiesContainer}>
