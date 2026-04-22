@@ -1,45 +1,209 @@
 /* globals.css - Ordem Paranormal Biblioteca (Aero Style) */
 
+/* 0. USER CUSTOMIZATIONS - Import last to override defaults */
+@import url('./custom.css');
+
 /* 1. IMPORTAÇÃO DE FONTES */
 @import url('https://fonts.googleapis.com/css2?family=Girassol&family=Special+Elite&display=swap');
 
 :root {
-  /* Fontes */
+  /* ===== FONTES ===== */
   --font-titles: 'Girassol', serif;
   --font-body: 'Special Elite', typewriter, serif;
 
-  /* Light Theme (Aero Vista) */
+  /* ===== CORES BASE ===== */
+  /* Backgrounds */
   --bg-primary: radial-gradient(circle at 0% 0%, #a8e6cf 0%, transparent 50%),
                 radial-gradient(circle at 100% 0%, #89cff0 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, #1e90ff 0%, transparent 50%),
                 #f0f8ff;
   --bg-secondary: rgba(255, 255, 255, 0.4);
+  --bg-tertiary: rgba(255, 255, 255, 0.2);
+  --bg-accent: rgba(0, 82, 163, 0.1);
+
+  /* Text */
   --text-primary: #003366;
   --text-secondary: #445566;
-  --text-primary-dark: #e0f4ff;
-  --text-secondary-dark: #a0c0d0;
+  --text-muted: #667788;
   --text-accent: #0052a3;
+  --text-inverse: #e0f4ff;
+
+  /* Borders */
   --border-color: rgba(255, 255, 255, 0.6);
+  --border-color-secondary: rgba(0, 82, 163, 0.2);
+  --border-radius: 8px;
+  --border-radius-large: 16px;
+  --border-radius-round: 50px;
+
+  /* ===== INTERAÇÃO ===== */
+  /* Buttons */
   --button-bg: linear-gradient(180deg, #82caff 0%, #3399ff 49%, #0077e6 50%, #005bb8 100%);
+  --button-bg-hover: linear-gradient(180deg, #99d4ff 0%, #4da6ff 49%, #1a8cff 50%, #0066cc 100%);
+  --button-text: white;
+
+  /* Inputs */
   --input-bg: rgba(255, 255, 255, 0.8);
+  --input-border: 1px solid var(--border-color);
+  --input-border-focus: 1px solid var(--text-accent);
+
+  /* ===== SOMBRAS E EFEITOS ===== */
   --shadow-main: 0 8px 32px rgba(0, 0, 0, 0.15);
+  --shadow-hover: 0 15px 35px rgba(0, 153, 255, 0.15);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  --shadow-glow: 0 0 10px var(--text-accent);
+
+  /* ===== ESPAÇAMENTO ===== */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* ===== TAMANHOS ===== */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 3rem;
+  --font-size-5xl: 4rem;
+
+  /* ===== TRANSIÇÕES ===== */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-bounce: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* ===== SCROLLBAR ===== */
+  --scrollbar-width: 12px;
+  --scrollbar-track: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb: linear-gradient(180deg, #82caff 0%, #0077e6 100%);
+  --scrollbar-thumb-hover: linear-gradient(180deg, #3399ff 0%, #005bb8 100%);
+
+  /* ===== Z-INDEX ===== */
+  --z-dropdown: 1000;
+  --z-modal: 1100;
+  --z-tooltip: 1200;
+  --z-overlay: 1300;
 }
 
 [data-theme='dark'] {
-  /* Dark Theme (Aero Night) */
+  /* ===== CORES BASE ===== */
+  /* Backgrounds */
   --bg-primary: radial-gradient(circle at 0% 0%, #0d0221 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, #1a0333 0%, transparent 50%),
                 #050110;
   --bg-secondary: rgba(13, 2, 33, 0.6);
+  --bg-tertiary: rgba(20, 5, 40, 0.4);
+  --bg-accent: rgba(0, 212, 255, 0.1);
+
+  /* Text */
   --text-primary: #e0f4ff;
   --text-secondary: #a0c0d0;
-  --text-primary-dark: #003366;
-  --text-secondary-dark: #445566;
+  --text-muted: #708090;
   --text-accent: #00d4ff;
+  --text-inverse: #003366;
+
+  /* Borders */
   --border-color: rgba(0, 212, 255, 0.2);
+  --border-color-secondary: rgba(0, 212, 255, 0.1);
+
+  /* ===== INTERAÇÃO ===== */
+  /* Buttons */
   --button-bg: linear-gradient(180deg, #00d4ff 0%, #0088ff 49%, #0055ff 50%, #003399 100%);
+  --button-bg-hover: linear-gradient(180deg, #33e6ff 0%, #1a99ff 49%, #0066ff 50%, #004499 100%);
+
+  /* Inputs */
   --input-bg: rgba(0, 0, 0, 0.4);
+
+  /* ===== SOMBRAS E EFEITOS ===== */
   --shadow-main: 0 8px 32px rgba(0, 212, 255, 0.15);
+  --shadow-hover: 0 15px 35px rgba(0, 212, 255, 0.2);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-glow: 0 0 15px var(--text-accent);
+
+  /* ===== SCROLLBAR ===== */
+  --scrollbar-thumb: linear-gradient(180deg, #00d4ff 0%, #0088ff 100%);
+  --scrollbar-thumb-hover: linear-gradient(180deg, #33e6ff 0%, #1a99ff 100%);
+}
+
+[data-theme='cyberpunk'] {
+  /* ===== CORES BASE ===== */
+  /* Backgrounds */
+  --bg-primary: linear-gradient(135deg, #0d0221 0%, #1a0333 25%, #0f0421 50%, #1d0433 75%, #0d0221 100%);
+  --bg-secondary: rgba(20, 5, 40, 0.7);
+  --bg-tertiary: rgba(30, 10, 60, 0.5);
+  --bg-accent: rgba(255, 0, 127, 0.1);
+
+  /* Text */
+  --text-primary: #00f7ff;
+  --text-secondary: #ff0080;
+  --text-muted: #888888;
+  --text-accent: #ff0080;
+  --text-inverse: #000000;
+
+  /* Borders */
+  --border-color: rgba(0, 247, 255, 0.3);
+  --border-color-secondary: rgba(255, 0, 127, 0.2);
+
+  /* ===== INTERAÇÃO ===== */
+  /* Buttons */
+  --button-bg: linear-gradient(45deg, #ff0080 0%, #00f7ff 50%, #6633ff 100%);
+  --button-bg-hover: linear-gradient(45deg, #ff3399 0%, #33f7ff 50%, #7744ff 100%);
+
+  /* Inputs */
+  --input-bg: rgba(0, 0, 0, 0.6);
+
+  /* ===== SOMBRAS E EFEITOS ===== */
+  --shadow-main: 0 0 20px rgba(0, 247, 255, 0.2);
+  --shadow-hover: 0 0 30px rgba(255, 0, 127, 0.3);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-glow: 0 0 20px var(--text-accent);
+
+  /* ===== SCROLLBAR ===== */
+  --scrollbar-thumb: linear-gradient(180deg, #ff0080 0%, #00f7ff 100%);
+  --scrollbar-thumb-hover: linear-gradient(180deg, #ff3399 0%, #33f7ff 100%);
+}
+
+[data-theme='minimal'] {
+  /* ===== CORES BASE ===== */
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-accent: #dee2e6;
+
+  /* Text */
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  --text-accent: #007bff;
+  --text-inverse: #ffffff;
+
+  /* Borders */
+  --border-color: #dee2e6;
+  --border-color-secondary: #ced4da;
+
+  /* ===== INTERAÇÃO ===== */
+  /* Buttons */
+  --button-bg: linear-gradient(180deg, #007bff 0%, #0056b3 100%);
+  --button-bg-hover: linear-gradient(180deg, #0056b3 0%, #004085 100%);
+
+  /* Inputs */
+  --input-bg: #ffffff;
+
+  /* ===== SOMBRAS E EFEITOS ===== */
+  --shadow-main: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 8px rgba(0, 123, 255, 0.3);
+
+  /* ===== SCROLLBAR ===== */
+  --scrollbar-thumb: #6c757d;
+  --scrollbar-thumb-hover: #5a6268;
 }
 
 /* 2. RESET & BASE */
@@ -56,27 +220,30 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  transition: background 0.5s ease;
+  transition: background var(--transition-slow) ease;
   line-height: 1.6;
+  font-size: var(--font-size-base);
 }
 
 /* 3. TIPOGRAFIA PARANORMAL */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-titles) !important;
+  font-family: var(--font-titles);
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 1px;
+  line-height: 1.2;
+  margin: var(--spacing-lg) 0 var(--spacing-md) 0;
 }
 
 /* Títulos do Header */
 .titleMain, [class*="titleMain"] {
-  font-family: var(--font-titles) !important;
-  font-size: 4rem;
+  font-family: var(--font-titles);
+  font-size: var(--font-size-5xl);
 }
 
 .titleSub, [class*="titleSub"] {
-  font-family: var(--font-titles) !important;
-  font-size: 2rem;
+  font-family: var(--font-titles);
+  font-size: var(--font-size-3xl);
 }
 
 /* 4. COMPONENTES AERO GLASS */
@@ -85,22 +252,25 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(15px) saturate(150%);
   -webkit-backdrop-filter: blur(15px) saturate(150%);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-main), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow-main), var(--shadow-inset);
+  border-radius: var(--border-radius-large);
 }
 
 /* 5. INTERATIVIDADE (Botões & Links) */
 button {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body);
   cursor: pointer;
   border: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-normal);
+  border-radius: var(--border-radius-round);
+  font-size: var(--font-size-base);
 }
 
 a {
   font-family: var(--font-body);
   color: var(--text-accent);
   text-decoration: none;
-  transition: filter 0.2s;
+  transition: filter var(--transition-fast);
 }
 
 a:hover {
@@ -110,61 +280,96 @@ a:hover {
 
 /* Botões Estilo Bolha */
 .aero-button, [class*="aeroButton"], [class*="manageLink"] {
-  background: var(--button-bg) !important;
-  color: white !important;
-  border-radius: 50px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: var(--button-bg);
+  color: var(--button-text);
+  border-radius: var(--border-radius-round);
+  box-shadow: var(--shadow-main), var(--shadow-inset);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .aero-button:hover, [class*="aeroButton"]:hover {
-  filter: brightness(1.1);
+  background: var(--button-bg-hover);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-hover), var(--shadow-inset);
 }
 
 /* 6. INPUTS & FORMULÁRIOS */
 input, textarea, select {
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body);
   background: var(--input-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0.8rem;
+  border: var(--input-border);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm) var(--spacing-md);
   color: var(--text-primary);
   outline: none;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-base);
 }
 
 input:focus, textarea:focus {
-  border-color: var(--text-accent);
-  box-shadow: 0 0 10px var(--text-accent);
+  border: var(--input-border-focus);
+  box-shadow: var(--shadow-glow), inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 /* 7. SCROLLBAR PERSONALIZADA (VISTA STYLE) */
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--scrollbar-track);
+  border-radius: calc(var(--scrollbar-width) / 2);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #82caff 0%, #0077e6 100%);
-  border-radius: 10px;
+  background: var(--scrollbar-thumb);
+  border-radius: calc(var(--scrollbar-width) / 2);
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #3399ff 0%, #005bb8 100%);
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* 8. ANIMAÇÕES */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(var(--spacing-md)); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .fade-in {
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+/* Utility classes for common animations */
+.fade-out {
+  animation: fadeOut var(--transition-normal) ease-out;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(var(--spacing-md)); }
+}
+
+.slide-in-left {
+  animation: slideInLeft var(--transition-normal) ease-out;
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-var(--spacing-xl)); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-in-right {
+  animation: slideInRight var(--transition-normal) ease-out;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(var(--spacing-xl)); }
+  to { opacity: 1; transform: translateX(0); }
 }

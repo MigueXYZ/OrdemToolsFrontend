@@ -10,7 +10,7 @@
 
 /* --- Header & Títulos --- */
 .header {
-  padding: 1.5rem 2rem;
+  padding: var(--spacing-lg) var(--spacing-xl);
   text-align: center;
   background: var(--bg-secondary);
   backdrop-filter: blur(25px) saturate(150%);
@@ -52,17 +52,17 @@
 }
 
 .title {
-  font-family: var(--font-titles) !important;
-  font-size: 2.8rem;
+  font-family: var(--font-titles);
+  font-size: var(--font-size-4xl);
   color: var(--text-primary);
-  margin: 0.5rem 0;
+  margin: var(--spacing-sm) 0;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .subtitle {
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   color: var(--text-accent);
   margin: 0;
   font-weight: 500;
@@ -73,28 +73,28 @@
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-xl);
 }
 
 /* --- Tabs Aero --- */
 .tabNavigation {
   display: flex;
-  gap: 0.8rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .tab {
-  padding: 0.8rem 1.5rem;
+  padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--bg-secondary);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border-color);
-  border-radius: 50px;
+  border-radius: var(--border-radius-round);
   color: var(--text-accent);
   font-weight: 700;
-  font-size: 1rem;
-  font-family: var(--font-titles) !important;
+  font-size: var(--font-size-base);
+  font-family: var(--font-titles);
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;

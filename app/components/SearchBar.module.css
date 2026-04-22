@@ -1,7 +1,7 @@
 /* SearchBar.module.css - Aero Premium (Light/Dark Ready) */
 
 .container {
-  padding: 2.5rem 1rem;
+  padding: var(--spacing-2xl) var(--spacing-md);
   background: transparent;
   position: relative;
   z-index: 10;
@@ -13,8 +13,8 @@
   background: var(--bg-secondary);
   backdrop-filter: blur(15px) saturate(150%);
   -webkit-backdrop-filter: blur(15px) saturate(150%);
-  padding: 0.4rem;
-  border-radius: 100px;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-round);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-main);
 }
@@ -30,33 +30,33 @@
 
 .input {
   flex: 1;
-  padding: 0 1.5rem;
+  padding: 0 var(--spacing-lg);
   height: 45px;
-  border-radius: 50px 0 0 50px;
+  border-radius: var(--border-radius-round) 0 0 var(--border-radius-round);
   border: 1px solid var(--border-color);
   border-right: none;
   background: var(--input-bg);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: var(--font-size-base);
   outline: none;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
 
 .input:focus {
   border-color: var(--text-accent);
-  box-shadow: 0 0 15px rgba(0, 153, 255, 0.2), inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-glow), inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .clearButton {
   position: absolute;
-  right: 11rem; 
+  right: 11rem;
   top: 50%;
   transform: translateY(-50%);
-  
+
   background: transparent;
   border: none;
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   cursor: pointer;
   width: 28px;
   height: 28px;
@@ -65,7 +65,7 @@
   align-items: center;
   justify-content: center;
   z-index: 15;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   opacity: 0.7;
 }
 
@@ -81,22 +81,22 @@
 }
 
 .searchButton {
-  height: 45px; 
-  padding: 0 1.8rem;
+  height: 45px;
+  padding: 0 var(--spacing-lg);
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  
+  gap: var(--spacing-sm);
+
   /* Estilo Glossy Global */
   background: var(--button-bg);
   color: white;
   border: 1px solid var(--text-accent);
-  border-radius: 0 50px 50px 0;
-  
+  border-radius: 0 var(--border-radius-round) var(--border-radius-round) 0;
+
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: var(--font-size-base);
   cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 0.2s;

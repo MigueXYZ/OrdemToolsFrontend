@@ -2,23 +2,23 @@
 
 .aeroForm {
   max-width: 750px;
-  margin: 0 auto 3rem;
+  margin: 0 auto var(--spacing-2xl);
   background: var(--bg-secondary);
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   border: 1px solid var(--border-color);
-  border-radius: 18px;
+  border-radius: var(--border-radius-large);
   box-shadow: var(--shadow-main);
   overflow: hidden;
   position: relative;
 }
 
 .formHeader {
-  padding: 0.9rem 1.8rem;
+  padding: var(--spacing-sm) var(--spacing-xl);
   background: var(--button-bg);
   border-bottom: 2px solid var(--border-color);
   position: relative;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-inset);
 }
 
 .formHeader::after {
@@ -31,8 +31,8 @@
 }
 
 .formTitle {
-  font-family: var(--font-titles) !important;
-  font-size: 1.4rem;
+  font-family: var(--font-titles);
+  font-size: var(--font-size-xl);
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -43,10 +43,10 @@
 }
 
 .formContent {
-  padding: 1.8rem;
+  padding: var(--spacing-xl);
 }
 
-.singleColumn { margin-bottom: 1.2rem; }
+.singleColumn { margin-bottom: var(--spacing-lg); }
 
 .grid {
   display: grid;

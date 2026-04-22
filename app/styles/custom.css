@@ -1,0 +1,74 @@
+/* custom.css - User Customizable Styles
+ *
+ * This file allows users to override the default theme variables
+ * to create their own custom appearance for the Ordem Biblioteca.
+ *
+ * Simply modify the CSS variables below to change colors, fonts,
+ * spacing, and other visual elements.
+ *
+ * IMPORTANT: Changes to this file will persist and override the
+ * default theme. To reset to defaults, comment out or remove
+ * the variable declarations.
+ */
+
+/* ===== CUSTOM THEME OVERRIDES ===== */
+/* Uncomment and modify these variables to customize the appearance */
+
+/* Fonts */
+/* --font-titles: 'Your Custom Font', serif; */
+/* --font-body: 'Your Custom Font', monospace; */
+
+/* Colors - Light Theme */
+/* --bg-primary: linear-gradient(135deg, #your-color 0%, #another-color 100%); */
+/* --bg-secondary: rgba(255, 255, 255, 0.9); */
+/* --text-primary: #333333; */
+/* --text-accent: #007acc; */
+/* --border-color: rgba(0, 122, 204, 0.3); */
+
+/* Colors - Dark Theme */
+/* [data-theme='dark'] {
+  --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --text-primary: #e0e0e0;
+  --text-accent: #00d4ff;
+} */
+
+/* Spacing */
+/* --spacing-sm: 0.5rem; */
+/* --spacing-md: 1rem; */
+/* --spacing-lg: 1.5rem; */
+
+/* Borders */
+/* --border-radius: 12px; */
+/* --border-radius-large: 20px; */
+
+/* Effects */
+/* --shadow-main: 0 4px 20px rgba(0, 0, 0, 0.1); */
+
+/* ===== ADVANCED CUSTOMIZATIONS ===== */
+/* Add your own custom CSS rules below */
+
+/* Example: Custom button styles */
+/* .aero-button {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+} */
+
+/* Example: Custom card hover effects */
+/* .card:hover {
+  transform: translateY(-8px) rotate(1deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+} */
+
+/* Example: Custom scrollbar */
+/* ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff6b6b, #4ecdc4);
+} */
+
+/* Example: Custom animations */
+/* @keyframes customPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.aero-button:hover {
+  animation: customPulse 0.6s ease-in-out;
+} */

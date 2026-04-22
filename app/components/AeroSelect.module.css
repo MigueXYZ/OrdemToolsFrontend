@@ -9,11 +9,11 @@
 .label {
   display: block;
   color: var(--text-accent);
-  margin-bottom: 0.6rem;
-  font-size: 0.95rem;
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-base);
   /* Reduzi a opacidade da sombra para não ficar estranho no Dark Mode */
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1); 
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body);
 }
 
 .required {
@@ -26,13 +26,13 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0 1rem;
+  padding: 0 var(--spacing-lg);
   background: var(--input-bg);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   outline: none;
   height: 42px;
   box-sizing: border-box;
@@ -41,11 +41,11 @@
 
 .selectTrigger:hover {
   border-color: var(--text-accent);
-  box-shadow: 0 0 10px rgba(0, 153, 255, 0.2);
+  box-shadow: var(--shadow-glow);
 }
 
 .selectTrigger.open {
-  border-radius: 10px 10px 0 0;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
   border-color: var(--text-accent);
   /* Remove a borda inferior para fundir com a lista */
   border-bottom: none; 
@@ -57,15 +57,15 @@
 
 .value {
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: var(--font-size-base);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: var(--font-body) !important;
+  font-family: var(--font-body);
 }
 
 .chevron {
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-normal);
   flex-shrink: 0;
   color: var(--text-accent);
 }
@@ -81,7 +81,7 @@
   top: 41px; /* Como o trigger tem height 42px e borda 1px, 41px força a união */
   left: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   
   margin: 0 !important;
   padding: 0 !important;
@@ -94,7 +94,7 @@
   /* Borda com cor de destaque que completa o trigger */
   border: 1px solid var(--text-accent);
   border-top: none; /* Já que o trigger fornece o topo */
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
   box-shadow: var(--shadow-main);
   
   max-height: 200px;
